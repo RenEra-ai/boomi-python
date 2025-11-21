@@ -2,6 +2,7 @@
 from __future__ import annotations
 from .utils.json_map import JsonMap
 from .utils.base_model import BaseModel
+from .utils.sentinel import SENTINEL
 from .msh_control_info import MshControlInfo
 
 
@@ -9,15 +10,16 @@ from .msh_control_info import MshControlInfo
 class Hl7ControlInfo(BaseModel):
     """Hl7ControlInfo
 
-    :param msh_control_info: msh_control_info
-    :type msh_control_info: MshControlInfo
+    :param msh_control_info: msh_control_info, defaults to None
+    :type msh_control_info: MshControlInfo, optional
     """
 
-    def __init__(self, msh_control_info: MshControlInfo, **kwargs):
+    def __init__(self, msh_control_info: MshControlInfo = SENTINEL, **kwargs):
         """Hl7ControlInfo
 
-        :param msh_control_info: msh_control_info
-        :type msh_control_info: MshControlInfo
+        :param msh_control_info: msh_control_info, defaults to None
+        :type msh_control_info: MshControlInfo, optional
         """
-        self.msh_control_info = self._define_object(msh_control_info, MshControlInfo)
+        if msh_control_info is not SENTINEL:
+            self.msh_control_info = self._define_object(msh_control_info, MshControlInfo)
         self._kwargs = kwargs

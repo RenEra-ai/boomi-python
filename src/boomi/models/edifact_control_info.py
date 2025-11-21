@@ -18,34 +18,36 @@ from .unh_control_info import UnhControlInfo
 class EdifactControlInfo(BaseModel):
     """EdifactControlInfo
 
-    :param unb_control_info: unb_control_info
-    :type unb_control_info: UnbControlInfo
+    :param unb_control_info: unb_control_info, defaults to None
+    :type unb_control_info: UnbControlInfo, optional
     :param ung_control_info: ung_control_info, defaults to None
     :type ung_control_info: UngControlInfo, optional
-    :param unh_control_info: unh_control_info
-    :type unh_control_info: UnhControlInfo
+    :param unh_control_info: unh_control_info, defaults to None
+    :type unh_control_info: UnhControlInfo, optional
     """
 
     def __init__(
         self,
-        unb_control_info: UnbControlInfo,
-        unh_control_info: UnhControlInfo,
+        unb_control_info: UnbControlInfo = SENTINEL,
         ung_control_info: UngControlInfo = SENTINEL,
+        unh_control_info: UnhControlInfo = SENTINEL,
         **kwargs,
     ):
         """EdifactControlInfo
 
-        :param unb_control_info: unb_control_info
-        :type unb_control_info: UnbControlInfo
+        :param unb_control_info: unb_control_info, defaults to None
+        :type unb_control_info: UnbControlInfo, optional
         :param ung_control_info: ung_control_info, defaults to None
         :type ung_control_info: UngControlInfo, optional
-        :param unh_control_info: unh_control_info
-        :type unh_control_info: UnhControlInfo
+        :param unh_control_info: unh_control_info, defaults to None
+        :type unh_control_info: UnhControlInfo, optional
         """
-        self.unb_control_info = self._define_object(unb_control_info, UnbControlInfo)
+        if unb_control_info is not SENTINEL:
+            self.unb_control_info = self._define_object(unb_control_info, UnbControlInfo)
         if ung_control_info is not SENTINEL:
             self.ung_control_info = self._define_object(
                 ung_control_info, UngControlInfo
             )
-        self.unh_control_info = self._define_object(unh_control_info, UnhControlInfo)
+        if unh_control_info is not SENTINEL:
+            self.unh_control_info = self._define_object(unh_control_info, UnhControlInfo)
         self._kwargs = kwargs
