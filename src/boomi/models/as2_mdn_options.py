@@ -73,14 +73,14 @@ class Synchronous(Enum):
 class As2MdnOptions(BaseModel):
     """As2MdnOptions
 
-    :param external_url: external_url
-    :type external_url: str
-    :param mdn_client_ssl_cert: mdn_client_ssl_cert
-    :type mdn_client_ssl_cert: PrivateCertificate
+    :param external_url: external_url, defaults to None
+    :type external_url: str, optional
+    :param mdn_client_ssl_cert: mdn_client_ssl_cert, defaults to None
+    :type mdn_client_ssl_cert: PrivateCertificate, optional
     :param mdn_digest_alg: mdn_digest_alg, defaults to None
     :type mdn_digest_alg: MdnDigestAlg, optional
-    :param mdn_ssl_cert: mdn_ssl_cert
-    :type mdn_ssl_cert: PublicCertificate
+    :param mdn_ssl_cert: mdn_ssl_cert, defaults to None
+    :type mdn_ssl_cert: PublicCertificate, optional
     :param request_mdn: request_mdn, defaults to None
     :type request_mdn: bool, optional
     :param signed: signed, defaults to None

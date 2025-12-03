@@ -45,20 +45,20 @@ class GrantType(Enum):
 class HttpoAuth2Settings(BaseModel):
     """HttpoAuth2Settings
 
-    :param access_token_endpoint: access_token_endpoint
-    :type access_token_endpoint: HttpEndpoint
-    :param access_token_parameters: access_token_parameters
-    :type access_token_parameters: HttpRequestParameters
-    :param authorization_parameters: authorization_parameters
-    :type authorization_parameters: HttpRequestParameters
-    :param authorization_token_endpoint: authorization_token_endpoint
-    :type authorization_token_endpoint: HttpEndpoint
-    :param credentials: credentials
-    :type credentials: HttpoAuthCredentials
+    :param access_token_endpoint: access_token_endpoint, defaults to None
+    :type access_token_endpoint: HttpEndpoint, optional
+    :param access_token_parameters: access_token_parameters, defaults to None
+    :type access_token_parameters: HttpRequestParameters, optional
+    :param authorization_parameters: authorization_parameters, defaults to None
+    :type authorization_parameters: HttpRequestParameters, optional
+    :param authorization_token_endpoint: authorization_token_endpoint, defaults to None
+    :type authorization_token_endpoint: HttpEndpoint, optional
+    :param credentials: credentials, defaults to None
+    :type credentials: HttpoAuthCredentials, optional
     :param grant_type: grant_type, defaults to None
     :type grant_type: GrantType, optional
-    :param scope: scope
-    :type scope: str
+    :param scope: scope, defaults to None
+    :type scope: str, optional
     """
 
     def __init__(

@@ -30,24 +30,24 @@ class As2PartnerInfo(BaseModel):
     :type listen_attachment_settings: AttachmentInfo, optional
     :param listen_auth_settings: listen_auth_settings, defaults to None
     :type listen_auth_settings: As2BasicAuthInfo, optional
-    :param as2_id: as2_id
-    :type as2_id: str
+    :param as2_id: as2_id, defaults to None
+    :type as2_id: str, optional
     :param basic_auth_enabled: basic_auth_enabled, defaults to None
     :type basic_auth_enabled: bool, optional
-    :param client_ssl_certificate: client_ssl_certificate
-    :type client_ssl_certificate: PublicCertificate
+    :param client_ssl_certificate: client_ssl_certificate, defaults to None
+    :type client_ssl_certificate: PublicCertificate, optional
     :param enabled_legacy_smime: enabled_legacy_smime, defaults to None
     :type enabled_legacy_smime: bool, optional
-    :param encryption_public_certificate: encryption_public_certificate
-    :type encryption_public_certificate: PublicCertificate
-    :param mdn_signature_public_certificate: mdn_signature_public_certificate
-    :type mdn_signature_public_certificate: PublicCertificate
+    :param encryption_public_certificate: encryption_public_certificate, defaults to None
+    :type encryption_public_certificate: PublicCertificate, optional
+    :param mdn_signature_public_certificate: mdn_signature_public_certificate, defaults to None
+    :type mdn_signature_public_certificate: PublicCertificate, optional
     :param messages_to_check_for_duplicates: messages_to_check_for_duplicates, defaults to None
     :type messages_to_check_for_duplicates: int, optional
     :param reject_duplicate_messages: reject_duplicate_messages, defaults to None
     :type reject_duplicate_messages: bool, optional
-    :param signing_public_certificate: signing_public_certificate
-    :type signing_public_certificate: PublicCertificate
+    :param signing_public_certificate: signing_public_certificate, defaults to None
+    :type signing_public_certificate: PublicCertificate, optional
     """
 
     def __init__(

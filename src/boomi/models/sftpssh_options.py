@@ -12,14 +12,14 @@ class SftpsshOptions(BaseModel):
 
     :param dh_key_size_max1024: dh_key_size_max1024, defaults to None
     :type dh_key_size_max1024: bool, optional
-    :param known_host_entry: known_host_entry
-    :type known_host_entry: str
+    :param known_host_entry: known_host_entry, defaults to None
+    :type known_host_entry: str, optional
     :param sshkeyauth: sshkeyauth, defaults to None
     :type sshkeyauth: bool, optional
-    :param sshkeypassword: sshkeypassword
-    :type sshkeypassword: str
-    :param sshkeypath: sshkeypath
-    :type sshkeypath: str
+    :param sshkeypassword: sshkeypassword, defaults to None
+    :type sshkeypassword: str, optional
+    :param sshkeypath: sshkeypath, defaults to None
+    :type sshkeypath: str, optional
     """
 
     def __init__(

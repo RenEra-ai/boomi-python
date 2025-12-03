@@ -170,8 +170,8 @@ class As2MessageOptions(BaseModel):
     :type signed: bool, optional
     :param signing_digest_alg: signing_digest_alg, defaults to None
     :type signing_digest_alg: SigningDigestAlg, optional
-    :param subject: subject
-    :type subject: str
+    :param subject: subject, defaults to None
+    :type subject: str, optional
     """
 
     def __init__(

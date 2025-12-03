@@ -52,12 +52,12 @@ class As2SendSettings(BaseModel):
     :type auth_settings: As2BasicAuthInfo, optional
     :param authentication_type: authentication_type, defaults to None
     :type authentication_type: As2SendSettingsAuthenticationType, optional
-    :param client_ssl_certificate: client_ssl_certificate
-    :type client_ssl_certificate: PrivateCertificate
-    :param ssl_certificate: ssl_certificate
-    :type ssl_certificate: PublicCertificate
-    :param url: url
-    :type url: str
+    :param client_ssl_certificate: client_ssl_certificate, defaults to None
+    :type client_ssl_certificate: PrivateCertificate, optional
+    :param ssl_certificate: ssl_certificate, defaults to None
+    :type ssl_certificate: PublicCertificate, optional
+    :param url: url, defaults to None
+    :type url: str, optional
     :param use_default_settings: use_default_settings, defaults to None
     :type use_default_settings: bool, optional
     :param verify_hostname: verify_hostname, defaults to None
