@@ -95,10 +95,10 @@ class As2MdnOptions(BaseModel):
 
     def __init__(
         self,
-        external_url: str,
-        mdn_client_ssl_cert: PrivateCertificate,
-        mdn_ssl_cert: PublicCertificate,
+        external_url: str = SENTINEL,
+        mdn_client_ssl_cert: PrivateCertificate = SENTINEL,
         mdn_digest_alg: MdnDigestAlg = SENTINEL,
+        mdn_ssl_cert: PublicCertificate = SENTINEL,
         request_mdn: bool = SENTINEL,
         signed: bool = SENTINEL,
         synchronous: Synchronous = SENTINEL,
@@ -108,14 +108,14 @@ class As2MdnOptions(BaseModel):
     ):
         """As2MdnOptions
 
-        :param external_url: external_url
-        :type external_url: str
-        :param mdn_client_ssl_cert: mdn_client_ssl_cert
-        :type mdn_client_ssl_cert: PrivateCertificate
+        :param external_url: external_url, defaults to None
+        :type external_url: str, optional
+        :param mdn_client_ssl_cert: mdn_client_ssl_cert, defaults to None
+        :type mdn_client_ssl_cert: PrivateCertificate, optional
         :param mdn_digest_alg: mdn_digest_alg, defaults to None
         :type mdn_digest_alg: MdnDigestAlg, optional
-        :param mdn_ssl_cert: mdn_ssl_cert
-        :type mdn_ssl_cert: PublicCertificate
+        :param mdn_ssl_cert: mdn_ssl_cert, defaults to None
+        :type mdn_ssl_cert: PublicCertificate, optional
         :param request_mdn: request_mdn, defaults to None
         :type request_mdn: bool, optional
         :param signed: signed, defaults to None
@@ -127,15 +127,18 @@ class As2MdnOptions(BaseModel):
         :param use_ssl: use_ssl, defaults to None
         :type use_ssl: bool, optional
         """
-        self.external_url = external_url
-        self.mdn_client_ssl_cert = self._define_object(
-            mdn_client_ssl_cert, PrivateCertificate
-        )
+        if external_url is not SENTINEL:
+            self.external_url = external_url
+        if mdn_client_ssl_cert is not SENTINEL:
+            self.mdn_client_ssl_cert = self._define_object(
+                mdn_client_ssl_cert, PrivateCertificate
+            )
         if mdn_digest_alg is not SENTINEL:
             self.mdn_digest_alg = self._enum_matching(
                 mdn_digest_alg, MdnDigestAlg.list(), "mdn_digest_alg"
             )
-        self.mdn_ssl_cert = self._define_object(mdn_ssl_cert, PublicCertificate)
+        if mdn_ssl_cert is not SENTINEL:
+            self.mdn_ssl_cert = self._define_object(mdn_ssl_cert, PublicCertificate)
         if request_mdn is not SENTINEL:
             self.request_mdn = request_mdn
         if signed is not SENTINEL:

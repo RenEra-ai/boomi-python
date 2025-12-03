@@ -71,10 +71,10 @@ class FtpSendOptions(BaseModel):
 
     :param ftp_action: ftp_action, defaults to None
     :type ftp_action: FtpSendOptionsFtpAction, optional
-    :param move_to_directory: move_to_directory
-    :type move_to_directory: str
-    :param remote_directory: remote_directory
-    :type remote_directory: str
+    :param move_to_directory: move_to_directory, defaults to None
+    :type move_to_directory: str, optional
+    :param remote_directory: remote_directory, defaults to None
+    :type remote_directory: str, optional
     :param transfer_type: transfer_type, defaults to None
     :type transfer_type: FtpSendOptionsTransferType, optional
     :param use_default_send_options: use_default_send_options, defaults to None
@@ -83,9 +83,9 @@ class FtpSendOptions(BaseModel):
 
     def __init__(
         self,
-        move_to_directory: str,
-        remote_directory: str,
         ftp_action: FtpSendOptionsFtpAction = SENTINEL,
+        move_to_directory: str = SENTINEL,
+        remote_directory: str = SENTINEL,
         transfer_type: FtpSendOptionsTransferType = SENTINEL,
         use_default_send_options: bool = SENTINEL,
         **kwargs
@@ -94,10 +94,10 @@ class FtpSendOptions(BaseModel):
 
         :param ftp_action: ftp_action, defaults to None
         :type ftp_action: FtpSendOptionsFtpAction, optional
-        :param move_to_directory: move_to_directory
-        :type move_to_directory: str
-        :param remote_directory: remote_directory
-        :type remote_directory: str
+        :param move_to_directory: move_to_directory, defaults to None
+        :type move_to_directory: str, optional
+        :param remote_directory: remote_directory, defaults to None
+        :type remote_directory: str, optional
         :param transfer_type: transfer_type, defaults to None
         :type transfer_type: FtpSendOptionsTransferType, optional
         :param use_default_send_options: use_default_send_options, defaults to None
@@ -107,8 +107,10 @@ class FtpSendOptions(BaseModel):
             self.ftp_action = self._enum_matching(
                 ftp_action, FtpSendOptionsFtpAction.list(), "ftp_action"
             )
-        self.move_to_directory = move_to_directory
-        self.remote_directory = remote_directory
+        if move_to_directory is not SENTINEL:
+            self.move_to_directory = move_to_directory
+        if remote_directory is not SENTINEL:
+            self.remote_directory = remote_directory
         if transfer_type is not SENTINEL:
             self.transfer_type = self._enum_matching(
                 transfer_type, FtpSendOptionsTransferType.list(), "transfer_type"

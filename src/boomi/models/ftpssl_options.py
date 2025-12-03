@@ -40,8 +40,8 @@ class Sslmode(Enum):
 class FtpsslOptions(BaseModel):
     """FtpsslOptions
 
-    :param client_ssl_certificate: client_ssl_certificate
-    :type client_ssl_certificate: PrivateCertificate
+    :param client_ssl_certificate: client_ssl_certificate, defaults to None
+    :type client_ssl_certificate: PrivateCertificate, optional
     :param sslmode: sslmode, defaults to None
     :type sslmode: Sslmode, optional
     :param use_client_authentication: use_client_authentication, defaults to None
@@ -50,23 +50,24 @@ class FtpsslOptions(BaseModel):
 
     def __init__(
         self,
-        client_ssl_certificate: PrivateCertificate,
+        client_ssl_certificate: PrivateCertificate = SENTINEL,
         sslmode: Sslmode = SENTINEL,
         use_client_authentication: bool = SENTINEL,
         **kwargs,
     ):
         """FtpsslOptions
 
-        :param client_ssl_certificate: client_ssl_certificate
-        :type client_ssl_certificate: PrivateCertificate
+        :param client_ssl_certificate: client_ssl_certificate, defaults to None
+        :type client_ssl_certificate: PrivateCertificate, optional
         :param sslmode: sslmode, defaults to None
         :type sslmode: Sslmode, optional
         :param use_client_authentication: use_client_authentication, defaults to None
         :type use_client_authentication: bool, optional
         """
-        self.client_ssl_certificate = self._define_object(
-            client_ssl_certificate, PrivateCertificate
-        )
+        if client_ssl_certificate is not SENTINEL:
+            self.client_ssl_certificate = self._define_object(
+                client_ssl_certificate, PrivateCertificate
+            )
         if sslmode is not SENTINEL:
             self.sslmode = self._enum_matching(sslmode, Sslmode.list(), "sslmode")
         if use_client_authentication is not SENTINEL:

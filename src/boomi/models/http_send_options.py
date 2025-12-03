@@ -124,18 +124,18 @@ class HttpSendOptions(BaseModel):
     :type follow_redirects: bool, optional
     :param method_type: method_type, defaults to None
     :type method_type: HttpSendOptionsMethodType, optional
-    :param path_elements: path_elements
-    :type path_elements: HttpPathElements
+    :param path_elements: path_elements, defaults to None
+    :type path_elements: HttpPathElements, optional
     :param reflect_headers: reflect_headers, defaults to None
     :type reflect_headers: HttpReflectHeaders, optional
-    :param request_headers: request_headers
-    :type request_headers: HttpRequestHeaders
+    :param request_headers: request_headers, defaults to None
+    :type request_headers: HttpRequestHeaders, optional
     :param request_profile: request_profile, defaults to None
     :type request_profile: str, optional
     :param request_profile_type: request_profile_type, defaults to None
     :type request_profile_type: HttpSendOptionsRequestProfileType, optional
-    :param response_header_mapping: response_header_mapping
-    :type response_header_mapping: HttpResponseHeaderMapping
+    :param response_header_mapping: response_header_mapping, defaults to None
+    :type response_header_mapping: HttpResponseHeaderMapping, optional
     :param response_profile: response_profile, defaults to None
     :type response_profile: str, optional
     :param response_profile_type: response_profile_type, defaults to None
@@ -150,15 +150,15 @@ class HttpSendOptions(BaseModel):
 
     def __init__(
         self,
-        path_elements: HttpPathElements,
-        request_headers: HttpRequestHeaders,
-        response_header_mapping: HttpResponseHeaderMapping,
         data_content_type: str = SENTINEL,
         follow_redirects: bool = SENTINEL,
         method_type: HttpSendOptionsMethodType = SENTINEL,
+        path_elements: HttpPathElements = SENTINEL,
         reflect_headers: HttpReflectHeaders = SENTINEL,
+        request_headers: HttpRequestHeaders = SENTINEL,
         request_profile: str = SENTINEL,
         request_profile_type: HttpSendOptionsRequestProfileType = SENTINEL,
+        response_header_mapping: HttpResponseHeaderMapping = SENTINEL,
         response_profile: str = SENTINEL,
         response_profile_type: HttpSendOptionsResponseProfileType = SENTINEL,
         return_errors: bool = SENTINEL,
@@ -174,18 +174,18 @@ class HttpSendOptions(BaseModel):
         :type follow_redirects: bool, optional
         :param method_type: method_type, defaults to None
         :type method_type: HttpSendOptionsMethodType, optional
-        :param path_elements: path_elements
-        :type path_elements: HttpPathElements
+        :param path_elements: path_elements, defaults to None
+        :type path_elements: HttpPathElements, optional
         :param reflect_headers: reflect_headers, defaults to None
         :type reflect_headers: HttpReflectHeaders, optional
-        :param request_headers: request_headers
-        :type request_headers: HttpRequestHeaders
+        :param request_headers: request_headers, defaults to None
+        :type request_headers: HttpRequestHeaders, optional
         :param request_profile: request_profile, defaults to None
         :type request_profile: str, optional
         :param request_profile_type: request_profile_type, defaults to None
         :type request_profile_type: HttpSendOptionsRequestProfileType, optional
-        :param response_header_mapping: response_header_mapping
-        :type response_header_mapping: HttpResponseHeaderMapping
+        :param response_header_mapping: response_header_mapping, defaults to None
+        :type response_header_mapping: HttpResponseHeaderMapping, optional
         :param response_profile: response_profile, defaults to None
         :type response_profile: str, optional
         :param response_profile_type: response_profile_type, defaults to None
@@ -205,12 +205,14 @@ class HttpSendOptions(BaseModel):
             self.method_type = self._enum_matching(
                 method_type, HttpSendOptionsMethodType.list(), "method_type"
             )
-        self.path_elements = self._define_object(path_elements, HttpPathElements)
+        if path_elements is not SENTINEL:
+            self.path_elements = self._define_object(path_elements, HttpPathElements)
         if reflect_headers is not SENTINEL:
             self.reflect_headers = self._define_object(
                 reflect_headers, HttpReflectHeaders
             )
-        self.request_headers = self._define_object(request_headers, HttpRequestHeaders)
+        if request_headers is not SENTINEL:
+            self.request_headers = self._define_object(request_headers, HttpRequestHeaders)
         if request_profile is not SENTINEL:
             self.request_profile = request_profile
         if request_profile_type is not SENTINEL:
@@ -219,9 +221,10 @@ class HttpSendOptions(BaseModel):
                 HttpSendOptionsRequestProfileType.list(),
                 "request_profile_type",
             )
-        self.response_header_mapping = self._define_object(
-            response_header_mapping, HttpResponseHeaderMapping
-        )
+        if response_header_mapping is not SENTINEL:
+            self.response_header_mapping = self._define_object(
+                response_header_mapping, HttpResponseHeaderMapping
+            )
         if response_profile is not SENTINEL:
             self.response_profile = response_profile
         if response_profile_type is not SENTINEL:

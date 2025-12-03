@@ -87,14 +87,14 @@ class CookieScope(Enum):
 class HttpSettings(BaseModel):
     """HttpSettings
 
-    :param http_auth_settings: http_auth_settings
-    :type http_auth_settings: HttpAuthSettings
+    :param http_auth_settings: http_auth_settings, defaults to None
+    :type http_auth_settings: HttpAuthSettings, optional
     :param httpo_auth2_settings: httpo_auth2_settings, defaults to None
     :type httpo_auth2_settings: HttpoAuth2Settings, optional
     :param httpo_auth_settings: httpo_auth_settings, defaults to None
     :type httpo_auth_settings: HttpoAuthSettings, optional
-    :param httpssl_options: httpssl_options
-    :type httpssl_options: HttpsslOptions
+    :param httpssl_options: httpssl_options, defaults to None
+    :type httpssl_options: HttpsslOptions, optional
     :param authentication_type: authentication_type, defaults to None
     :type authentication_type: HttpSettingsAuthenticationType, optional
     :param connect_timeout: connect_timeout, defaults to None
@@ -115,13 +115,13 @@ class HttpSettings(BaseModel):
 
     def __init__(
         self,
-        http_auth_settings: HttpAuthSettings,
-        httpssl_options: HttpsslOptions,
-        httpo_auth2_settings: HttpoAuth2Settings = SENTINEL,
-        httpo_auth_settings: HttpoAuthSettings = SENTINEL,
         authentication_type: HttpSettingsAuthenticationType = SENTINEL,
         connect_timeout: int = SENTINEL,
         cookie_scope: CookieScope = SENTINEL,
+        http_auth_settings: HttpAuthSettings = SENTINEL,
+        httpo_auth2_settings: HttpoAuth2Settings = SENTINEL,
+        httpo_auth_settings: HttpoAuthSettings = SENTINEL,
+        httpssl_options: HttpsslOptions = SENTINEL,
         read_timeout: int = SENTINEL,
         url: str = SENTINEL,
         use_basic_auth: bool = SENTINEL,
@@ -131,14 +131,14 @@ class HttpSettings(BaseModel):
     ):
         """HttpSettings
 
-        :param http_auth_settings: http_auth_settings
-        :type http_auth_settings: HttpAuthSettings
+        :param http_auth_settings: http_auth_settings, defaults to None
+        :type http_auth_settings: HttpAuthSettings, optional
         :param httpo_auth2_settings: httpo_auth2_settings, defaults to None
         :type httpo_auth2_settings: HttpoAuth2Settings, optional
         :param httpo_auth_settings: httpo_auth_settings, defaults to None
         :type httpo_auth_settings: HttpoAuthSettings, optional
-        :param httpssl_options: httpssl_options
-        :type httpssl_options: HttpsslOptions
+        :param httpssl_options: httpssl_options, defaults to None
+        :type httpssl_options: HttpsslOptions, optional
         :param authentication_type: authentication_type, defaults to None
         :type authentication_type: HttpSettingsAuthenticationType, optional
         :param connect_timeout: connect_timeout, defaults to None
@@ -156,9 +156,10 @@ class HttpSettings(BaseModel):
         :param use_default_settings: use_default_settings, defaults to None
         :type use_default_settings: bool, optional
         """
-        self.http_auth_settings = self._define_object(
-            http_auth_settings, HttpAuthSettings
-        )
+        if http_auth_settings is not SENTINEL:
+            self.http_auth_settings = self._define_object(
+                http_auth_settings, HttpAuthSettings
+            )
         if httpo_auth2_settings is not SENTINEL:
             self.httpo_auth2_settings = self._define_object(
                 httpo_auth2_settings, HttpoAuth2Settings
@@ -167,7 +168,8 @@ class HttpSettings(BaseModel):
             self.httpo_auth_settings = self._define_object(
                 httpo_auth_settings, HttpoAuthSettings
             )
-        self.httpssl_options = self._define_object(httpssl_options, HttpsslOptions)
+        if httpssl_options is not SENTINEL:
+            self.httpssl_options = self._define_object(httpssl_options, HttpsslOptions)
         if authentication_type is not SENTINEL:
             self.authentication_type = self._enum_matching(
                 authentication_type,

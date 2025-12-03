@@ -67,14 +67,14 @@ class FtpGetOptionsTransferType(Enum):
 class FtpGetOptions(BaseModel):
     """FtpGetOptions
 
-    :param file_to_move: file_to_move
-    :type file_to_move: str
+    :param file_to_move: file_to_move, defaults to None
+    :type file_to_move: str, optional
     :param ftp_action: ftp_action, defaults to None
     :type ftp_action: FtpGetOptionsFtpAction, optional
-    :param max_file_count: max_file_count
-    :type max_file_count: int
-    :param remote_directory: remote_directory
-    :type remote_directory: str
+    :param max_file_count: max_file_count, defaults to None
+    :type max_file_count: int, optional
+    :param remote_directory: remote_directory, defaults to None
+    :type remote_directory: str, optional
     :param transfer_type: transfer_type, defaults to None
     :type transfer_type: FtpGetOptionsTransferType, optional
     :param use_default_get_options: use_default_get_options, defaults to None
@@ -83,36 +83,39 @@ class FtpGetOptions(BaseModel):
 
     def __init__(
         self,
-        file_to_move: str,
-        max_file_count: int,
-        remote_directory: str,
+        file_to_move: str = SENTINEL,
         ftp_action: FtpGetOptionsFtpAction = SENTINEL,
+        max_file_count: int = SENTINEL,
+        remote_directory: str = SENTINEL,
         transfer_type: FtpGetOptionsTransferType = SENTINEL,
         use_default_get_options: bool = SENTINEL,
         **kwargs
     ):
         """FtpGetOptions
 
-        :param file_to_move: file_to_move
-        :type file_to_move: str
+        :param file_to_move: file_to_move, defaults to None
+        :type file_to_move: str, optional
         :param ftp_action: ftp_action, defaults to None
         :type ftp_action: FtpGetOptionsFtpAction, optional
-        :param max_file_count: max_file_count
-        :type max_file_count: int
-        :param remote_directory: remote_directory
-        :type remote_directory: str
+        :param max_file_count: max_file_count, defaults to None
+        :type max_file_count: int, optional
+        :param remote_directory: remote_directory, defaults to None
+        :type remote_directory: str, optional
         :param transfer_type: transfer_type, defaults to None
         :type transfer_type: FtpGetOptionsTransferType, optional
         :param use_default_get_options: use_default_get_options, defaults to None
         :type use_default_get_options: bool, optional
         """
-        self.file_to_move = file_to_move
+        if file_to_move is not SENTINEL:
+            self.file_to_move = file_to_move
         if ftp_action is not SENTINEL:
             self.ftp_action = self._enum_matching(
                 ftp_action, FtpGetOptionsFtpAction.list(), "ftp_action"
             )
-        self.max_file_count = max_file_count
-        self.remote_directory = remote_directory
+        if max_file_count is not SENTINEL:
+            self.max_file_count = max_file_count
+        if remote_directory is not SENTINEL:
+            self.remote_directory = remote_directory
         if transfer_type is not SENTINEL:
             self.transfer_type = self._enum_matching(
                 transfer_type, FtpGetOptionsTransferType.list(), "transfer_type"

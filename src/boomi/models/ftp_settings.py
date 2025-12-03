@@ -38,59 +38,64 @@ class ConnectionMode(Enum):
 class FtpSettings(BaseModel):
     """FtpSettings
 
-    :param ftpssl_options: ftpssl_options
-    :type ftpssl_options: FtpsslOptions
+    :param ftpssl_options: ftpssl_options, defaults to None
+    :type ftpssl_options: FtpsslOptions, optional
     :param connection_mode: connection_mode, defaults to None
     :type connection_mode: ConnectionMode, optional
-    :param host: host
-    :type host: str
-    :param password: password
-    :type password: str
-    :param port: port
-    :type port: int
+    :param host: host, defaults to None
+    :type host: str, optional
+    :param password: password, defaults to None
+    :type password: str, optional
+    :param port: port, defaults to None
+    :type port: int, optional
     :param use_default_settings: use_default_settings, defaults to None
     :type use_default_settings: bool, optional
-    :param user: user
-    :type user: str
+    :param user: user, defaults to None
+    :type user: str, optional
     """
 
     def __init__(
         self,
-        ftpssl_options: FtpsslOptions,
-        host: str,
-        password: str,
-        port: int,
-        user: str,
         connection_mode: ConnectionMode = SENTINEL,
+        ftpssl_options: FtpsslOptions = SENTINEL,
+        host: str = SENTINEL,
+        password: str = SENTINEL,
+        port: int = SENTINEL,
         use_default_settings: bool = SENTINEL,
+        user: str = SENTINEL,
         **kwargs,
     ):
         """FtpSettings
 
-        :param ftpssl_options: ftpssl_options
-        :type ftpssl_options: FtpsslOptions
+        :param ftpssl_options: ftpssl_options, defaults to None
+        :type ftpssl_options: FtpsslOptions, optional
         :param connection_mode: connection_mode, defaults to None
         :type connection_mode: ConnectionMode, optional
-        :param host: host
-        :type host: str
-        :param password: password
-        :type password: str
-        :param port: port
-        :type port: int
+        :param host: host, defaults to None
+        :type host: str, optional
+        :param password: password, defaults to None
+        :type password: str, optional
+        :param port: port, defaults to None
+        :type port: int, optional
         :param use_default_settings: use_default_settings, defaults to None
         :type use_default_settings: bool, optional
-        :param user: user
-        :type user: str
+        :param user: user, defaults to None
+        :type user: str, optional
         """
-        self.ftpssl_options = self._define_object(ftpssl_options, FtpsslOptions)
+        if ftpssl_options is not SENTINEL:
+            self.ftpssl_options = self._define_object(ftpssl_options, FtpsslOptions)
         if connection_mode is not SENTINEL:
             self.connection_mode = self._enum_matching(
                 connection_mode, ConnectionMode.list(), "connection_mode"
             )
-        self.host = host
-        self.password = password
-        self.port = port
+        if host is not SENTINEL:
+            self.host = host
+        if password is not SENTINEL:
+            self.password = password
+        if port is not SENTINEL:
+            self.port = port
         if use_default_settings is not SENTINEL:
             self.use_default_settings = use_default_settings
-        self.user = user
+        if user is not SENTINEL:
+            self.user = user
         self._kwargs = kwargs

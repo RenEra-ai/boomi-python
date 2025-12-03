@@ -21,58 +21,64 @@ from .sftpssh_options import SftpsshOptions
 class SftpSettings(BaseModel):
     """SftpSettings
 
-    :param sftp_proxy_settings: sftp_proxy_settings
-    :type sftp_proxy_settings: SftpProxySettings
-    :param sftpssh_options: sftpssh_options
-    :type sftpssh_options: SftpsshOptions
-    :param host: host
-    :type host: str
-    :param password: password
-    :type password: str
-    :param port: port
-    :type port: int
+    :param sftp_proxy_settings: sftp_proxy_settings, defaults to None
+    :type sftp_proxy_settings: SftpProxySettings, optional
+    :param sftpssh_options: sftpssh_options, defaults to None
+    :type sftpssh_options: SftpsshOptions, optional
+    :param host: host, defaults to None
+    :type host: str, optional
+    :param password: password, defaults to None
+    :type password: str, optional
+    :param port: port, defaults to None
+    :type port: int, optional
     :param use_default_settings: use_default_settings, defaults to None
     :type use_default_settings: bool, optional
-    :param user: user
-    :type user: str
+    :param user: user, defaults to None
+    :type user: str, optional
     """
 
     def __init__(
         self,
-        sftp_proxy_settings: SftpProxySettings,
-        sftpssh_options: SftpsshOptions,
-        host: str,
-        password: str,
-        port: int,
-        user: str,
+        host: str = SENTINEL,
+        password: str = SENTINEL,
+        port: int = SENTINEL,
+        sftp_proxy_settings: SftpProxySettings = SENTINEL,
+        sftpssh_options: SftpsshOptions = SENTINEL,
         use_default_settings: bool = SENTINEL,
+        user: str = SENTINEL,
         **kwargs,
     ):
         """SftpSettings
 
-        :param sftp_proxy_settings: sftp_proxy_settings
-        :type sftp_proxy_settings: SftpProxySettings
-        :param sftpssh_options: sftpssh_options
-        :type sftpssh_options: SftpsshOptions
-        :param host: host
-        :type host: str
-        :param password: password
-        :type password: str
-        :param port: port
-        :type port: int
+        :param sftp_proxy_settings: sftp_proxy_settings, defaults to None
+        :type sftp_proxy_settings: SftpProxySettings, optional
+        :param sftpssh_options: sftpssh_options, defaults to None
+        :type sftpssh_options: SftpsshOptions, optional
+        :param host: host, defaults to None
+        :type host: str, optional
+        :param password: password, defaults to None
+        :type password: str, optional
+        :param port: port, defaults to None
+        :type port: int, optional
         :param use_default_settings: use_default_settings, defaults to None
         :type use_default_settings: bool, optional
-        :param user: user
-        :type user: str
+        :param user: user, defaults to None
+        :type user: str, optional
         """
-        self.sftp_proxy_settings = self._define_object(
-            sftp_proxy_settings, SftpProxySettings
-        )
-        self.sftpssh_options = self._define_object(sftpssh_options, SftpsshOptions)
-        self.host = host
-        self.password = password
-        self.port = port
+        if sftp_proxy_settings is not SENTINEL:
+            self.sftp_proxy_settings = self._define_object(
+                sftp_proxy_settings, SftpProxySettings
+            )
+        if sftpssh_options is not SENTINEL:
+            self.sftpssh_options = self._define_object(sftpssh_options, SftpsshOptions)
+        if host is not SENTINEL:
+            self.host = host
+        if password is not SENTINEL:
+            self.password = password
+        if port is not SENTINEL:
+            self.port = port
         if use_default_settings is not SENTINEL:
             self.use_default_settings = use_default_settings
-        self.user = user
+        if user is not SENTINEL:
+            self.user = user
         self._kwargs = kwargs

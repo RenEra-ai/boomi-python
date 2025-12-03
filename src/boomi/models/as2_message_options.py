@@ -176,7 +176,6 @@ class As2MessageOptions(BaseModel):
 
     def __init__(
         self,
-        subject: str,
         attachment_cache: str = SENTINEL,
         attachment_option: AttachmentOption = SENTINEL,
         compressed: bool = SENTINEL,
@@ -187,6 +186,7 @@ class As2MessageOptions(BaseModel):
         multiple_attachments: bool = SENTINEL,
         signed: bool = SENTINEL,
         signing_digest_alg: SigningDigestAlg = SENTINEL,
+        subject: str = SENTINEL,
         **kwargs
     ):
         """As2MessageOptions
@@ -211,8 +211,8 @@ class As2MessageOptions(BaseModel):
         :type signed: bool, optional
         :param signing_digest_alg: signing_digest_alg, defaults to None
         :type signing_digest_alg: SigningDigestAlg, optional
-        :param subject: subject
-        :type subject: str
+        :param subject: subject, defaults to None
+        :type subject: str, optional
         """
         if attachment_cache is not SENTINEL:
             self.attachment_cache = attachment_cache
@@ -244,5 +244,6 @@ class As2MessageOptions(BaseModel):
             self.signing_digest_alg = self._enum_matching(
                 signing_digest_alg, SigningDigestAlg.list(), "signing_digest_alg"
             )
-        self.subject = subject
+        if subject is not SENTINEL:
+            self.subject = subject
         self._kwargs = kwargs

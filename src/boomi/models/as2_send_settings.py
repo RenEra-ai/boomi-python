@@ -66,11 +66,11 @@ class As2SendSettings(BaseModel):
 
     def __init__(
         self,
-        client_ssl_certificate: PrivateCertificate,
-        ssl_certificate: PublicCertificate,
-        url: str,
         auth_settings: As2BasicAuthInfo = SENTINEL,
         authentication_type: As2SendSettingsAuthenticationType = SENTINEL,
+        client_ssl_certificate: PrivateCertificate = SENTINEL,
+        ssl_certificate: PublicCertificate = SENTINEL,
+        url: str = SENTINEL,
         use_default_settings: bool = SENTINEL,
         verify_hostname: bool = SENTINEL,
         **kwargs,
@@ -81,12 +81,12 @@ class As2SendSettings(BaseModel):
         :type auth_settings: As2BasicAuthInfo, optional
         :param authentication_type: authentication_type, defaults to None
         :type authentication_type: As2SendSettingsAuthenticationType, optional
-        :param client_ssl_certificate: client_ssl_certificate
-        :type client_ssl_certificate: PrivateCertificate
-        :param ssl_certificate: ssl_certificate
-        :type ssl_certificate: PublicCertificate
-        :param url: url
-        :type url: str
+        :param client_ssl_certificate: client_ssl_certificate, defaults to None
+        :type client_ssl_certificate: PrivateCertificate, optional
+        :param ssl_certificate: ssl_certificate, defaults to None
+        :type ssl_certificate: PublicCertificate, optional
+        :param url: url, defaults to None
+        :type url: str, optional
         :param use_default_settings: use_default_settings, defaults to None
         :type use_default_settings: bool, optional
         :param verify_hostname: verify_hostname, defaults to None
@@ -100,11 +100,14 @@ class As2SendSettings(BaseModel):
                 As2SendSettingsAuthenticationType.list(),
                 "authentication_type",
             )
-        self.client_ssl_certificate = self._define_object(
-            client_ssl_certificate, PrivateCertificate
-        )
-        self.ssl_certificate = self._define_object(ssl_certificate, PublicCertificate)
-        self.url = url
+        if client_ssl_certificate is not SENTINEL:
+            self.client_ssl_certificate = self._define_object(
+                client_ssl_certificate, PrivateCertificate
+            )
+        if ssl_certificate is not SENTINEL:
+            self.ssl_certificate = self._define_object(ssl_certificate, PublicCertificate)
+        if url is not SENTINEL:
+            self.url = url
         if use_default_settings is not SENTINEL:
             self.use_default_settings = use_default_settings
         if verify_hostname is not SENTINEL:
