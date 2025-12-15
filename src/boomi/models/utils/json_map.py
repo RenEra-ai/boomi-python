@@ -49,12 +49,24 @@ class JsonMap:
             for key, value in attribute_dict.items():
                 if key == "_kwargs" or not was_value_set(value):
                     continue
+
+                # Skip None values - Boomi API doesn't accept nulls
+                if value is None:
+                    continue
+
                 if isinstance(value, list):
                     value = [v._map() if hasattr(v, "_map") else v for v in value]
                 elif isinstance(value, Enum):
                     value = value.value
                 elif hasattr(value, "_map"):
                     value = value._map()
+                elif isinstance(value, bool):
+                    # Keep as native bool (JSON serializer handles it)
+                    pass
+                elif isinstance(value, str) and value.lower() in ('true', 'false'):
+                    # Convert string booleans to native bool
+                    value = value.lower() == 'true'
+
                 mapped_key = map.get(key, key)
                 result_dict[mapped_key] = value
 
