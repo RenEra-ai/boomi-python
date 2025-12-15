@@ -91,7 +91,11 @@ class JsonMap:
 
             return cls(**mapped_attributes)
 
-        cls._map = _map
+        # Only set _map if the class doesn't have its own custom implementation
+        # This allows classes to override with their own serialization logic
+        # Use __dict__ to check if the class itself (not parent) defines _map
+        if '_map' not in cls.__dict__:
+            cls._map = _map
         cls._unmap = _unmap
 
         return cls

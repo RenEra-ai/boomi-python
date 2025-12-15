@@ -99,3 +99,135 @@ class PartnerCommunication(BaseModel):
                 sftp_communication_options, SftpCommunicationOptions
             )
         self._kwargs = kwargs
+
+    def _map(self):
+        """
+        Convert to dict for API operations, producing minimal structure for UPDATE compatibility.
+
+        The Boomi API returns extra fields on GET (CommunicationSetting, *GetOptions,
+        *SendOptions, *SSLOptions, useDefault*) that it rejects on UPDATE with
+        "Unable to read message body" error.
+
+        This method produces a minimal structure that both CREATE and UPDATE accept.
+        """
+        result = {}
+
+        # Helper to extract minimal settings for each protocol
+        def extract_ftp_settings(ftp_opts):
+            if not ftp_opts:
+                return None
+            mapped = ftp_opts._map() if hasattr(ftp_opts, '_map') else ftp_opts
+            settings = mapped.get('FTPSettings', {})
+            # Keep only essential fields, ensuring port is integer
+            port = settings.get('port')
+            if port is not None:
+                port = int(port)
+            return {
+                'FTPSettings': {
+                    'host': settings.get('host'),
+                    'port': port,
+                    'user': settings.get('user'),
+                    'password': settings.get('password', ''),
+                    'connectionMode': settings.get('connectionMode', 'passive')
+                }
+            }
+
+        def extract_sftp_settings(sftp_opts):
+            if not sftp_opts:
+                return None
+            mapped = sftp_opts._map() if hasattr(sftp_opts, '_map') else sftp_opts
+            settings = mapped.get('SFTPSettings', {})
+            # Ensure port is integer
+            port = settings.get('port')
+            if port is not None:
+                port = int(port)
+            return {
+                'SFTPSettings': {
+                    'host': settings.get('host'),
+                    'port': port,
+                    'user': settings.get('user'),
+                    'password': settings.get('password', '')
+                }
+            }
+
+        def extract_http_settings(http_opts):
+            if not http_opts:
+                return None
+            mapped = http_opts._map() if hasattr(http_opts, '_map') else http_opts
+            settings = mapped.get('HTTPSettings', {})
+            minimal = {
+                'HTTPSettings': {
+                    'url': settings.get('url'),
+                    'authenticationType': settings.get('authenticationType', 'NONE')
+                }
+            }
+            # Include auth info if present
+            if 'HTTPAuthSettings' in settings:
+                minimal['HTTPSettings']['HTTPAuthSettings'] = settings['HTTPAuthSettings']
+            return minimal
+
+        def extract_disk_settings(disk_opts):
+            if not disk_opts:
+                return None
+            mapped = disk_opts._map() if hasattr(disk_opts, '_map') else disk_opts
+            result = {}
+            if 'DiskGetOptions' in mapped:
+                get_opts = mapped['DiskGetOptions']
+                result['DiskGetOptions'] = {
+                    'getDirectory': get_opts.get('getDirectory'),
+                    'fileFilter': get_opts.get('fileFilter', '*')
+                }
+            if 'DiskSendOptions' in mapped:
+                send_opts = mapped['DiskSendOptions']
+                result['DiskSendOptions'] = {
+                    'sendDirectory': send_opts.get('sendDirectory')
+                }
+            return result if result else None
+
+        def extract_as2_settings(as2_opts):
+            if not as2_opts:
+                return None
+            mapped = as2_opts._map() if hasattr(as2_opts, '_map') else as2_opts
+            result = {}
+            if 'AS2SendSettings' in mapped:
+                settings = mapped['AS2SendSettings']
+                result['AS2SendSettings'] = {
+                    'url': settings.get('url'),
+                    'authenticationType': settings.get('authenticationType', 'NONE')
+                }
+            # AS2SendOptions with required nested objects
+            result['AS2SendOptions'] = {
+                'AS2MDNOptions': mapped.get('AS2SendOptions', {}).get('AS2MDNOptions', {}),
+                'AS2MessageOptions': mapped.get('AS2SendOptions', {}).get('AS2MessageOptions', {})
+            }
+            if 'AS2PartnerInfo' in mapped.get('AS2SendOptions', {}):
+                result['AS2SendOptions']['AS2PartnerInfo'] = mapped['AS2SendOptions']['AS2PartnerInfo']
+            return result
+
+        # Extract each protocol if present
+        if hasattr(self, 'ftp_communication_options'):
+            ftp = extract_ftp_settings(self.ftp_communication_options)
+            if ftp:
+                result['FTPCommunicationOptions'] = ftp
+
+        if hasattr(self, 'sftp_communication_options'):
+            sftp = extract_sftp_settings(self.sftp_communication_options)
+            if sftp:
+                result['SFTPCommunicationOptions'] = sftp
+
+        if hasattr(self, 'http_communication_options'):
+            http = extract_http_settings(self.http_communication_options)
+            if http:
+                result['HTTPCommunicationOptions'] = http
+
+        if hasattr(self, 'disk_communication_options'):
+            disk = extract_disk_settings(self.disk_communication_options)
+            if disk:
+                result['DiskCommunicationOptions'] = disk
+
+        if hasattr(self, 'as2_communication_options'):
+            as2 = extract_as2_settings(self.as2_communication_options)
+            if as2:
+                result['AS2CommunicationOptions'] = as2
+
+        return result
