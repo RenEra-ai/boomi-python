@@ -122,7 +122,7 @@ class PartnerCommunication(BaseModel):
             port = settings.get('port')
             if port is not None:
                 port = int(port)
-            return {
+            result = {
                 'FTPSettings': {
                     'host': settings.get('host'),
                     'port': port,
@@ -131,6 +131,10 @@ class PartnerCommunication(BaseModel):
                     'connectionMode': settings.get('connectionMode', 'passive')
                 }
             }
+            # Include SSL options if present
+            if 'FTPSSLOptions' in settings:
+                result['FTPSettings']['FTPSSLOptions'] = settings['FTPSSLOptions']
+            return result
 
         def extract_sftp_settings(sftp_opts):
             if not sftp_opts:
@@ -141,7 +145,7 @@ class PartnerCommunication(BaseModel):
             port = settings.get('port')
             if port is not None:
                 port = int(port)
-            return {
+            result = {
                 'SFTPSettings': {
                     'host': settings.get('host'),
                     'port': port,
@@ -149,6 +153,10 @@ class PartnerCommunication(BaseModel):
                     'password': settings.get('password', '')
                 }
             }
+            # Include SSH options if present
+            if 'SFTPSSHOptions' in settings:
+                result['SFTPSettings']['SFTPSSHOptions'] = settings['SFTPSSHOptions']
+            return result
 
         def extract_http_settings(http_opts):
             if not http_opts:
@@ -164,6 +172,19 @@ class PartnerCommunication(BaseModel):
             # Include auth info if present
             if 'HTTPAuthSettings' in settings:
                 minimal['HTTPSettings']['HTTPAuthSettings'] = settings['HTTPAuthSettings']
+            # Include SSL options if present
+            if 'HTTPSSLOptions' in settings:
+                minimal['HTTPSettings']['HTTPSSLOptions'] = settings['HTTPSSLOptions']
+            # Include timeouts if present
+            if 'connectTimeout' in settings:
+                minimal['HTTPSettings']['connectTimeout'] = settings['connectTimeout']
+            if 'readTimeout' in settings:
+                minimal['HTTPSettings']['readTimeout'] = settings['readTimeout']
+            # Include send options if present
+            if 'HTTPSendOptions' in mapped:
+                minimal['HTTPSendOptions'] = mapped['HTTPSendOptions']
+            if 'HTTPGetOptions' in mapped:
+                minimal['HTTPGetOptions'] = mapped['HTTPGetOptions']
             return minimal
 
         def extract_disk_settings(disk_opts):
@@ -229,5 +250,19 @@ class PartnerCommunication(BaseModel):
             as2 = extract_as2_settings(self.as2_communication_options)
             if as2:
                 result['AS2CommunicationOptions'] = as2
+
+        # MLLP - pass through directly
+        if hasattr(self, 'mllp_communication_options') and self.mllp_communication_options:
+            mllp = self.mllp_communication_options
+            mapped = mllp._map() if hasattr(mllp, '_map') else mllp
+            if mapped:
+                result['MLLPCommunicationOptions'] = mapped
+
+        # OFTP - pass through directly
+        if hasattr(self, 'oftp_communication_options') and self.oftp_communication_options:
+            oftp = self.oftp_communication_options
+            mapped = oftp._map() if hasattr(oftp, '_map') else oftp
+            if mapped:
+                result['OFTPCommunicationOptions'] = mapped
 
         return result
