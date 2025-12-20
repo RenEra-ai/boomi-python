@@ -134,9 +134,13 @@ class PartnerCommunication(BaseModel):
             # Include SSL options if present
             if 'FTPSSLOptions' in settings:
                 result['FTPSettings']['FTPSSLOptions'] = settings['FTPSSLOptions']
-            # Include Get/Send options if present (for remote_directory preservation)
+            # Include Get/Send options if present (for remote_directory and action preservation)
             if 'FTPGetOptions' in mapped:
-                result['FTPGetOptions'] = mapped['FTPGetOptions']
+                get_opts = mapped['FTPGetOptions'].copy()
+                # Ensure maxFileCount is int (API returns string, but requires int on update)
+                if 'maxFileCount' in get_opts and get_opts['maxFileCount'] is not None:
+                    get_opts['maxFileCount'] = int(get_opts['maxFileCount'])
+                result['FTPGetOptions'] = get_opts
             if 'FTPSendOptions' in mapped:
                 result['FTPSendOptions'] = mapped['FTPSendOptions']
             return result
@@ -163,7 +167,11 @@ class PartnerCommunication(BaseModel):
                 result['SFTPSettings']['SFTPSSHOptions'] = settings['SFTPSSHOptions']
             # Include Get/Send options if present (for remote_directory preservation)
             if 'SFTPGetOptions' in mapped:
-                result['SFTPGetOptions'] = mapped['SFTPGetOptions']
+                get_opts = mapped['SFTPGetOptions'].copy()
+                # Ensure maxFileCount is int (API returns string, but requires int on update)
+                if 'maxFileCount' in get_opts and get_opts['maxFileCount'] is not None:
+                    get_opts['maxFileCount'] = int(get_opts['maxFileCount'])
+                result['SFTPGetOptions'] = get_opts
             if 'SFTPSendOptions' in mapped:
                 result['SFTPSendOptions'] = mapped['SFTPSendOptions']
             return result
@@ -190,11 +198,11 @@ class PartnerCommunication(BaseModel):
                 minimal['HTTPSettings']['connectTimeout'] = settings['connectTimeout']
             if 'readTimeout' in settings:
                 minimal['HTTPSettings']['readTimeout'] = settings['readTimeout']
-            # Include send options if present
-            if 'HTTPSendOptions' in mapped:
-                minimal['HTTPSendOptions'] = mapped['HTTPSendOptions']
+            # Include Get/Send options if present
             if 'HTTPGetOptions' in mapped:
                 minimal['HTTPGetOptions'] = mapped['HTTPGetOptions']
+            if 'HTTPSendOptions' in mapped:
+                minimal['HTTPSendOptions'] = mapped['HTTPSendOptions']
             return minimal
 
         def extract_disk_settings(disk_opts):
