@@ -102,13 +102,11 @@ class PartnerCommunication(BaseModel):
 
     def _map(self):
         """
-        Convert to dict for API operations, producing minimal structure for UPDATE compatibility.
+        Convert to dict for API operations.
 
-        The Boomi API returns extra fields on GET (CommunicationSetting, *GetOptions,
-        *SendOptions, *SSLOptions, useDefault*) that it rejects on UPDATE with
-        "Unable to read message body" error.
-
-        This method produces a minimal structure that both CREATE and UPDATE accept.
+        Uses passthrough for most protocols, stripping only read-only keys
+        (CommunicationSetting, SharedCommunicationChannel) that the API rejects on UPDATE.
+        FTP/SFTP use whitelists with port/maxFileCount int conversions.
         """
         result = {}
 
@@ -180,68 +178,32 @@ class PartnerCommunication(BaseModel):
             if not http_opts:
                 return None
             mapped = http_opts._map() if hasattr(http_opts, '_map') else http_opts
-            settings = mapped.get('HTTPSettings', {})
-            minimal = {
-                'HTTPSettings': {
-                    'url': settings.get('url'),
-                    'authenticationType': settings.get('authenticationType', 'NONE')
-                }
-            }
-            # Include auth info if present
-            if 'HTTPAuthSettings' in settings:
-                minimal['HTTPSettings']['HTTPAuthSettings'] = settings['HTTPAuthSettings']
-            # Include SSL options if present
-            if 'HTTPSSLOptions' in settings:
-                minimal['HTTPSettings']['HTTPSSLOptions'] = settings['HTTPSSLOptions']
-            # Include timeouts if present
-            if 'connectTimeout' in settings:
-                minimal['HTTPSettings']['connectTimeout'] = settings['connectTimeout']
-            if 'readTimeout' in settings:
-                minimal['HTTPSettings']['readTimeout'] = settings['readTimeout']
-            # Include Get/Send options if present
-            if 'HTTPGetOptions' in mapped:
-                minimal['HTTPGetOptions'] = mapped['HTTPGetOptions']
-            if 'HTTPSendOptions' in mapped:
-                minimal['HTTPSendOptions'] = mapped['HTTPSendOptions']
-            return minimal
+            # Strip read-only keys that the API rejects on UPDATE
+            mapped.pop('CommunicationSetting', None)
+            mapped.pop('SharedCommunicationChannel', None)
+            return mapped if mapped else None
 
         def extract_disk_settings(disk_opts):
             if not disk_opts:
                 return None
             mapped = disk_opts._map() if hasattr(disk_opts, '_map') else disk_opts
-            result = {}
+            mapped.pop('CommunicationSetting', None)
+            mapped.pop('SharedCommunicationChannel', None)
+            # Ensure maxFileCount is int (API returns string, requires int on update)
             if 'DiskGetOptions' in mapped:
                 get_opts = mapped['DiskGetOptions']
-                result['DiskGetOptions'] = {
-                    'getDirectory': get_opts.get('getDirectory'),
-                    'fileFilter': get_opts.get('fileFilter', '*')
-                }
-            if 'DiskSendOptions' in mapped:
-                send_opts = mapped['DiskSendOptions']
-                result['DiskSendOptions'] = {
-                    'sendDirectory': send_opts.get('sendDirectory')
-                }
-            return result if result else None
+                if 'maxFileCount' in get_opts and get_opts['maxFileCount'] is not None:
+                    get_opts['maxFileCount'] = int(get_opts['maxFileCount'])
+            return mapped if mapped else None
 
         def extract_as2_settings(as2_opts):
             if not as2_opts:
                 return None
             mapped = as2_opts._map() if hasattr(as2_opts, '_map') else as2_opts
-            result = {}
-            if 'AS2SendSettings' in mapped:
-                settings = mapped['AS2SendSettings']
-                result['AS2SendSettings'] = {
-                    'url': settings.get('url'),
-                    'authenticationType': settings.get('authenticationType', 'NONE')
-                }
-            # AS2SendOptions with required nested objects
-            result['AS2SendOptions'] = {
-                'AS2MDNOptions': mapped.get('AS2SendOptions', {}).get('AS2MDNOptions', {}),
-                'AS2MessageOptions': mapped.get('AS2SendOptions', {}).get('AS2MessageOptions', {})
-            }
-            if 'AS2PartnerInfo' in mapped.get('AS2SendOptions', {}):
-                result['AS2SendOptions']['AS2PartnerInfo'] = mapped['AS2SendOptions']['AS2PartnerInfo']
-            return result
+            # Strip read-only keys that the API rejects on UPDATE
+            mapped.pop('CommunicationSetting', None)
+            mapped.pop('SharedCommunicationChannel', None)
+            return mapped if mapped else None
 
         # Extract each protocol if present
         if hasattr(self, 'ftp_communication_options'):
