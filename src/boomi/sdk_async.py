@@ -141,10 +141,20 @@ from .services.async_.rosetta_net_connector_record import (
 )
 from .services.async_.runtime_release_schedule import RuntimeReleaseScheduleServiceAsync
 from .services.async_.cancel_execution import CancelExecutionServiceAsync
-from .services.async_.execute_process import ExecuteProcessServiceAsync
-from .services.async_.worker import WorkerServiceAsync
-from .services.async_.shared_web_server_log import SharedWebServerLogServiceAsync
-from .services.async_.account_provision import AccountProvisionServiceAsync
+from .services.async_.runtime_cloud import RuntimeCloudServiceAsync
+from .services.async_.account_cloud_attachment_summary import (
+    AccountCloudAttachmentSummaryServiceAsync,
+)
+from .services.async_.account_cloud_attachment_properties_default import (
+    AccountCloudAttachmentPropertiesDefaultServiceAsync,
+)
+from .services.async_.runtime_properties import RuntimePropertiesServiceAsync
+from .services.async_.runtime_observability_settings import (
+    RuntimeObservabilitySettingsServiceAsync,
+)
+from .services.async_.cloud_attachment_secrets_configuration import (
+    CloudAttachmentSecretsConfigurationServiceAsync,
+)
 from .services.async_.shared_server_information import (
     SharedServerInformationServiceAsync,
 )
@@ -404,12 +414,22 @@ class BoomiAsync(Boomi):
             base_url=self._base_url
         )
         self.cancel_execution = CancelExecutionServiceAsync(base_url=self._base_url)
-        self.execute_process = ExecuteProcessServiceAsync(base_url=self._base_url)
-        self.worker = WorkerServiceAsync(base_url=self._base_url)
-        self.shared_web_server_log = SharedWebServerLogServiceAsync(
+        self.runtime_cloud = RuntimeCloudServiceAsync(base_url=self._base_url)
+        self.account_cloud_attachment_summary = (
+            AccountCloudAttachmentSummaryServiceAsync(base_url=self._base_url)
+        )
+        self.account_cloud_attachment_properties_default = (
+            AccountCloudAttachmentPropertiesDefaultServiceAsync(base_url=self._base_url)
+        )
+        self.runtime_properties = RuntimePropertiesServiceAsync(
             base_url=self._base_url
         )
-        self.account_provision = AccountProvisionServiceAsync(base_url=self._base_url)
+        self.runtime_observability_settings = (
+            RuntimeObservabilitySettingsServiceAsync(base_url=self._base_url)
+        )
+        self.cloud_attachment_secrets_configuration = (
+            CloudAttachmentSecretsConfigurationServiceAsync(base_url=self._base_url)
+        )
         self.shared_server_information = SharedServerInformationServiceAsync(
             base_url=self._base_url
         )
