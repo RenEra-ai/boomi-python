@@ -50,7 +50,7 @@ class TradingPartnerProcessingGroupService(BaseService):
         if content == "application/json":
             return TradingPartnerProcessingGroup._unmap(response)
         if content == "application/xml":
-            return TradingPartnerProcessingGroup._unmap(response)
+            return TradingPartnerProcessingGroup._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -85,7 +85,7 @@ class TradingPartnerProcessingGroupService(BaseService):
         if content == "application/json":
             return TradingPartnerProcessingGroup._unmap(response)
         if content == "application/xml":
-            return TradingPartnerProcessingGroup._unmap(response)
+            return TradingPartnerProcessingGroup._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -123,7 +123,7 @@ class TradingPartnerProcessingGroupService(BaseService):
         if content == "application/json":
             return TradingPartnerProcessingGroup._unmap(response)
         if content == "application/xml":
-            return TradingPartnerProcessingGroup._unmap(response)
+            return TradingPartnerProcessingGroup._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -184,7 +184,7 @@ class TradingPartnerProcessingGroupService(BaseService):
         if content == "application/json":
             return TradingPartnerProcessingGroupBulkResponse._unmap(response)
         if content == "application/xml":
-            return TradingPartnerProcessingGroupBulkResponse._unmap(response)
+            return TradingPartnerProcessingGroupBulkResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models

@@ -54,12 +54,12 @@ class MllpSendSettings(BaseModel):
 
     def __init__(
         self,
-        mllpssl_options: MllpsslOptions,
-        end_block: EdiDelimiter,
-        end_data: EdiDelimiter,
-        host: str,
-        port: int,
-        start_block: EdiDelimiter,
+        mllpssl_options: MllpsslOptions = SENTINEL,
+        end_block: EdiDelimiter = SENTINEL,
+        end_data: EdiDelimiter = SENTINEL,
+        host: str = SENTINEL,
+        port: int = SENTINEL,
+        start_block: EdiDelimiter = SENTINEL,
         halt_timeout: bool = SENTINEL,
         inactivity_timeout: int = SENTINEL,
         max_connections: int = SENTINEL,
@@ -98,12 +98,16 @@ class MllpSendSettings(BaseModel):
         :param start_block: start_block
         :type start_block: EdiDelimiter
         """
-        self.mllpssl_options = self._define_object(mllpssl_options, MllpsslOptions)
-        self.end_block = self._define_object(end_block, EdiDelimiter)
-        self.end_data = self._define_object(end_data, EdiDelimiter)
+        if mllpssl_options is not SENTINEL:
+            self.mllpssl_options = self._define_object(mllpssl_options, MllpsslOptions)
+        if end_block is not SENTINEL:
+            self.end_block = self._define_object(end_block, EdiDelimiter)
+        if end_data is not SENTINEL:
+            self.end_data = self._define_object(end_data, EdiDelimiter)
         if halt_timeout is not SENTINEL:
             self.halt_timeout = halt_timeout
-        self.host = host
+        if host is not SENTINEL:
+            self.host = host
         if inactivity_timeout is not SENTINEL:
             self.inactivity_timeout = inactivity_timeout
         if max_connections is not SENTINEL:
@@ -112,10 +116,12 @@ class MllpSendSettings(BaseModel):
             self.max_retry = max_retry
         if persistent is not SENTINEL:
             self.persistent = persistent
-        self.port = port
+        if port is not SENTINEL:
+            self.port = port
         if receive_timeout is not SENTINEL:
             self.receive_timeout = receive_timeout
         if send_timeout is not SENTINEL:
             self.send_timeout = send_timeout
-        self.start_block = self._define_object(start_block, EdiDelimiter)
+        if start_block is not SENTINEL:
+            self.start_block = self._define_object(start_block, EdiDelimiter)
         self._kwargs = kwargs

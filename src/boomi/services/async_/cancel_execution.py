@@ -9,5 +9,5 @@ class CancelExecutionServiceAsync(CancelExecutionService):
     Async Wrapper for CancelExecutionServiceAsync
     """
 
-    def get_cancel_execution(self) -> Awaitable[None]:
-        return to_async(super().get_cancel_execution)()
+    def cancel_execution(self, execution_id: str) -> Awaitable[None]:
+        return to_async(super().cancel_execution)(execution_id)

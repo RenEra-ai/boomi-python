@@ -4,6 +4,7 @@ from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
+from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
@@ -50,7 +51,7 @@ class EnvironmentMapExtensionExternalComponentService(BaseService):
             )
         if content == "application/xml":
             return EnvironmentMapExtensionExternalComponentQueryResponse._unmap(
-                response
+                parse_xml_to_dict(response)
             )
         raise ApiError("Error on deserializing the response.", status, response)
 
@@ -88,6 +89,6 @@ class EnvironmentMapExtensionExternalComponentService(BaseService):
             )
         if content == "application/xml":
             return EnvironmentMapExtensionExternalComponentQueryResponse._unmap(
-                response
+                parse_xml_to_dict(response)
             )
         raise ApiError("Error on deserializing the response.", status, response)

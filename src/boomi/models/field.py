@@ -3,6 +3,7 @@ from __future__ import annotations
 from .utils.json_map import JsonMap
 from .utils.base_model import BaseModel
 from .utils.sentinel import SENTINEL
+from .cloud_managed_secret_config import CloudManagedSecretConfig
 from .custom_properties import CustomProperties
 
 
@@ -14,6 +15,7 @@ from .custom_properties import CustomProperties
         "id_": "id",
         "use_default": "useDefault",
         "uses_encryption": "usesEncryption",
+        "cloud_managed_secret_config": "cloudManagedSecretConfig",
     }
 )
 class Field(BaseModel):
@@ -33,6 +35,8 @@ class Field(BaseModel):
     :type uses_encryption: bool, optional
     :param value: value, defaults to None
     :type value: str, optional
+    :param cloud_managed_secret_config: cloud_managed_secret_config, defaults to None
+    :type cloud_managed_secret_config: CloudManagedSecretConfig, optional
     """
 
     def __init__(
@@ -44,6 +48,7 @@ class Field(BaseModel):
         use_default: bool = SENTINEL,
         uses_encryption: bool = SENTINEL,
         value: str = SENTINEL,
+        cloud_managed_secret_config: CloudManagedSecretConfig = SENTINEL,
         **kwargs,
     ):
         """Field
@@ -62,6 +67,8 @@ class Field(BaseModel):
         :type uses_encryption: bool, optional
         :param value: value, defaults to None
         :type value: str, optional
+        :param cloud_managed_secret_config: cloud_managed_secret_config, defaults to None
+        :type cloud_managed_secret_config: CloudManagedSecretConfig, optional
         """
         if component_override is not SENTINEL:
             self.component_override = component_override
@@ -79,4 +86,6 @@ class Field(BaseModel):
             self.uses_encryption = uses_encryption
         if value is not SENTINEL:
             self.value = value
+        if cloud_managed_secret_config is not SENTINEL:
+            self.cloud_managed_secret_config = self._define_object(cloud_managed_secret_config, CloudManagedSecretConfig)
         self._kwargs = kwargs

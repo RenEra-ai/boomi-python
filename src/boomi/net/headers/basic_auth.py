@@ -45,6 +45,8 @@ class BasicAuth(BaseHeader):
         :return: A dictionary with the Authorization field set to the Basic authentication token.
         :rtype: Dict[str, str]
         """
+        if self._username is None and self._password is None:
+            return {}
         token = (
             "Basic " + b64encode(f"{self._username}:{self._password}".encode()).decode()
         )

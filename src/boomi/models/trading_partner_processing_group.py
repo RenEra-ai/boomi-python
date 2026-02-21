@@ -19,6 +19,8 @@ from .processing_group_trading_partners import ProcessingGroupTradingPartners
         "component_name": "componentName",
         "folder_id": "folderId",
         "folder_name": "folderName",
+        "branch_id": "branchId",
+        "branch_name": "branchName",
     }
 )
 class TradingPartnerProcessingGroup(BaseModel):
@@ -44,6 +46,10 @@ class TradingPartnerProcessingGroup(BaseModel):
     :type folder_id: int, optional
     :param folder_name: folder_name, defaults to None
     :type folder_name: str, optional
+    :param branch_id: branch_id, defaults to None
+    :type branch_id: str, optional
+    :param branch_name: branch_name, defaults to None
+    :type branch_name: str, optional
     """
 
     def __init__(
@@ -58,6 +64,8 @@ class TradingPartnerProcessingGroup(BaseModel):
         description: str = SENTINEL,
         folder_id: int = SENTINEL,
         folder_name: str = SENTINEL,
+        branch_id: str = SENTINEL,
+        branch_name: str = SENTINEL,
         **kwargs,
     ):
         """TradingPartnerProcessingGroup
@@ -82,6 +90,10 @@ class TradingPartnerProcessingGroup(BaseModel):
         :type folder_id: int, optional
         :param folder_name: folder_name, defaults to None
         :type folder_name: str, optional
+        :param branch_id: branch_id, defaults to None
+        :type branch_id: str, optional
+        :param branch_name: branch_name, defaults to None
+        :type branch_name: str, optional
         """
         if default_routing is not SENTINEL:
             self.default_routing = self._define_object(
@@ -111,4 +123,8 @@ class TradingPartnerProcessingGroup(BaseModel):
             self.folder_id = folder_id
         if folder_name is not SENTINEL:
             self.folder_name = folder_name
+        if branch_id is not SENTINEL:
+            self.branch_id = branch_id
+        if branch_name is not SENTINEL:
+            self.branch_name = branch_name
         self._kwargs = kwargs

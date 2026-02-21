@@ -4,6 +4,7 @@ from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
+from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import Oftp2ConnectorRecordQueryConfig, Oftp2ConnectorRecordQueryResponse
@@ -50,7 +51,7 @@ class Oftp2ConnectorRecordService(BaseService):
         if content == "application/json":
             return Oftp2ConnectorRecordQueryResponse._unmap(response)
         if content == "application/xml":
-            return Oftp2ConnectorRecordQueryResponse._unmap(response)
+            return Oftp2ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -84,5 +85,5 @@ class Oftp2ConnectorRecordService(BaseService):
         if content == "application/json":
             return Oftp2ConnectorRecordQueryResponse._unmap(response)
         if content == "application/xml":
-            return Oftp2ConnectorRecordQueryResponse._unmap(response)
+            return Oftp2ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)

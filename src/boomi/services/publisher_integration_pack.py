@@ -4,6 +4,7 @@ from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
+from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
@@ -48,7 +49,7 @@ class PublisherIntegrationPackService(BaseService):
         if content == "application/json":
             return PublisherIntegrationPack._unmap(response)
         if content == "application/xml":
-            return PublisherIntegrationPack._unmap(response)
+            return PublisherIntegrationPack._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -84,7 +85,7 @@ class PublisherIntegrationPackService(BaseService):
         if content == "application/json":
             return PublisherIntegrationPack._unmap(response)
         if content == "application/xml":
-            return PublisherIntegrationPack._unmap(response)
+            return PublisherIntegrationPack._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -127,7 +128,7 @@ class PublisherIntegrationPackService(BaseService):
         if content == "application/json":
             return PublisherIntegrationPack._unmap(response)
         if content == "application/xml":
-            return PublisherIntegrationPack._unmap(response)
+            return PublisherIntegrationPack._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -190,7 +191,7 @@ class PublisherIntegrationPackService(BaseService):
         if content == "application/json":
             return PublisherIntegrationPackBulkResponse._unmap(response)
         if content == "application/xml":
-            return PublisherIntegrationPackBulkResponse._unmap(response)
+            return PublisherIntegrationPackBulkResponse._unmap(parse_xml_to_dict(response))
         if content == "example":
             return response
         raise ApiError("Error on deserializing the response.", status, response)
@@ -228,7 +229,7 @@ class PublisherIntegrationPackService(BaseService):
         if content == "application/json":
             return PublisherIntegrationPackQueryResponse._unmap(response)
         if content == "application/xml":
-            return PublisherIntegrationPackQueryResponse._unmap(response)
+            return PublisherIntegrationPackQueryResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -262,5 +263,5 @@ class PublisherIntegrationPackService(BaseService):
         if content == "application/json":
             return PublisherIntegrationPackQueryResponse._unmap(response)
         if content == "application/xml":
-            return PublisherIntegrationPackQueryResponse._unmap(response)
+            return PublisherIntegrationPackQueryResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)

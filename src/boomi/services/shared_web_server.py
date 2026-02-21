@@ -6,6 +6,7 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
+from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     SharedWebServer,
     SharedWebServerBulkRequest,
@@ -44,7 +45,7 @@ class SharedWebServerService(BaseService):
         if content == "application/json":
             return SharedWebServer._unmap(response)
         if content == "application/xml":
-            return SharedWebServer._unmap(response)
+            return SharedWebServer._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -82,7 +83,7 @@ class SharedWebServerService(BaseService):
         if content == "application/json":
             return SharedWebServer._unmap(response)
         if content == "application/xml":
-            return SharedWebServer._unmap(response)
+            return SharedWebServer._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -116,5 +117,5 @@ class SharedWebServerService(BaseService):
         if content == "application/json":
             return SharedWebServerBulkResponse._unmap(response)
         if content == "application/xml":
-            return SharedWebServerBulkResponse._unmap(response)
+            return SharedWebServerBulkResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)

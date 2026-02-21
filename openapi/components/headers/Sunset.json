@@ -1,6 +1,0 @@
-{
-  "description": "The approximate date the API Object will be removed.",
-  "schema": {
-    "type": "string"
-  }
-}

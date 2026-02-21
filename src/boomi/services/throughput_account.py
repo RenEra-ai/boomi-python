@@ -6,6 +6,7 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
+from ..net.transport.utils import parse_xml_to_dict
 from ..models import ThroughputAccountQueryConfig, ThroughputAccountQueryResponse
 
 
@@ -46,7 +47,7 @@ class ThroughputAccountService(BaseService):
         if content == "application/json":
             return ThroughputAccountQueryResponse._unmap(response)
         if content == "application/xml":
-            return ThroughputAccountQueryResponse._unmap(response)
+            return ThroughputAccountQueryResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -81,5 +82,5 @@ class ThroughputAccountService(BaseService):
         if content == "application/json":
             return ThroughputAccountQueryResponse._unmap(response)
         if content == "application/xml":
-            return ThroughputAccountQueryResponse._unmap(response)
+            return ThroughputAccountQueryResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)

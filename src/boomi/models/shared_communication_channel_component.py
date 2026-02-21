@@ -16,6 +16,8 @@ from .partner_communication import PartnerCommunication
         "component_name": "componentName",
         "folder_id": "folderId",
         "folder_name": "folderName",
+        "branch_id": "branchId",
+        "branch_name": "branchName",
     }
 )
 class SharedCommunicationChannelComponent(BaseModel):
@@ -39,6 +41,10 @@ class SharedCommunicationChannelComponent(BaseModel):
     :type folder_id: int, optional
     :param folder_name: folder_name, defaults to None
     :type folder_name: str, optional
+    :param branch_id: branch_id, defaults to None
+    :type branch_id: str, optional
+    :param branch_name: branch_name, defaults to None
+    :type branch_name: str, optional
     """
 
     def __init__(
@@ -52,6 +58,8 @@ class SharedCommunicationChannelComponent(BaseModel):
         description: str = SENTINEL,
         folder_id: int = SENTINEL,
         folder_name: str = SENTINEL,
+        branch_id: str = SENTINEL,
+        branch_name: str = SENTINEL,
         **kwargs,
     ):
         """SharedCommunicationChannelComponent
@@ -74,6 +82,10 @@ class SharedCommunicationChannelComponent(BaseModel):
         :type folder_id: int, optional
         :param folder_name: folder_name, defaults to None
         :type folder_name: str, optional
+        :param branch_id: branch_id, defaults to None
+        :type branch_id: str, optional
+        :param branch_name: branch_name, defaults to None
+        :type branch_name: str, optional
         """
         self.partner_archiving = self._define_object(
             partner_archiving, PartnerArchiving
@@ -95,4 +107,8 @@ class SharedCommunicationChannelComponent(BaseModel):
             self.folder_id = folder_id
         if folder_name is not SENTINEL:
             self.folder_name = folder_name
+        if branch_id is not SENTINEL:
+            self.branch_id = branch_id
+        if branch_name is not SENTINEL:
+            self.branch_name = branch_name
         self._kwargs = kwargs

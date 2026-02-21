@@ -4,6 +4,7 @@ from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
+from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import RuntimeRestartRequest
@@ -51,7 +52,7 @@ class RuntimeRestartRequestService(BaseService):
             # Check if response is a string or a dict
             if isinstance(response, str):
                 return response
-            return RuntimeRestartRequest._unmap(response)
+            return RuntimeRestartRequest._unmap(parse_xml_to_dict(response))
         # Handle plain text responses (common for restart confirmations)
         if isinstance(response, str):
             return response

@@ -4,6 +4,7 @@ from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
+from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
@@ -48,7 +49,7 @@ class SharedCommunicationChannelComponentService(BaseService):
 
         response, status, content = self.send_request(serialized_request)
         if content == "application/xml":
-            return SharedCommunicationChannelComponent._unmap(response)
+            return SharedCommunicationChannelComponent._unmap(parse_xml_to_dict(response))
         if content == "application/json":
             return SharedCommunicationChannelComponent._unmap(response)
         raise ApiError("Error on deserializing the response.", status, response)
@@ -84,7 +85,7 @@ class SharedCommunicationChannelComponentService(BaseService):
         if content == "application/json":
             return SharedCommunicationChannelComponent._unmap(response)
         if content == "application/xml":
-            return SharedCommunicationChannelComponent._unmap(response)
+            return SharedCommunicationChannelComponent._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -124,7 +125,7 @@ class SharedCommunicationChannelComponentService(BaseService):
         if content == "application/json":
             return SharedCommunicationChannelComponent._unmap(response)
         if content == "application/xml":
-            return SharedCommunicationChannelComponent._unmap(response)
+            return SharedCommunicationChannelComponent._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -185,7 +186,7 @@ class SharedCommunicationChannelComponentService(BaseService):
         if content == "application/json":
             return SharedCommunicationChannelComponentBulkResponse._unmap(response)
         if content == "application/xml":
-            return SharedCommunicationChannelComponentBulkResponse._unmap(response)
+            return SharedCommunicationChannelComponentBulkResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models

@@ -6,6 +6,7 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
+from ..net.transport.utils import parse_xml_to_dict
 from ..models import X12ConnectorRecordQueryConfig, X12ConnectorRecordQueryResponse
 
 
@@ -46,7 +47,7 @@ class X12ConnectorRecordService(BaseService):
         if content == "application/json":
             return X12ConnectorRecordQueryResponse._unmap(response)
         if content == "application/xml":
-            return X12ConnectorRecordQueryResponse._unmap(response)
+            return X12ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -80,5 +81,5 @@ class X12ConnectorRecordService(BaseService):
         if content == "application/json":
             return X12ConnectorRecordQueryResponse._unmap(response)
         if content == "application/xml":
-            return X12ConnectorRecordQueryResponse._unmap(response)
+            return X12ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)

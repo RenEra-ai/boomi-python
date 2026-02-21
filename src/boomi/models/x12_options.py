@@ -120,8 +120,8 @@ class X12Options(BaseModel):
 
     def __init__(
         self,
-        element_delimiter: EdiDelimiter,
-        segment_terminator: EdiSegmentTerminator,
+        element_delimiter: EdiDelimiter = SENTINEL,
+        segment_terminator: EdiSegmentTerminator = SENTINEL,
         acknowledgementoption: X12OptionsAcknowledgementoption = SENTINEL,
         envelopeoption: X12OptionsEnvelopeoption = SENTINEL,
         filteracknowledgements: bool = SENTINEL,
@@ -155,7 +155,8 @@ class X12Options(BaseModel):
                 X12OptionsAcknowledgementoption.list(),
                 "acknowledgementoption",
             )
-        self.element_delimiter = self._define_object(element_delimiter, EdiDelimiter)
+        if element_delimiter is not SENTINEL:
+            self.element_delimiter = self._define_object(element_delimiter, EdiDelimiter)
         if envelopeoption is not SENTINEL:
             self.envelopeoption = self._enum_matching(
                 envelopeoption, X12OptionsEnvelopeoption.list(), "envelopeoption"
@@ -172,7 +173,8 @@ class X12Options(BaseModel):
             )
         if reject_duplicate_interchange is not SENTINEL:
             self.reject_duplicate_interchange = reject_duplicate_interchange
-        self.segment_terminator = self._define_object(
-            segment_terminator, EdiSegmentTerminator
-        )
+        if segment_terminator is not SENTINEL:
+            self.segment_terminator = self._define_object(
+                segment_terminator, EdiSegmentTerminator
+            )
         self._kwargs = kwargs

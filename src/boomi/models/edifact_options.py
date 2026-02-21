@@ -124,9 +124,9 @@ class EdifactOptions(BaseModel):
 
     def __init__(
         self,
-        composite_delimiter: EdiDelimiter,
-        element_delimiter: EdiDelimiter,
-        segment_terminator: EdiSegmentTerminator,
+        composite_delimiter: EdiDelimiter = SENTINEL,
+        element_delimiter: EdiDelimiter = SENTINEL,
+        segment_terminator: EdiSegmentTerminator = SENTINEL,
         acknowledgementoption: EdifactOptionsAcknowledgementoption = SENTINEL,
         envelopeoption: EdifactOptionsEnvelopeoption = SENTINEL,
         filteracknowledgements: bool = SENTINEL,
@@ -165,10 +165,12 @@ class EdifactOptions(BaseModel):
                 EdifactOptionsAcknowledgementoption.list(),
                 "acknowledgementoption",
             )
-        self.composite_delimiter = self._define_object(
-            composite_delimiter, EdiDelimiter
-        )
-        self.element_delimiter = self._define_object(element_delimiter, EdiDelimiter)
+        if composite_delimiter is not SENTINEL:
+            self.composite_delimiter = self._define_object(
+                composite_delimiter, EdiDelimiter
+            )
+        if element_delimiter is not SENTINEL:
+            self.element_delimiter = self._define_object(element_delimiter, EdiDelimiter)
         if envelopeoption is not SENTINEL:
             self.envelopeoption = self._enum_matching(
                 envelopeoption, EdifactOptionsEnvelopeoption.list(), "envelopeoption"
@@ -187,7 +189,8 @@ class EdifactOptions(BaseModel):
             )
         if reject_duplicate_unb is not SENTINEL:
             self.reject_duplicate_unb = reject_duplicate_unb
-        self.segment_terminator = self._define_object(
-            segment_terminator, EdiSegmentTerminator
-        )
+        if segment_terminator is not SENTINEL:
+            self.segment_terminator = self._define_object(
+                segment_terminator, EdiSegmentTerminator
+            )
         self._kwargs = kwargs

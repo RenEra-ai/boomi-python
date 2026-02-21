@@ -39,4 +39,6 @@ class AccessTokenAuth(BaseHeader):
         :return: A dictionary with the Authorization field set to the Access token.
         :rtype: Dict[str, str]
         """
+        if self.token_value is None:
+            return {}
         return {"Authorization": f"{self._token_prefix} {self.token_value}"}

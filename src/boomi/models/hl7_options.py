@@ -155,10 +155,10 @@ class Hl7Options(BaseModel):
 
     def __init__(
         self,
-        composite_delimiter: EdiDelimiter,
-        element_delimiter: EdiDelimiter,
-        segment_terminator: EdiSegmentTerminator,
-        sub_composite_delimiter: EdiDelimiter,
+        composite_delimiter: EdiDelimiter = SENTINEL,
+        element_delimiter: EdiDelimiter = SENTINEL,
+        segment_terminator: EdiSegmentTerminator = SENTINEL,
+        sub_composite_delimiter: EdiDelimiter = SENTINEL,
         acceptackoption: Acceptackoption = SENTINEL,
         appackoption: Appackoption = SENTINEL,
         batchoption: Batchoption = SENTINEL,
@@ -205,10 +205,12 @@ class Hl7Options(BaseModel):
             self.batchoption = self._enum_matching(
                 batchoption, Batchoption.list(), "batchoption"
             )
-        self.composite_delimiter = self._define_object(
-            composite_delimiter, EdiDelimiter
-        )
-        self.element_delimiter = self._define_object(element_delimiter, EdiDelimiter)
+        if composite_delimiter is not SENTINEL:
+            self.composite_delimiter = self._define_object(
+                composite_delimiter, EdiDelimiter
+            )
+        if element_delimiter is not SENTINEL:
+            self.element_delimiter = self._define_object(element_delimiter, EdiDelimiter)
         if filteracknowledgements is not SENTINEL:
             self.filteracknowledgements = filteracknowledgements
         if outbound_interchange_validation is not SENTINEL:
@@ -221,10 +223,12 @@ class Hl7Options(BaseModel):
             )
         if reject_duplicates is not SENTINEL:
             self.reject_duplicates = reject_duplicates
-        self.segment_terminator = self._define_object(
-            segment_terminator, EdiSegmentTerminator
-        )
-        self.sub_composite_delimiter = self._define_object(
-            sub_composite_delimiter, EdiDelimiter
-        )
+        if segment_terminator is not SENTINEL:
+            self.segment_terminator = self._define_object(
+                segment_terminator, EdiSegmentTerminator
+            )
+        if sub_composite_delimiter is not SENTINEL:
+            self.sub_composite_delimiter = self._define_object(
+                sub_composite_delimiter, EdiDelimiter
+            )
         self._kwargs = kwargs

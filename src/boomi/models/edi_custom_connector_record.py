@@ -24,6 +24,17 @@ from .custom_fields import CustomFields
         "size": "size",
         "successful": "successful",
         "to_trading_partner": "toTradingPartner",
+        "custom_standard_id": "customStandardId",
+        "custom_standard_name": "customStandardName",
+        "message_date": "messageDate",
+        "message_id": "messageId",
+        "message_time": "messageTime",
+        "message_type": "messageType",
+        "receiver_id": "receiverId",
+        "receiver_id_qualifier": "receiverIdQualifier",
+        "sender_id": "senderId",
+        "sender_id_qualifier": "senderIdQualifier",
+        "standard_id": "standardId",
     }
 )
 class EdiCustomConnectorRecord(BaseModel):
@@ -61,6 +72,30 @@ class EdiCustomConnectorRecord(BaseModel):
     :type successful: bool, optional
     :param to_trading_partner: The name of the receiving trading partner component., defaults to None
     :type to_trading_partner: str, optional
+    :param custom_standard_id: custom_standard_id, defaults to None
+    :type custom_standard_id: str, optional
+    :param custom_standard_name: custom_standard_name, defaults to None
+    :type custom_standard_name: str, optional
+    :param message_date: message_date, defaults to None
+    :type message_date: str, optional
+    :param message_id: message_id, defaults to None
+    :type message_id: str, optional
+    :param message_time: message_time, defaults to None
+    :type message_time: str, optional
+    :param message_type: message_type, defaults to None
+    :type message_type: str, optional
+    :param receiver_id: receiver_id, defaults to None
+    :type receiver_id: str, optional
+    :param receiver_id_qualifier: receiver_id_qualifier, defaults to None
+    :type receiver_id_qualifier: str, optional
+    :param sender_id: sender_id, defaults to None
+    :type sender_id: str, optional
+    :param sender_id_qualifier: sender_id_qualifier, defaults to None
+    :type sender_id_qualifier: str, optional
+    :param standard_id: standard_id, defaults to None
+    :type standard_id: str, optional
+    :param version: version, defaults to None
+    :type version: str, optional
     """
 
     def __init__(
@@ -81,6 +116,18 @@ class EdiCustomConnectorRecord(BaseModel):
         size: int = SENTINEL,
         successful: bool = SENTINEL,
         to_trading_partner: str = SENTINEL,
+        custom_standard_id: str = SENTINEL,
+        custom_standard_name: str = SENTINEL,
+        message_date: str = SENTINEL,
+        message_id: str = SENTINEL,
+        message_time: str = SENTINEL,
+        message_type: str = SENTINEL,
+        receiver_id: str = SENTINEL,
+        receiver_id_qualifier: str = SENTINEL,
+        sender_id: str = SENTINEL,
+        sender_id_qualifier: str = SENTINEL,
+        standard_id: str = SENTINEL,
+        version: str = SENTINEL,
         **kwargs,
     ):
         """EdiCustomConnectorRecord
@@ -117,6 +164,30 @@ class EdiCustomConnectorRecord(BaseModel):
         :type successful: bool, optional
         :param to_trading_partner: The name of the receiving trading partner component., defaults to None
         :type to_trading_partner: str, optional
+        :param custom_standard_id: custom_standard_id, defaults to None
+        :type custom_standard_id: str, optional
+        :param custom_standard_name: custom_standard_name, defaults to None
+        :type custom_standard_name: str, optional
+        :param message_date: message_date, defaults to None
+        :type message_date: str, optional
+        :param message_id: message_id, defaults to None
+        :type message_id: str, optional
+        :param message_time: message_time, defaults to None
+        :type message_time: str, optional
+        :param message_type: message_type, defaults to None
+        :type message_type: str, optional
+        :param receiver_id: receiver_id, defaults to None
+        :type receiver_id: str, optional
+        :param receiver_id_qualifier: receiver_id_qualifier, defaults to None
+        :type receiver_id_qualifier: str, optional
+        :param sender_id: sender_id, defaults to None
+        :type sender_id: str, optional
+        :param sender_id_qualifier: sender_id_qualifier, defaults to None
+        :type sender_id_qualifier: str, optional
+        :param standard_id: standard_id, defaults to None
+        :type standard_id: str, optional
+        :param version: version, defaults to None
+        :type version: str, optional
         """
         self.account = account
         self.action_type = action_type
@@ -139,4 +210,28 @@ class EdiCustomConnectorRecord(BaseModel):
             self.successful = successful
         if to_trading_partner is not SENTINEL:
             self.to_trading_partner = to_trading_partner
+        if custom_standard_id is not SENTINEL:
+            self.custom_standard_id = custom_standard_id
+        if custom_standard_name is not SENTINEL:
+            self.custom_standard_name = custom_standard_name
+        if message_date is not SENTINEL:
+            self.message_date = message_date
+        if message_id is not SENTINEL:
+            self.message_id = message_id
+        if message_time is not SENTINEL:
+            self.message_time = message_time
+        if message_type is not SENTINEL:
+            self.message_type = message_type
+        if receiver_id is not SENTINEL:
+            self.receiver_id = receiver_id
+        if receiver_id_qualifier is not SENTINEL:
+            self.receiver_id_qualifier = receiver_id_qualifier
+        if sender_id is not SENTINEL:
+            self.sender_id = sender_id
+        if sender_id_qualifier is not SENTINEL:
+            self.sender_id_qualifier = sender_id_qualifier
+        if standard_id is not SENTINEL:
+            self.standard_id = standard_id
+        if version is not SENTINEL:
+            self.version = version
         self._kwargs = kwargs

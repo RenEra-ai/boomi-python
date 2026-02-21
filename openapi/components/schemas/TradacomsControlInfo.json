@@ -1,8 +1,0 @@
-{
-  "type": "object",
-  "properties": {
-    "STXControlInfo": {
-      "$ref": "./STXControlInfo.json"
-    }
-  }
-}

@@ -7,7 +7,7 @@ from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..net.transport.utils import parse_xml_to_dict
-from ..models import ExecutionRecordQueryConfig, ExecutionRecordQueryResponse
+from ..models import ExecutionRecord, ExecutionRecordQueryConfig, ExecutionRecordQueryResponse
 
 
 class ExecutionRecordService(BaseService):
@@ -78,4 +78,36 @@ class ExecutionRecordService(BaseService):
             return ExecutionRecordQueryResponse._unmap(response)
         if content == "application/xml":
             return ExecutionRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        raise ApiError("Error on deserializing the response.", status, response)
+
+    @cast_models
+    def async_get_execution_record(self, id_: str) -> Union[ExecutionRecord, str]:
+        """Retrieves the execution record asynchronously for the specified ID.
+
+        :param id_: The execution record ID.
+        :type id_: str
+        ...
+        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
+        ...
+        :return: The parsed response data.
+        :rtype: Union[ExecutionRecord, str]
+        """
+
+        Validator(str).validate(id_)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/ExecutionRecord/async/{{id}}",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            .add_path("id", id_)
+            .serialize()
+            .set_method("GET")
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        if content == "application/json":
+            return ExecutionRecord._unmap(response)
+        if content == "application/xml":
+            return ExecutionRecord._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
