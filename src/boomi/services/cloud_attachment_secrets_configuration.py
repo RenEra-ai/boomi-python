@@ -37,7 +37,7 @@ class CloudAttachmentSecretsConfigurationService(BaseService):
 
         serialized_request = (
             Serializer(
-                f"{self.base_url or Environment.DEFAULT.url}/CloudAttachmentSecretsConfiguration/{{containerId}}",
+                f"{self.base_url or Environment.DEFAULT.url}/cloudAttachmentSecretsConfiguration/{{containerId}}",
                 [self.get_access_token(), self.get_basic_auth()],
             )
             .add_path("containerId", container_id)
