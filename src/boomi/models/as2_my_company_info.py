@@ -13,6 +13,7 @@ from .private_certificate import PrivateCertificate
         "encryption_private_certificate": "encryptionPrivateCertificate",
         "mdn_signature_private_certificate": "mdnSignaturePrivateCertificate",
         "signing_private_certificate": "signingPrivateCertificate",
+        "enabled_folded_headers": "enabledFoldedHeaders",
     }
 )
 class As2MyCompanyInfo(BaseModel):
@@ -28,6 +29,8 @@ class As2MyCompanyInfo(BaseModel):
     :type mdn_signature_private_certificate: PrivateCertificate
     :param signing_private_certificate: signing_private_certificate
     :type signing_private_certificate: PrivateCertificate
+    :param enabled_folded_headers: enabled_folded_headers, defaults to None
+    :type enabled_folded_headers: bool, optional
     """
 
     def __init__(
@@ -37,6 +40,7 @@ class As2MyCompanyInfo(BaseModel):
         mdn_signature_private_certificate: PrivateCertificate = SENTINEL,
         signing_private_certificate: PrivateCertificate = SENTINEL,
         enabled_legacy_smime: bool = SENTINEL,
+        enabled_folded_headers: bool = SENTINEL,
         **kwargs,
     ):
         """As2MyCompanyInfo
@@ -51,6 +55,8 @@ class As2MyCompanyInfo(BaseModel):
         :type mdn_signature_private_certificate: PrivateCertificate, optional
         :param signing_private_certificate: signing_private_certificate, defaults to None
         :type signing_private_certificate: PrivateCertificate, optional
+        :param enabled_folded_headers: enabled_folded_headers, defaults to None
+        :type enabled_folded_headers: bool, optional
         """
         if as2_id is not SENTINEL:
             self.as2_id = as2_id
@@ -68,4 +74,6 @@ class As2MyCompanyInfo(BaseModel):
             self.signing_private_certificate = self._define_object(
                 signing_private_certificate, PrivateCertificate
             )
+        if enabled_folded_headers is not SENTINEL:
+            self.enabled_folded_headers = enabled_folded_headers
         self._kwargs = kwargs

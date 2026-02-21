@@ -21,6 +21,7 @@ from .public_certificate import PublicCertificate
         "messages_to_check_for_duplicates": "messagesToCheckForDuplicates",
         "reject_duplicate_messages": "rejectDuplicateMessages",
         "signing_public_certificate": "signingPublicCertificate",
+        "enabled_folded_headers": "enabledFoldedHeaders",
     }
 )
 class As2PartnerInfo(BaseModel):
@@ -48,6 +49,8 @@ class As2PartnerInfo(BaseModel):
     :type reject_duplicate_messages: bool, optional
     :param signing_public_certificate: signing_public_certificate, defaults to None
     :type signing_public_certificate: PublicCertificate, optional
+    :param enabled_folded_headers: enabled_folded_headers, defaults to None
+    :type enabled_folded_headers: bool, optional
     """
 
     def __init__(
@@ -63,6 +66,7 @@ class As2PartnerInfo(BaseModel):
         messages_to_check_for_duplicates: int = SENTINEL,
         reject_duplicate_messages: bool = SENTINEL,
         signing_public_certificate: PublicCertificate = SENTINEL,
+        enabled_folded_headers: bool = SENTINEL,
         **kwargs,
     ):
         """As2PartnerInfo
@@ -89,6 +93,8 @@ class As2PartnerInfo(BaseModel):
         :type reject_duplicate_messages: bool, optional
         :param signing_public_certificate: signing_public_certificate, defaults to None
         :type signing_public_certificate: PublicCertificate, optional
+        :param enabled_folded_headers: enabled_folded_headers, defaults to None
+        :type enabled_folded_headers: bool, optional
         """
         if as2_id is not SENTINEL:
             self.as2_id = as2_id
@@ -124,4 +130,6 @@ class As2PartnerInfo(BaseModel):
             self.signing_public_certificate = self._define_object(
                 signing_public_certificate, PublicCertificate
             )
+        if enabled_folded_headers is not SENTINEL:
+            self.enabled_folded_headers = enabled_folded_headers
         self._kwargs = kwargs

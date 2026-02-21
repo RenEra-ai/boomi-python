@@ -89,6 +89,8 @@ class TradingPartnerComponentStandard(Enum):
         "folder_id": "folderId",
         "folder_name": "folderName",
         "organization_id": "organizationId",
+        "branch_id": "branchId",
+        "branch_name": "branchName",
     }
 )
 class TradingPartnerComponent(BaseModel):
@@ -124,6 +126,10 @@ class TradingPartnerComponent(BaseModel):
     :type organization_id: str, optional
     :param standard: standard, defaults to None
     :type standard: TradingPartnerComponentStandard, optional
+    :param branch_id: branch_id, defaults to None
+    :type branch_id: str, optional
+    :param branch_name: branch_name, defaults to None
+    :type branch_name: str, optional
     """
 
     def __init__(
@@ -143,6 +149,8 @@ class TradingPartnerComponent(BaseModel):
         identifier: str = SENTINEL,
         organization_id: str = SENTINEL,
         standard: TradingPartnerComponentStandard = SENTINEL,
+        branch_id: str = SENTINEL,
+        branch_name: str = SENTINEL,
         **kwargs,
     ):
         """TradingPartnerComponent
@@ -177,6 +185,10 @@ class TradingPartnerComponent(BaseModel):
         :type organization_id: str, optional
         :param standard: standard, defaults to None
         :type standard: TradingPartnerComponentStandard, optional
+        :param branch_id: branch_id, defaults to None
+        :type branch_id: str, optional
+        :param branch_name: branch_name, defaults to None
+        :type branch_name: str, optional
         """
         if contact_info is not SENTINEL:
             self.contact_info = self._define_object(contact_info, ContactInfo)
@@ -218,4 +230,8 @@ class TradingPartnerComponent(BaseModel):
             self.standard = self._enum_matching(
                 standard, TradingPartnerComponentStandard.list(), "standard"
             )
+        if branch_id is not SENTINEL:
+            self.branch_id = branch_id
+        if branch_name is not SENTINEL:
+            self.branch_name = branch_name
         self._kwargs = kwargs

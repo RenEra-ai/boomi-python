@@ -111,10 +111,6 @@ from .services.role import RoleService
 from .services.rosetta_net_connector_record import RosettaNetConnectorRecordService
 from .services.runtime_release_schedule import RuntimeReleaseScheduleService
 from .services.cancel_execution import CancelExecutionService
-from .services.execute_process import ExecuteProcessService
-from .services.worker import WorkerService
-from .services.shared_web_server_log import SharedWebServerLogService
-from .services.account_provision import AccountProvisionService
 from .services.shared_server_information import SharedServerInformationService
 from .services.shared_web_server import SharedWebServerService
 from .services.throughput_account import ThroughputAccountService
@@ -140,6 +136,20 @@ from .services.release_integration_pack_status import (
 )
 from .services.runtime_restart_request import RuntimeRestartRequestService
 from .services.refresh_secrets_manager import RefreshSecretsManagerService
+from .services.runtime_cloud import RuntimeCloudService
+from .services.account_cloud_attachment_summary import (
+    AccountCloudAttachmentSummaryService,
+)
+from .services.account_cloud_attachment_properties_default import (
+    AccountCloudAttachmentPropertiesDefaultService,
+)
+from .services.runtime_properties import RuntimePropertiesService
+from .services.runtime_observability_settings import (
+    RuntimeObservabilitySettingsService,
+)
+from .services.cloud_attachment_secrets_configuration import (
+    CloudAttachmentSecretsConfigurationService,
+)
 from .net.environment import Environment
 
 
@@ -337,10 +347,6 @@ class Boomi:
             base_url=self._base_url
         )
         self.cancel_execution = CancelExecutionService(base_url=self._base_url)
-        self.execute_process = ExecuteProcessService(base_url=self._base_url)
-        self.worker = WorkerService(base_url=self._base_url)
-        self.shared_web_server_log = SharedWebServerLogService(base_url=self._base_url)
-        self.account_provision = AccountProvisionService(base_url=self._base_url)
         self.shared_server_information = SharedServerInformationService(
             base_url=self._base_url
         )
@@ -385,6 +391,20 @@ class Boomi:
         )
         self.refresh_secrets_manager = RefreshSecretsManagerService(
             base_url=self._base_url
+        )
+        self.runtime_cloud = RuntimeCloudService(base_url=self._base_url)
+        self.account_cloud_attachment_summary = (
+            AccountCloudAttachmentSummaryService(base_url=self._base_url)
+        )
+        self.account_cloud_attachment_properties_default = (
+            AccountCloudAttachmentPropertiesDefaultService(base_url=self._base_url)
+        )
+        self.runtime_properties = RuntimePropertiesService(base_url=self._base_url)
+        self.runtime_observability_settings = RuntimeObservabilitySettingsService(
+            base_url=self._base_url
+        )
+        self.cloud_attachment_secrets_configuration = (
+            CloudAttachmentSecretsConfigurationService(base_url=self._base_url)
         )
         self.set_access_token(access_token)
         self.set_basic_auth(username=username, password=password)
@@ -499,10 +519,6 @@ class Boomi:
         self.rosetta_net_connector_record.set_base_url(formatted_url)
         self.runtime_release_schedule.set_base_url(formatted_url)
         self.cancel_execution.set_base_url(formatted_url)
-        self.execute_process.set_base_url(formatted_url)
-        self.worker.set_base_url(formatted_url)
-        self.shared_web_server_log.set_base_url(formatted_url)
-        self.account_provision.set_base_url(formatted_url)
         self.shared_server_information.set_base_url(formatted_url)
         self.shared_web_server.set_base_url(formatted_url)
         self.throughput_account.set_base_url(formatted_url)
@@ -522,6 +538,12 @@ class Boomi:
         self.release_integration_pack_status.set_base_url(formatted_url)
         self.runtime_restart_request.set_base_url(formatted_url)
         self.refresh_secrets_manager.set_base_url(formatted_url)
+        self.runtime_cloud.set_base_url(formatted_url)
+        self.account_cloud_attachment_summary.set_base_url(formatted_url)
+        self.account_cloud_attachment_properties_default.set_base_url(formatted_url)
+        self.runtime_properties.set_base_url(formatted_url)
+        self.runtime_observability_settings.set_base_url(formatted_url)
+        self.cloud_attachment_secrets_configuration.set_base_url(formatted_url)
 
         return self
 
@@ -626,10 +648,6 @@ class Boomi:
         self.rosetta_net_connector_record.set_access_token(access_token)
         self.runtime_release_schedule.set_access_token(access_token)
         self.cancel_execution.set_access_token(access_token)
-        self.execute_process.set_access_token(access_token)
-        self.worker.set_access_token(access_token)
-        self.shared_web_server_log.set_access_token(access_token)
-        self.account_provision.set_access_token(access_token)
         self.shared_server_information.set_access_token(access_token)
         self.shared_web_server.set_access_token(access_token)
         self.throughput_account.set_access_token(access_token)
@@ -649,6 +667,12 @@ class Boomi:
         self.release_integration_pack_status.set_access_token(access_token)
         self.runtime_restart_request.set_access_token(access_token)
         self.refresh_secrets_manager.set_access_token(access_token)
+        self.runtime_cloud.set_access_token(access_token)
+        self.account_cloud_attachment_summary.set_access_token(access_token)
+        self.account_cloud_attachment_properties_default.set_access_token(access_token)
+        self.runtime_properties.set_access_token(access_token)
+        self.runtime_observability_settings.set_access_token(access_token)
+        self.cloud_attachment_secrets_configuration.set_access_token(access_token)
 
         return self
 
@@ -819,10 +843,6 @@ class Boomi:
             username=username, password=password
         )
         self.cancel_execution.set_basic_auth(username=username, password=password)
-        self.execute_process.set_basic_auth(username=username, password=password)
-        self.worker.set_basic_auth(username=username, password=password)
-        self.shared_web_server_log.set_basic_auth(username=username, password=password)
-        self.account_provision.set_basic_auth(username=username, password=password)
         self.shared_server_information.set_basic_auth(
             username=username, password=password
         )
@@ -864,6 +884,20 @@ class Boomi:
             username=username, password=password
         )
         self.refresh_secrets_manager.set_basic_auth(
+            username=username, password=password
+        )
+        self.runtime_cloud.set_basic_auth(username=username, password=password)
+        self.account_cloud_attachment_summary.set_basic_auth(
+            username=username, password=password
+        )
+        self.account_cloud_attachment_properties_default.set_basic_auth(
+            username=username, password=password
+        )
+        self.runtime_properties.set_basic_auth(username=username, password=password)
+        self.runtime_observability_settings.set_basic_auth(
+            username=username, password=password
+        )
+        self.cloud_attachment_secrets_configuration.set_basic_auth(
             username=username, password=password
         )
 
@@ -969,10 +1003,6 @@ class Boomi:
         self.rosetta_net_connector_record.set_timeout(timeout)
         self.runtime_release_schedule.set_timeout(timeout)
         self.cancel_execution.set_timeout(timeout)
-        self.execute_process.set_timeout(timeout)
-        self.worker.set_timeout(timeout)
-        self.shared_web_server_log.set_timeout(timeout)
-        self.account_provision.set_timeout(timeout)
         self.shared_server_information.set_timeout(timeout)
         self.shared_web_server.set_timeout(timeout)
         self.throughput_account.set_timeout(timeout)
@@ -992,6 +1022,12 @@ class Boomi:
         self.release_integration_pack_status.set_timeout(timeout)
         self.runtime_restart_request.set_timeout(timeout)
         self.refresh_secrets_manager.set_timeout(timeout)
+        self.runtime_cloud.set_timeout(timeout)
+        self.account_cloud_attachment_summary.set_timeout(timeout)
+        self.account_cloud_attachment_properties_default.set_timeout(timeout)
+        self.runtime_properties.set_timeout(timeout)
+        self.runtime_observability_settings.set_timeout(timeout)
+        self.cloud_attachment_secrets_configuration.set_timeout(timeout)
 
         return self
 

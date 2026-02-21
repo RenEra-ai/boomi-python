@@ -3,6 +3,7 @@ from __future__ import annotations
 from .utils.json_map import JsonMap
 from .utils.base_model import BaseModel
 from .utils.sentinel import SENTINEL
+from .custom_partner_info import CustomPartnerInfo
 from .edifact_partner_info import EdifactPartnerInfo
 from .hl7_partner_info import Hl7PartnerInfo
 from .odette_partner_info import OdettePartnerInfo
@@ -26,7 +27,7 @@ class PartnerInfo(BaseModel):
     """PartnerInfo
 
     :param custom_partner_info: custom_partner_info, defaults to None
-    :type custom_partner_info: dict, optional
+    :type custom_partner_info: CustomPartnerInfo, optional
     :param edifact_partner_info: edifact_partner_info, defaults to None
     :type edifact_partner_info: EdifactPartnerInfo, optional
     :param hl7_partner_info: hl7_partner_info, defaults to None
@@ -43,7 +44,7 @@ class PartnerInfo(BaseModel):
 
     def __init__(
         self,
-        custom_partner_info: dict = SENTINEL,
+        custom_partner_info: CustomPartnerInfo = SENTINEL,
         edifact_partner_info: EdifactPartnerInfo = SENTINEL,
         hl7_partner_info: Hl7PartnerInfo = SENTINEL,
         odette_partner_info: OdettePartnerInfo = SENTINEL,
@@ -55,7 +56,7 @@ class PartnerInfo(BaseModel):
         """PartnerInfo
 
         :param custom_partner_info: custom_partner_info, defaults to None
-        :type custom_partner_info: dict, optional
+        :type custom_partner_info: CustomPartnerInfo, optional
         :param edifact_partner_info: edifact_partner_info, defaults to None
         :type edifact_partner_info: EdifactPartnerInfo, optional
         :param hl7_partner_info: hl7_partner_info, defaults to None
@@ -70,7 +71,9 @@ class PartnerInfo(BaseModel):
         :type x12_partner_info: X12PartnerInfo, optional
         """
         if custom_partner_info is not SENTINEL:
-            self.custom_partner_info = custom_partner_info
+            self.custom_partner_info = self._define_object(
+                custom_partner_info, CustomPartnerInfo
+            )
         if edifact_partner_info is not SENTINEL:
             self.edifact_partner_info = self._define_object(
                 edifact_partner_info, EdifactPartnerInfo

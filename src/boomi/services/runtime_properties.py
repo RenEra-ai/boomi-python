@@ -7,33 +7,41 @@ from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..net.transport.utils import parse_xml_to_dict
-from ..models import ExecutionRecord, ExecutionRecordQueryConfig, ExecutionRecordQueryResponse
+from ..models import (
+    RuntimeProperties,
+    RuntimePropertiesAsyncResponse,
+    AsyncOperationTokenResult,
+)
 
 
-class ExecutionRecordService(BaseService):
+class RuntimePropertiesService(BaseService):
 
     @cast_models
-    def query_execution_record(
-        self, request_body: ExecutionRecordQueryConfig = None
-    ) -> Union[ExecutionRecordQueryResponse, str]:
-        """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
+    def update_runtime_properties(
+        self, id_: str, request_body: RuntimeProperties = None
+    ) -> Union[RuntimeProperties, str]:
+        """Updates the RuntimeProperties object having the specified ID.
 
         :param request_body: The request body., defaults to None
-        :type request_body: ExecutionRecordQueryConfig, optional
+        :type request_body: RuntimeProperties, optional
+        :param id_: id_
+        :type id_: str
         ...
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ExecutionRecordQueryResponse, str]
+        :rtype: Union[RuntimeProperties, str]
         """
 
-        Validator(ExecutionRecordQueryConfig).is_optional().validate(request_body)
+        Validator(RuntimeProperties).is_optional().validate(request_body)
+        Validator(str).validate(id_)
 
         serialized_request = (
             Serializer(
-                f"{self.base_url or Environment.DEFAULT.url}/ExecutionRecord/query",
+                f"{self.base_url or Environment.DEFAULT.url}/RuntimeProperties/{{id}}",
                 [self.get_access_token(), self.get_basic_auth()],
             )
+            .add_path("id", id_)
             .serialize()
             .set_method("POST")
             .set_body(request_body)
@@ -41,63 +49,31 @@ class ExecutionRecordService(BaseService):
 
         response, status, content = self.send_request(serialized_request)
         if content == "application/json":
-            return ExecutionRecordQueryResponse._unmap(response)
+            return RuntimeProperties._unmap(response)
         if content == "application/xml":
-            return ExecutionRecordQueryResponse._unmap(parse_xml_to_dict(response))
+            return RuntimeProperties._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
-    def query_more_execution_record(
-        self, request_body: str
-    ) -> Union[ExecutionRecordQueryResponse, str]:
-        """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
+    def async_get_runtime_properties(
+        self, id_: str
+    ) -> Union[AsyncOperationTokenResult, str]:
+        """Returns a token for the specified RuntimeProperties.
 
-        :param request_body: The request body.
-        :type request_body: str
-        ...
-        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
-        ...
-        :return: The parsed response data.
-        :rtype: Union[ExecutionRecordQueryResponse, str]
-        """
-
-        Validator(str).validate(request_body)
-
-        serialized_request = (
-            Serializer(
-                f"{self.base_url or Environment.DEFAULT.url}/ExecutionRecord/queryMore",
-                [self.get_access_token(), self.get_basic_auth()],
-            )
-            .serialize()
-            .set_method("POST")
-            .set_body(request_body, "text/plain")
-        )
-
-        response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ExecutionRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return ExecutionRecordQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
-
-    @cast_models
-    def async_get_execution_record(self, id_: str) -> Union[ExecutionRecord, str]:
-        """Retrieves the execution record asynchronously for the specified ID.
-
-        :param id_: The execution record ID.
+        :param id_: id_
         :type id_: str
         ...
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ExecutionRecord, str]
+        :rtype: Union[AsyncOperationTokenResult, str]
         """
 
         Validator(str).validate(id_)
 
         serialized_request = (
             Serializer(
-                f"{self.base_url or Environment.DEFAULT.url}/ExecutionRecord/async/{{id}}",
+                f"{self.base_url or Environment.DEFAULT.url}/async/RuntimeProperties/{{id}}",
                 [self.get_access_token(), self.get_basic_auth()],
             )
             .add_path("id", id_)
@@ -107,7 +83,41 @@ class ExecutionRecordService(BaseService):
 
         response, status, content = self.send_request(serialized_request)
         if content == "application/json":
-            return ExecutionRecord._unmap(response)
+            return AsyncOperationTokenResult._unmap(response)
         if content == "application/xml":
-            return ExecutionRecord._unmap(parse_xml_to_dict(response))
+            return AsyncOperationTokenResult._unmap(parse_xml_to_dict(response))
+        raise ApiError("Error on deserializing the response.", status, response)
+
+    @cast_models
+    def async_token_runtime_properties(
+        self, token: str
+    ) -> Union[RuntimePropertiesAsyncResponse, str]:
+        """For a response, use the token from the initial GET response in a new request.
+
+        :param token: Takes in the token from a previous call to return a result.
+        :type token: str
+        ...
+        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
+        ...
+        :return: The parsed response data.
+        :rtype: Union[RuntimePropertiesAsyncResponse, str]
+        """
+
+        Validator(str).validate(token)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/async/RuntimeProperties/response/{{token}}",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            .add_path("token", token)
+            .serialize()
+            .set_method("GET")
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        if content == "application/json":
+            return RuntimePropertiesAsyncResponse._unmap(response)
+        if content == "application/xml":
+            return RuntimePropertiesAsyncResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
