@@ -69,11 +69,14 @@ class ComponentService(BaseService):
 
         Validator(str).validate(component_id)
 
-        serialized_request = (
-            Serializer(
+        serializer = Serializer(
                 f"{self.base_url or Environment.DEFAULT.url}/Component/{{componentId}}",
                 [self.get_access_token(), self.get_basic_auth()],
             )
+        # Component GET only supports application/xml responses
+        serializer.add_header("Accept", "application/xml")
+        serialized_request = (
+            serializer
             .add_path("componentId", component_id)
             .serialize()
             .set_method("GET")
@@ -253,17 +256,20 @@ class ComponentService(BaseService):
         :rtype: str
         """
         Validator(str).validate(component_id)
-        
-        serialized_request = (
-            Serializer(
+
+        serializer = Serializer(
                 f"{self.base_url or Environment.DEFAULT.url}/Component/{{componentId}}",
                 [self.get_access_token(), self.get_basic_auth()],
             )
+        # Component GET only supports application/xml responses
+        serializer.add_header("Accept", "application/xml")
+        serialized_request = (
+            serializer
             .add_path("componentId", component_id)
             .serialize()
             .set_method("GET")
         )
-        
+
         # Return raw response without any parsing
         response, status, content = self.send_request(serialized_request)
         if status >= 200 and status < 300:

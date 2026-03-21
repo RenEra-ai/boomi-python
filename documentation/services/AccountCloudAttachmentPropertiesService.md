@@ -19,7 +19,7 @@ Modifies one or more Account Cloud attachment properties. - To update property v
 
 | Name         | Type                                                                              | Required | Description       |
 | :----------- | :-------------------------------------------------------------------------------- | :------- | :---------------- |
-| request_body | [AccountCloudAttachmentProperties](../models/AccountCloudAttachmentProperties.md) | ❌       | The request body. |
+| request_body | [AccountCloudAttachmentProperties](../models/AccountCloudAttachmentProperties.md) | ✅       | The request body. **Note:** The GET response does not return `container_id`. The SDK automatically defaults `container_id` from the `id_` path parameter when it is missing or empty in the request body. |
 | id\_         | str                                                                               | ✅       |                   |
 
 **Return Type**
@@ -116,6 +116,8 @@ print(result)
 ## async_token_account_cloud_attachment_properties
 
 Send a second GET request with the token returned in the first GET request. The object returns a list of existing property names and values for the given account and Cloud. \>**Note:** The Cloud and attachments to which you are calling must be online. Cloud owners and users that own the Cloud attachments can use this operation.
+
+> **SDK behavior:** When `async_get_account_cloud_attachment_properties` and `async_token_account_cloud_attachment_properties` are called on the same service instance, the SDK automatically backfills `container_id` on each result item from the `id_` used in the initial GET, since the API response omits it. If the API ever starts returning `containerId`, the SDK preserves the API-provided value.
 
 - HTTP Method: `GET`
 - Endpoint: `/async/AccountCloudAttachmentProperties/response/{token}`

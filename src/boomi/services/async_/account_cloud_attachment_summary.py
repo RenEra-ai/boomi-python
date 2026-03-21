@@ -12,8 +12,13 @@ from ...models import (
 
 
 class AccountCloudAttachmentSummaryServiceAsync(AccountCloudAttachmentSummaryService):
-    """
-    Async Wrapper for AccountCloudAttachmentSummaryServiceAsync
+    """Async wrapper for AccountCloudAttachmentSummaryService.
+
+    .. note::
+        The Cloud Management feature must be enabled for your Boomi account.
+        Without it, all AccountCloudAttachmentSummary endpoints return HTTP 400
+        with the message "The Cloud Management feature is not enabled for your
+        account."  This response does not indicate a malformed SDK request.
     """
 
     def get_account_cloud_attachment_summary(

@@ -139,7 +139,16 @@ class AsyncOperationManager:
                     token = result.async_token.token
                     
             elif operation == 'listener_status':
-                result = self.sdk.listener_status.async_get_listener_status(id_=atom_id)
+                query = ListenerStatusQueryConfig(
+                    query_filter=ListenerStatusQueryConfigQueryFilter(
+                        expression=ListenerStatusSimpleExpression(
+                            property=ListenerStatusSimpleExpressionProperty.CONTAINERID,
+                            operator=ListenerStatusSimpleExpressionOperator.EQUALS,
+                            argument=[atom_id],
+                        )
+                    )
+                )
+                result = self.sdk.listener_status.async_get_listener_status(request_body=query)
                 if hasattr(result, 'async_token'):
                     token = result.async_token.token
 

@@ -48,9 +48,9 @@ from datetime import datetime, timedelta
 from typing import List, Dict, Optional, Any, Tuple
 
 # Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'src'))
 
-from src.boomi import Boomi
+from boomi import Boomi
 
 
 class ProcessExecutor:
@@ -74,7 +74,7 @@ class ProcessExecutor:
         
         try:
             # Import SDK models
-            from src.boomi.models import (
+            from boomi.models import (
                 ExecutionRequest, 
                 ExecutionRequestDynamicProcessProperties,
                 ExecutionRequestProcessProperties,
@@ -136,7 +136,7 @@ class ProcessExecutor:
         """Get the status of a specific execution using SDK"""
         try:
             # Import SDK models
-            from src.boomi.models import (
+            from boomi.models import (
                 ExecutionRecordQueryConfig,
                 ExecutionRecordQueryConfigQueryFilter,
                 ExecutionRecordSimpleExpression,
@@ -238,7 +238,7 @@ class ProcessExecutor:
         """Find recent execution by pattern matching using SDK"""
         try:
             # Import SDK models
-            from src.boomi.models import (
+            from boomi.models import (
                 ExecutionRecordQueryConfig,
                 ExecutionRecordQueryConfigQueryFilter,
                 ExecutionRecordSimpleExpression,
@@ -375,7 +375,7 @@ class ProcessExecutor:
         
         try:
             # Import SDK models
-            from src.boomi.models import (
+            from boomi.models import (
                 ExecutionRecordQueryConfig,
                 ExecutionRecordQueryConfigQueryFilter,
                 ExecutionRecordSimpleExpression,

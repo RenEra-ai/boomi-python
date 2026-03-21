@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "boomi"
-version = "2.0.1"
+version = "2.1.0"
 license = "MIT"
 description = "Python SDK for Boomi Platform API - provides programmatic access to Boomi Enterprise Platform functionality."
 readme = "PyPI_README.md"
@@ -17,4 +17,17 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "python-dotenv>=1.0.0"
+]
+
+[tool.pytest.ini_options]
+markers = [
+    "live: runs live Boomi API calls against a configured account",
+    "live_spec_delta: covers endpoints and models affected by the latest platform OpenAPI update",
+    "live_full_surface: audits the broader public SDK surface with real API calls",
+    "live_inventory: validates public sync/async SDK surface inventory and bucketing",
+    "live_risky: performs state-changing or operationally disruptive live API calls",
+    "live_sync: runs live coverage through the synchronous SDK client",
+    "live_async: runs live coverage through the asynchronous SDK client",
+    "live_recent_fixes: validates fixes from recent SDK commits",
+    "live_deep_groups: deep per-group service validation with response field checking",
 ]

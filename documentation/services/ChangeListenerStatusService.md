@@ -11,7 +11,7 @@ A list of all methods in the `ChangeListenerStatusService` service. Click on the
 You can use the changeListenerStatus operation to pause, resume, or restart listeners. A successful changeListenerStatus call returns an empty changeListenerStatusResponse to indicate acceptance of the request.
 
 - HTTP Method: `POST`
-- Endpoint: `/ChangeListenerStatus`
+- Endpoint: `/changeListenerStatus`
 
 **Parameters**
 

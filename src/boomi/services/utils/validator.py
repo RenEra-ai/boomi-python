@@ -143,7 +143,7 @@ class Validator:
         if self._is_nullable and value is None:
             return
 
-        if self._is_optional and not was_value_set(value):
+        if self._is_optional and (not was_value_set(value) or value is None):
             return
 
         self._validate_type(value)

@@ -99,7 +99,12 @@ class HttpWorkload(Enum):
         "max_connector_track_docs": "maxConnectorTrackDocs",
         "min_numberof_atom_workers": "minNumberofAtomWorkers",
         "numberof_atom_workers": "numberofAtomWorkers",
+        "queue_commit_batch_limit": "queueCommitBatchLimit",
         "queue_incoming_message_rate_limit": "queueIncomingMessageRateLimit",
+        "queue_max_batch_size": "queueMaxBatchSize",
+        "queue_max_doc_size": "queueMaxDocSize",
+        "queue_msg_throttle_rate": "queueMsgThrottleRate",
+        "queue_use_file_persistence": "queueUseFilePersistence",
         "session_id": "sessionId",
         "status_code": "statusCode",
         "test_mode_max_doc_bytes": "testModeMaxDocBytes",
@@ -151,8 +156,18 @@ class AccountCloudAttachmentProperties(BaseModel):
     :type min_numberof_atom_workers: int, optional
     :param numberof_atom_workers: Allocated number of execution workers., defaults to None
     :type numberof_atom_workers: int, optional
+    :param queue_commit_batch_limit: queue_commit_batch_limit, defaults to None
+    :type queue_commit_batch_limit: int, optional
     :param queue_incoming_message_rate_limit: The maximum number of requests the attachment is allowed to send to the Shared Queue Server per minute. The limit is only enforced if the Incoming Message Rate Limit is set in the underlying cloud Queue Shared Server. If a value is not set or is less than 1, the Shared Queue Server limit is used. The message is rejected if the limit is exceeded and should be retried from within the integration process. The limit is enforced per cloud node., defaults to None
     :type queue_incoming_message_rate_limit: int, optional
+    :param queue_max_batch_size: queue_max_batch_size, defaults to None
+    :type queue_max_batch_size: int, optional
+    :param queue_max_doc_size: queue_max_doc_size, defaults to None
+    :type queue_max_doc_size: int, optional
+    :param queue_msg_throttle_rate: queue_msg_throttle_rate, defaults to None
+    :type queue_msg_throttle_rate: int, optional
+    :param queue_use_file_persistence: queue_use_file_persistence, defaults to None
+    :type queue_use_file_persistence: bool, optional
     :param session_id: session_id, defaults to None
     :type session_id: str, optional
     :param status_code: status_code, defaults to None
@@ -195,7 +210,12 @@ class AccountCloudAttachmentProperties(BaseModel):
         max_connector_track_docs: int = SENTINEL,
         min_numberof_atom_workers: int = SENTINEL,
         numberof_atom_workers: int = SENTINEL,
+        queue_commit_batch_limit: int = SENTINEL,
         queue_incoming_message_rate_limit: int = SENTINEL,
+        queue_max_batch_size: int = SENTINEL,
+        queue_max_doc_size: int = SENTINEL,
+        queue_msg_throttle_rate: int = SENTINEL,
+        queue_use_file_persistence: bool = SENTINEL,
         session_id: str = SENTINEL,
         status_code: int = SENTINEL,
         test_mode_max_doc_bytes: int = SENTINEL,
@@ -246,8 +266,18 @@ class AccountCloudAttachmentProperties(BaseModel):
         :type min_numberof_atom_workers: int, optional
         :param numberof_atom_workers: Allocated number of execution workers., defaults to None
         :type numberof_atom_workers: int, optional
+        :param queue_commit_batch_limit: queue_commit_batch_limit, defaults to None
+        :type queue_commit_batch_limit: int, optional
         :param queue_incoming_message_rate_limit: The maximum number of requests the attachment is allowed to send to the Shared Queue Server per minute. The limit is only enforced if the Incoming Message Rate Limit is set in the underlying cloud Queue Shared Server. If a value is not set or is less than 1, the Shared Queue Server limit is used. The message is rejected if the limit is exceeded and should be retried from within the integration process. The limit is enforced per cloud node., defaults to None
         :type queue_incoming_message_rate_limit: int, optional
+        :param queue_max_batch_size: queue_max_batch_size, defaults to None
+        :type queue_max_batch_size: int, optional
+        :param queue_max_doc_size: queue_max_doc_size, defaults to None
+        :type queue_max_doc_size: int, optional
+        :param queue_msg_throttle_rate: queue_msg_throttle_rate, defaults to None
+        :type queue_msg_throttle_rate: int, optional
+        :param queue_use_file_persistence: queue_use_file_persistence, defaults to None
+        :type queue_use_file_persistence: bool, optional
         :param session_id: session_id, defaults to None
         :type session_id: str, optional
         :param status_code: status_code, defaults to None
@@ -315,8 +345,18 @@ class AccountCloudAttachmentProperties(BaseModel):
             self.min_numberof_atom_workers = min_numberof_atom_workers
         if numberof_atom_workers is not SENTINEL:
             self.numberof_atom_workers = numberof_atom_workers
+        if queue_commit_batch_limit is not SENTINEL:
+            self.queue_commit_batch_limit = queue_commit_batch_limit
         if queue_incoming_message_rate_limit is not SENTINEL:
             self.queue_incoming_message_rate_limit = queue_incoming_message_rate_limit
+        if queue_max_batch_size is not SENTINEL:
+            self.queue_max_batch_size = queue_max_batch_size
+        if queue_max_doc_size is not SENTINEL:
+            self.queue_max_doc_size = queue_max_doc_size
+        if queue_msg_throttle_rate is not SENTINEL:
+            self.queue_msg_throttle_rate = queue_msg_throttle_rate
+        if queue_use_file_persistence is not SENTINEL:
+            self.queue_use_file_persistence = queue_use_file_persistence
         if session_id is not SENTINEL:
             self.session_id = session_id
         if status_code is not SENTINEL:

@@ -52,9 +52,9 @@ from pathlib import Path
 from typing import List, Dict, Optional, Any, Tuple
 
 # Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'src'))
 
-from src.boomi import Boomi
+from boomi import Boomi
 
 
 class ArtifactDownloader:
@@ -74,7 +74,7 @@ class ArtifactDownloader:
         """Get details about a specific execution using SDK"""
         try:
             # Import SDK models
-            from src.boomi.models import (
+            from boomi.models import (
                 ExecutionRecordQueryConfig,
                 ExecutionRecordQueryConfigQueryFilter,
                 ExecutionRecordSimpleExpression,
@@ -134,7 +134,7 @@ class ArtifactDownloader:
         
         try:
             # Import SDK models
-            from src.boomi.models import (
+            from boomi.models import (
                 ExecutionRecordQueryConfig,
                 ExecutionRecordQueryConfigQueryFilter,
                 ExecutionRecordSimpleExpression,
@@ -240,7 +240,7 @@ class ArtifactDownloader:
         
         try:
             # Import SDK models
-            from src.boomi.models import ExecutionArtifacts
+            from boomi.models import ExecutionArtifacts
             
             # Create execution artifacts request
             artifacts_request = ExecutionArtifacts(

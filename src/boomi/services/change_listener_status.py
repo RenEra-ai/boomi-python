@@ -27,7 +27,7 @@ class ChangeListenerStatusService(BaseService):
 
         serialized_request = (
             Serializer(
-                f"{self.base_url or Environment.DEFAULT.url}/ChangeListenerStatus",
+                f"{self.base_url or Environment.DEFAULT.url}/changeListenerStatus",
                 [self.get_access_token(), self.get_basic_auth()],
             )
             .serialize()

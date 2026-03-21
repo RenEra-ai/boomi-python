@@ -167,7 +167,7 @@ class DeploymentManager:
                     )
                 else:
                     # Multiple filters - use AND logic
-                    from src.boomi.models import DeployedPackageGroupingExpression
+                    from boomi.models import DeployedPackageGroupingExpression
                     grouping_expression = DeployedPackageGroupingExpression(
                         operator="and",
                         nested_expression=expressions

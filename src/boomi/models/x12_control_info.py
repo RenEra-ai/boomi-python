@@ -7,7 +7,7 @@ from .gs_control_info import GsControlInfo
 from .isa_control_info import IsaControlInfo
 
 
-@JsonMap({"gs_control_info": "GSControlInfo", "isa_control_info": "ISAControlInfo"})
+@JsonMap({"gs_control_info": "GSControlInfo", "isa_control_info": "isaControlInfo"})
 class X12ControlInfo(BaseModel):
     """X12ControlInfo
 

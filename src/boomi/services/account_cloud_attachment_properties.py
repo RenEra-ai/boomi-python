@@ -1,5 +1,6 @@
-
+import copy
 from typing import Union
+
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
@@ -16,9 +17,15 @@ from ..models import (
 
 class AccountCloudAttachmentPropertiesService(BaseService):
 
+    def __init__(self, base_url: str = None):
+        super().__init__(base_url)
+        self._token_to_container = {}
+
     @cast_models
     def update_account_cloud_attachment_properties(
-        self, id_: str, request_body: AccountCloudAttachmentProperties = None
+        self,
+        id_: str,
+        request_body: AccountCloudAttachmentProperties,
     ) -> Union[AccountCloudAttachmentProperties, str]:
         """Modifies one or more Account Cloud attachment properties.
 
@@ -30,8 +37,8 @@ class AccountCloudAttachmentPropertiesService(BaseService):
 
          - To modify properties, you must be the owner of the private Runtime cloud, and both the Runtime cloud and its attachments must be online.
 
-        :param request_body: The request body., defaults to None
-        :type request_body: AccountCloudAttachmentProperties, optional
+        :param request_body: The request body. Must include container_id.
+        :type request_body: AccountCloudAttachmentProperties
         :param id_: id_
         :type id_: str
         ...
@@ -41,8 +48,13 @@ class AccountCloudAttachmentPropertiesService(BaseService):
         :rtype: Union[AccountCloudAttachmentProperties, str]
         """
 
-        Validator(AccountCloudAttachmentProperties).is_optional().validate(request_body)
+        Validator(AccountCloudAttachmentProperties).validate(request_body)
         Validator(str).validate(id_)
+
+        body = request_body
+        if not getattr(request_body, "container_id", None):
+            body = copy.copy(request_body)
+            body.container_id = id_
 
         serialized_request = (
             Serializer(
@@ -52,7 +64,7 @@ class AccountCloudAttachmentPropertiesService(BaseService):
             .add_path("id", id_)
             .serialize()
             .set_method("POST")
-            .set_body(request_body)
+            .set_body(body)
         )
 
         response, status, content = self.send_request(serialized_request)
@@ -92,10 +104,15 @@ class AccountCloudAttachmentPropertiesService(BaseService):
 
         response, status, content = self.send_request(serialized_request)
         if content == "application/json":
-            return AsyncOperationTokenResult._unmap(response)
-        if content == "application/xml":
-            return AsyncOperationTokenResult._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+            result = AsyncOperationTokenResult._unmap(response)
+        elif content == "application/xml":
+            result = AsyncOperationTokenResult._unmap(parse_xml_to_dict(response))
+        else:
+            raise ApiError("Error on deserializing the response.", status, response)
+
+        if hasattr(result, "async_token") and hasattr(result.async_token, "token"):
+            self._token_to_container[result.async_token.token] = id_
+        return result
 
     @cast_models
     def async_token_account_cloud_attachment_properties(
@@ -127,7 +144,20 @@ class AccountCloudAttachmentPropertiesService(BaseService):
 
         response, status, content = self.send_request(serialized_request)
         if content == "application/json":
-            return AccountCloudAttachmentPropertiesAsyncResponse._unmap(response)
-        if content == "application/xml":
-            return AccountCloudAttachmentPropertiesAsyncResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+            result = AccountCloudAttachmentPropertiesAsyncResponse._unmap(response)
+        elif content == "application/xml":
+            result = AccountCloudAttachmentPropertiesAsyncResponse._unmap(parse_xml_to_dict(response))
+        else:
+            raise ApiError("Error on deserializing the response.", status, response)
+
+        container_id = self._token_to_container.get(token)
+        response_status_code = getattr(result, "response_status_code", None)
+        if container_id and hasattr(result, "result") and result.result:
+            for item in result.result:
+                if not getattr(item, "container_id", None):
+                    item.container_id = container_id
+        if container_id and response_status_code != 202:
+            # Keep the mapping for intermediate 202 responses because some
+            # endpoints return partial result objects before the completed 200.
+            self._token_to_container.pop(token, None)
+        return result

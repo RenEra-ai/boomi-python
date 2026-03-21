@@ -15,4 +15,6 @@
 | enabled_legacy_smime             | bool              | ❌       |             |
 | messages_to_check_for_duplicates | int               | ❌       |             |
 | reject_duplicate_messages        | bool              | ❌       |             |
+| require_encrypted_messages       | bool              | ❌       |             |
+| require_signed_messages          | bool              | ❌       |             |
 

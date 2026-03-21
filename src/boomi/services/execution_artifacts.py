@@ -52,3 +52,32 @@ class ExecutionArtifactsService(BaseService):
         if content == "application/xml":
             return LogDownload._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
+
+    def download_execution_artifacts(
+        self,
+        request_body: ExecutionArtifacts = None,
+        max_retries: int = 10,
+        initial_delay: float = 2.0,
+    ) -> bytes:
+        """Request and download execution artifacts.
+
+        Combines the two-phase download process: submits the download request via
+        create_execution_artifacts(), then polls the returned URL until the content is ready.
+
+        :param request_body: The request body., defaults to None
+        :type request_body: ExecutionArtifacts, optional
+        :param max_retries: Maximum number of polling attempts., defaults to 10
+        :type max_retries: int
+        :param initial_delay: Initial delay in seconds between retries., defaults to 2.0
+        :type initial_delay: float
+        :return: The raw artifact content as bytes (typically a ZIP file).
+        :rtype: bytes
+        """
+        result = self.create_execution_artifacts(request_body=request_body)
+        if hasattr(result, "status_code") and str(result.status_code) == "504":
+            raise ApiError("Runtime unavailable for artifact download", 504, result)
+        if not hasattr(result, "url") or not result.url:
+            raise ApiError("No download URL in response", 0, result)
+        return self._poll_download_url(
+            result.url, max_retries=max_retries, initial_delay=initial_delay
+        )

@@ -17,6 +17,14 @@ from ..models import (
 
 
 class AccountCloudAttachmentSummaryService(BaseService):
+    """Service for AccountCloudAttachmentSummary endpoints.
+
+    .. note::
+        The Cloud Management feature must be enabled for your Boomi account.
+        Without it, all AccountCloudAttachmentSummary endpoints return HTTP 400
+        with the message "The Cloud Management feature is not enabled for your
+        account."  This response does not indicate a malformed SDK request.
+    """
 
     @cast_models
     def get_account_cloud_attachment_summary(

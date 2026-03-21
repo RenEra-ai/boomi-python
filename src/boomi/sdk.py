@@ -30,6 +30,7 @@ from .services.branch import BranchService
 from .services.change_listener_status import ChangeListenerStatusService
 from .services.clear_queue import ClearQueueService
 from .services.cloud import CloudService
+from .services.cloud_attachment_properties import CloudAttachmentPropertiesService
 from .services.component import ComponentService
 from .services.component_atom_attachment import ComponentAtomAttachmentService
 from .services.component_diff_request import ComponentDiffRequestService
@@ -214,6 +215,9 @@ class Boomi:
         )
         self.clear_queue = ClearQueueService(base_url=self._base_url)
         self.cloud = CloudService(base_url=self._base_url)
+        self.cloud_attachment_properties = CloudAttachmentPropertiesService(
+            base_url=self._base_url
+        )
         self.component = ComponentService(base_url=self._base_url)
         self.component_atom_attachment = ComponentAtomAttachmentService(
             base_url=self._base_url
@@ -452,6 +456,7 @@ class Boomi:
         self.change_listener_status.set_base_url(formatted_url)
         self.clear_queue.set_base_url(formatted_url)
         self.cloud.set_base_url(formatted_url)
+        self.cloud_attachment_properties.set_base_url(formatted_url)
         self.component.set_base_url(formatted_url)
         self.component_atom_attachment.set_base_url(formatted_url)
         self.component_diff_request.set_base_url(formatted_url)
@@ -577,6 +582,7 @@ class Boomi:
         self.change_listener_status.set_access_token(access_token)
         self.clear_queue.set_access_token(access_token)
         self.cloud.set_access_token(access_token)
+        self.cloud_attachment_properties.set_access_token(access_token)
         self.component.set_access_token(access_token)
         self.component_atom_attachment.set_access_token(access_token)
         self.component_diff_request.set_access_token(access_token)
@@ -720,6 +726,9 @@ class Boomi:
         self.change_listener_status.set_basic_auth(username=username, password=password)
         self.clear_queue.set_basic_auth(username=username, password=password)
         self.cloud.set_basic_auth(username=username, password=password)
+        self.cloud_attachment_properties.set_basic_auth(
+            username=username, password=password
+        )
         self.component.set_basic_auth(username=username, password=password)
         self.component_atom_attachment.set_basic_auth(
             username=username, password=password
@@ -936,6 +945,7 @@ class Boomi:
         self.change_listener_status.set_timeout(timeout)
         self.clear_queue.set_timeout(timeout)
         self.cloud.set_timeout(timeout)
+        self.cloud_attachment_properties.set_timeout(timeout)
         self.component.set_timeout(timeout)
         self.component_atom_attachment.set_timeout(timeout)
         self.component_diff_request.set_timeout(timeout)

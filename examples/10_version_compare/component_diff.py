@@ -47,7 +47,7 @@ from datetime import datetime
 from typing import Optional, List, Dict, Any, Tuple
 
 # Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'src'))
 
 # Load environment variables from .env file if available
 try:
@@ -56,8 +56,8 @@ try:
 except ImportError:
     pass  # dotenv is optional
 
-from src.boomi import Boomi
-from src.boomi.models import (
+from boomi import Boomi
+from boomi.models import (
     ComponentDiffRequest,
     ComponentDiffRequestBulkRequest,
     ComponentDiffRequestBulkRequestType
@@ -83,7 +83,7 @@ class ComponentDiffer:
         """Get available versions for a component"""
         try:
             # Get component metadata to find available versions
-            from src.boomi.models import (
+            from boomi.models import (
                 ComponentMetadataQueryConfig,
                 ComponentMetadataQueryConfigQueryFilter,
                 ComponentMetadataSimpleExpression,
@@ -164,7 +164,7 @@ class ComponentDiffer:
                     'source_version': version1,
                     'target_version': version2,
                     'differences': self._process_diff_result(result),
-                    'message': result._kwargs.get('message', '') if hasattr(result, '_kwargs') else '',
+                    'message': getattr(result, 'message', '') or '',
                     'timestamp': datetime.now().isoformat()
                 }
 
@@ -235,68 +235,14 @@ class ComponentDiffer:
             return None
     
     def _process_diff_result(self, result: Any) -> List[Dict[str, Any]]:
-        """Process diff result from API"""
+        """Process diff result from API using typed SDK response objects"""
         differences = []
 
         try:
-            # Check if result has _kwargs with GenericDiff
-            if hasattr(result, '_kwargs') and 'GenericDiff' in result._kwargs:
-                generic_diff = result._kwargs['GenericDiff']
-
-                # Process modifications
-                if 'modification' in generic_diff:
-                    mod = generic_diff['modification']
-                    if isinstance(mod, dict) and 'change' in mod:
-                        change = mod['change']
-                        diff_item = {
-                            'type': 'modification',
-                            'change_type': change.get('type', 'unknown'),
-                            'attribute': change.get('changedParticleName', ''),
-                            'old_value': change.get('oldValue', {}).get('#text', ''),
-                            'new_value': change.get('newValue', {}).get('#text', ''),
-                            'path': change.get('elementKey', {}).get('elementName', '')
-                        }
-                        differences.append(diff_item)
-
-                # Process additions
-                if 'addition' in generic_diff:
-                    add = generic_diff['addition']
-                    total = add.get('total', '0')
-                    if int(total) > 0:
-                        diff_item = {
-                            'type': 'addition',
-                            'count': int(total)
-                        }
-                        differences.append(diff_item)
-
-                # Process deletions
-                if 'deletion' in generic_diff:
-                    deletion = generic_diff['deletion']
-                    total = deletion.get('total', '0')
-                    if int(total) > 0:
-                        diff_item = {
-                            'type': 'deletion',
-                            'count': int(total)
-                        }
-                        differences.append(diff_item)
-
-            # Check if result has differences attribute
-            elif hasattr(result, 'differences'):
-                for diff in result.differences:
-                    diff_item = {
-                        'type': getattr(diff, 'type', 'unknown'),
-                        'path': getattr(diff, 'path', ''),
-                        'old_value': getattr(diff, 'old_value', None),
-                        'new_value': getattr(diff, 'new_value', None),
-                        'description': getattr(diff, 'description', '')
-                    }
-                    differences.append(diff_item)
-
-            # If result is a string (XML diff), parse it
-            elif isinstance(result, str):
+            # Handle string responses (XML or raw) before typed attribute access
+            if isinstance(result, str):
                 try:
                     root = ET.fromstring(result)
-                    # Extract diff elements
                     for diff_elem in root.findall('.//difference'):
                         diff_item = {
                             'type': diff_elem.get('type', 'unknown'),
@@ -306,17 +252,63 @@ class ComponentDiffer:
                             'description': diff_elem.findtext('description', '')
                         }
                         differences.append(diff_item)
-                except:
-                    # If not XML, treat as raw diff
+                except Exception:
                     differences.append({
                         'type': 'raw',
                         'content': result
                     })
-            
+                return differences
+
+            generic_diff = result.generic_diff
+            if generic_diff:
+                # Process modifications
+                mod = getattr(generic_diff, 'modification', None)
+                if mod and hasattr(mod, 'change'):
+                    for change in (mod.change or []):
+                        old_val = getattr(change, 'old_value', '')
+                        new_val = getattr(change, 'new_value', '')
+                        # Handle ChangeValue objects (dict-like with xpath/value)
+                        if hasattr(old_val, 'value'):
+                            old_val = old_val.value
+                        if hasattr(new_val, 'value'):
+                            new_val = new_val.value
+                        element_key = getattr(change, 'element_key', None)
+                        diff_item = {
+                            'type': 'modification',
+                            'change_type': getattr(change, 'type_', 'unknown'),
+                            'attribute': getattr(change, 'changed_particle_name', ''),
+                            'old_value': old_val or '',
+                            'new_value': new_val or '',
+                            'path': getattr(element_key, 'element_name', '') if element_key else ''
+                        }
+                        differences.append(diff_item)
+
+                # Process additions
+                add = getattr(generic_diff, 'addition', None)
+                if add:
+                    total = getattr(add, 'total', 0)
+                    if int(total) > 0:
+                        diff_item = {
+                            'type': 'addition',
+                            'count': int(total)
+                        }
+                        differences.append(diff_item)
+
+                # Process deletions
+                deletion = getattr(generic_diff, 'deletion', None)
+                if deletion:
+                    total = getattr(deletion, 'total', 0)
+                    if int(total) > 0:
+                        diff_item = {
+                            'type': 'deletion',
+                            'count': int(total)
+                        }
+                        differences.append(diff_item)
+
         except Exception as e:
             if self.verbose:
                 print(f"Error processing diff result: {e}")
-        
+
         return differences
     
     def _compare_attributes(self, tree1: ET.Element, tree2: ET.Element) -> List[Dict[str, Any]]:

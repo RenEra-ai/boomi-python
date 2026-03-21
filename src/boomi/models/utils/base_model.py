@@ -48,6 +48,12 @@ class BaseModel:
         if input_data is None or input_data is SENTINEL:
             return None
 
+        # xmltodict returns a single dict when there is only one XML child
+        # element and the tag is not in the force_list set.  The model layer
+        # expects a list, so wrap the dict to avoid iterating over dict keys.
+        if isinstance(input_data, dict):
+            input_data = [input_data]
+
         result: List[T] = []
         for item in input_data:
             if hasattr(list_class, "__args__") and len(list_class.__args__) > 0:

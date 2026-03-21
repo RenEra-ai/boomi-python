@@ -14,3 +14,13 @@ class AtomWorkerLogServiceAsync(AtomWorkerLogService):
         self, request_body: AtomWorkerLog = None
     ) -> Awaitable[Union[LogDownload, str]]:
         return to_async(super().create_atom_worker_log)(request_body)
+
+    def download_atom_worker_log(
+        self,
+        request_body: AtomWorkerLog = None,
+        max_retries: int = 10,
+        initial_delay: float = 2.0,
+    ) -> Awaitable[bytes]:
+        return to_async(super().download_atom_worker_log)(
+            request_body, max_retries, initial_delay
+        )

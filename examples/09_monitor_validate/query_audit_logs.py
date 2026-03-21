@@ -50,9 +50,9 @@ from typing import List, Dict, Optional, Any
 from collections import defaultdict, Counter
 
 # Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'src'))
 
-from src.boomi import Boomi
+from boomi import Boomi
 
 
 class AuditLogAnalyzer:
@@ -79,7 +79,7 @@ class AuditLogAnalyzer:
         
         try:
             # Import SDK models
-            from src.boomi.models import (
+            from boomi.models import (
                 AuditLogQueryConfig,
                 AuditLogQueryConfigQueryFilter,
                 AuditLogSimpleExpression,

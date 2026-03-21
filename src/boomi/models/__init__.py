@@ -139,6 +139,10 @@ from .cloud_bulk_request import CloudBulkRequest, CloudBulkRequestType
 from .cloud_bulk_response import CloudBulkResponse, CloudBulkResponseResponse
 from .cloud_query_config import CloudQueryConfig, CloudQueryConfigQueryFilter
 from .cloud_query_response import CloudQueryResponse
+from .cloud_attachment_properties import CloudAttachmentProperties
+from .cloud_attachment_properties_async_response import (
+    CloudAttachmentPropertiesAsyncResponse,
+)
 from .component import Component, ComponentType
 from .component_bulk_request import ComponentBulkRequest, ComponentBulkRequestType
 from .component_bulk_response import (
@@ -157,6 +161,7 @@ from .component_diff_request import ComponentDiffRequest
 from .component_diff_response_create import (
     ComponentDiffResponseCreate,
     ComponentDiffResponse,
+    ChangeValue,
 )
 from .component_diff_request_bulk_request import (
     ComponentDiffRequestBulkRequest,
@@ -174,6 +179,8 @@ from .component_environment_attachment_query_config import (
 from .component_environment_attachment_query_response import (
     ComponentEnvironmentAttachmentQueryResponse,
 )
+from .component_merge_config import ComponentMergeConfig
+from .component_merge_configs import ComponentMergeConfigs
 from .component_metadata import ComponentMetadata, ComponentMetadataType
 from .component_metadata_bulk_request import (
     ComponentMetadataBulkRequest,
@@ -696,7 +703,6 @@ from .listener_status_query_config import (
 )
 from .listener_status_async_response import (
     ListenerStatusAsyncResponse,
-    ResponseStatusCode,
 )
 from .organization_component import OrganizationComponent
 from .organization_component_bulk_request import (

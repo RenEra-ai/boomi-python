@@ -14,3 +14,13 @@ class ExecutionArtifactsServiceAsync(ExecutionArtifactsService):
         self, request_body: ExecutionArtifacts = None
     ) -> Awaitable[Union[ExecutionArtifacts, str]]:
         return to_async(super().create_execution_artifacts)(request_body)
+
+    def download_execution_artifacts(
+        self,
+        request_body: ExecutionArtifacts = None,
+        max_retries: int = 10,
+        initial_delay: float = 2.0,
+    ) -> Awaitable[bytes]:
+        return to_async(super().download_execution_artifacts)(
+            request_body, max_retries, initial_delay
+        )

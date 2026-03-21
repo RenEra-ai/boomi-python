@@ -54,7 +54,7 @@ class ComponentDiffRequestService(BaseService):
     @cast_models
     def get_component_diff_request(
         self, component_id: str
-    ) -> Union[ComponentDiffRequest, str]:
+    ) -> Union[ComponentDiffResponseCreate, str]:
         """If you use Postman to make API calls, the GET response contains a diff visualization option to help understand the differences between component versions. For more information, refer to the Postman article [Visualize request responses using Postman Visualizer](https://learning.postman.com/docs/sending-requests/response-data/visualizer/). The Postman visualization feature currently supports only JSON responses.
 
         :param component_id: The ID of the component for which you want to compare versions.
@@ -63,7 +63,7 @@ class ComponentDiffRequestService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ComponentDiffRequest, str]
+        :rtype: Union[ComponentDiffResponseCreate, str]
         """
 
         Validator(str).validate(component_id)
@@ -80,9 +80,9 @@ class ComponentDiffRequestService(BaseService):
 
         response, status, content = self.send_request(serialized_request)
         if content == "application/json":
-            return ComponentDiffRequest._unmap(response)
+            return ComponentDiffResponseCreate._unmap(response)
         if content == "application/xml":
-            return ComponentDiffRequest._unmap(parse_xml_to_dict(response))
+            return ComponentDiffResponseCreate._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models

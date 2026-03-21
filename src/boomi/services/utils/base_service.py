@@ -1,4 +1,7 @@
 
+import time
+import urllib.request
+import urllib.error
 from typing import Any, Dict, Tuple, Generator
 from enum import Enum
 
@@ -7,6 +10,7 @@ from .default_headers import DefaultHeaders, DefaultHeadersKeys
 from ...net.headers.base_header import BaseHeader
 
 from ...net.transport.request import Request
+from ...net.transport.api_error import ApiError
 from ...net.request_chain.request_chain import RequestChain
 from ...net.request_chain.handlers.hook_handler import HookHandler
 from ...net.request_chain.handlers.http_handler import HttpHandler
@@ -85,6 +89,15 @@ class BaseService:
 
         return self
 
+    def get_timeout(self) -> int:
+        """
+        Get the configured request timeout in milliseconds.
+
+        :return: The timeout in milliseconds.
+        :rtype: int
+        """
+        return self._timeout
+
     def set_base_url(self, base_url: str):
         """
         Sets the base URL for the service.
@@ -147,6 +160,61 @@ class BaseService:
             .add_handler(RetryHandler())
             .add_handler(HttpHandler(self._timeout))
         )
+
+    def _poll_download_url(
+        self, url: str, max_retries: int = 10, initial_delay: float = 2.0
+    ) -> bytes:
+        """
+        Poll a Boomi download URL with authentication until content is ready.
+
+        The Boomi API download pattern returns HTTP 202 while content is being
+        prepared, then HTTP 200 with the actual content once ready.
+
+        :param str url: The absolute download URL returned by a create_* method.
+        :param int max_retries: Maximum number of polling attempts. Defaults to 10.
+        :param float initial_delay: Initial delay in seconds between retries. Defaults to 2.0.
+        :return: The raw downloaded content.
+        :rtype: bytes
+        """
+        auth_headers = {}
+        basic_auth = self.get_basic_auth()
+        if basic_auth is not None:
+            auth_headers = basic_auth.get_headers()
+        if not auth_headers:
+            access_token = self.get_access_token()
+            if access_token is not None:
+                auth_headers = access_token.get_headers()
+        if not auth_headers:
+            raise ApiError("No authentication configured for download", 401, None)
+
+        delay = initial_delay
+        for attempt in range(max_retries):
+            if attempt > 0:
+                time.sleep(delay)
+                delay = min(delay * 2, 30.0)
+
+            req = urllib.request.Request(url, headers=auth_headers)
+            try:
+                with urllib.request.urlopen(
+                    req, timeout=self._timeout / 1000
+                ) as response:
+                    status = response.status
+                    if status == 202:
+                        if attempt < max_retries - 1:
+                            continue
+                        raise ApiError(
+                            f"Download not ready after {max_retries} attempts",
+                            202,
+                            None,
+                        )
+                    content = response.read()
+                    if len(content) == 0 and attempt < max_retries - 1:
+                        continue
+                    return content
+            except urllib.error.HTTPError as e:
+                raise ApiError(f"Download failed with HTTP {e.code}", e.code, None)
+
+        raise ApiError(f"Download timed out after {max_retries} retries", 408, None)
 
     def _update_request_handler(self) -> None:
         """

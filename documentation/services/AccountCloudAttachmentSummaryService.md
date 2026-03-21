@@ -1,5 +1,7 @@
 # AccountCloudAttachmentSummaryService
 
+> **Note:** The Cloud Management feature must be enabled for your account to use AccountCloudAttachmentSummary endpoints. Without it, API calls return HTTP 400 with the message: "The Cloud Management feature is not enabled for your account."
+
 A list of all methods in the `AccountCloudAttachmentSummaryService` service. Click on the method name to view detailed information about that method.
 
 | Methods                                                                                                   | Description                                                                                                                                                                                                                                     |
@@ -91,6 +93,8 @@ print(result)
 
 For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
+> **Note:** This endpoint requires the Cloud Management feature. A valid query will still return HTTP 400 when the account does not have Cloud Management enabled — this does not indicate a malformed SDK request.
+
 - HTTP Method: `POST`
 - Endpoint: `/AccountCloudAttachmentSummary/query`
 
@@ -106,9 +110,19 @@ For general information about the structure of QUERY filters, their sample paylo
 
 **Example Usage Code Snippet**
 
+> **Note:** This example only succeeds for accounts with the Cloud Management feature enabled.
+
 ```python
 from boomi import Boomi
-from boomi.models import AccountCloudAttachmentSummaryQueryConfig
+from boomi.models import (
+    AccountCloudAttachmentSummaryQueryConfig,
+    AccountCloudAttachmentSummarySimpleExpression,
+)
+from boomi.models.account_cloud_attachment_summary_query_config import AccountCloudAttachmentSummaryQueryConfigQueryFilter
+from boomi.models.account_cloud_attachment_summary_simple_expression import (
+    AccountCloudAttachmentSummarySimpleExpressionOperator,
+    AccountCloudAttachmentSummarySimpleExpressionProperty,
+)
 
 sdk = Boomi(
     access_token="YOUR_ACCESS_TOKEN",
@@ -118,15 +132,13 @@ sdk = Boomi(
 )
 
 request_body = AccountCloudAttachmentSummaryQueryConfig(
-    query_filter={
-        "expression": {
-            "argument": [
-                "argument"
-            ],
-            "operator": "EQUALS",
-            "property": "name"
-        }
-    }
+    query_filter=AccountCloudAttachmentSummaryQueryConfigQueryFilter(
+        expression=AccountCloudAttachmentSummarySimpleExpression(
+            operator=AccountCloudAttachmentSummarySimpleExpressionOperator.EQUALS,
+            property=AccountCloudAttachmentSummarySimpleExpressionProperty.RUNTIMEID,
+            argument=["fd6c5e19-ef0c-44bf-bd79-5d59b897c7a7"],
+        )
+    )
 )
 
 result = sdk.account_cloud_attachment_summary.query_account_cloud_attachment_summary(request_body=request_body)

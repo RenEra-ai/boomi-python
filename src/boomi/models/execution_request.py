@@ -41,9 +41,9 @@ class ExecutionRequest(BaseModel):
 
     def __init__(
         self,
-        dynamic_process_properties: ExecutionRequestDynamicProcessProperties,
-        process_properties: ExecutionRequestProcessProperties,
-        atom_id: str,
+        dynamic_process_properties: ExecutionRequestDynamicProcessProperties = SENTINEL,
+        process_properties: ExecutionRequestProcessProperties = SENTINEL,
+        atom_id: str = SENTINEL,
         process_id: str = SENTINEL,
         process_name: str = SENTINEL,
         record_url: str = SENTINEL,
@@ -52,12 +52,12 @@ class ExecutionRequest(BaseModel):
     ):
         """ExecutionRequest
 
-        :param dynamic_process_properties: The full list of Dynamic Process properties within the specified Runtime, Runtime cluster, or cloud, where each property is defined by their name and value.
-        :type dynamic_process_properties: ExecutionRequestDynamicProcessProperties
-        :param process_properties: The full list of Process properties within the specified Runtime, Runtime cluster, or cloud, where each property is defined by their name and value.
-        :type process_properties: ExecutionRequestProcessProperties
-        :param atom_id: The ID of the Runtime on which to run the process. Locate the Runtime ID by navigating to **Manage** \\> **Runtime Management** on the user interface, and viewing the Runtime Information panel for a selected Runtime.
-        :type atom_id: str
+        :param dynamic_process_properties: The full list of Dynamic Process properties within the specified Runtime, Runtime cluster, or cloud, where each property is defined by their name and value., defaults to None
+        :type dynamic_process_properties: ExecutionRequestDynamicProcessProperties, optional
+        :param process_properties: The full list of Process properties within the specified Runtime, Runtime cluster, or cloud, where each property is defined by their name and value., defaults to None
+        :type process_properties: ExecutionRequestProcessProperties, optional
+        :param atom_id: The ID of the Runtime on which to run the process. Locate the Runtime ID by navigating to **Manage** \\> **Runtime Management** on the user interface, and viewing the Runtime Information panel for a selected Runtime., defaults to None
+        :type atom_id: str, optional
         :param process_id: The ID of the process to run. You can find ID of a process by locating the process' **Component ID** in the **Revision History** dialog on the user interface., defaults to None
         :type process_id: str, optional
         :param process_name: process_name, defaults to None
@@ -67,13 +67,16 @@ class ExecutionRequest(BaseModel):
         :param request_id: request_id, defaults to None
         :type request_id: str, optional
         """
-        self.dynamic_process_properties = self._define_object(
-            dynamic_process_properties, ExecutionRequestDynamicProcessProperties
-        )
-        self.process_properties = self._define_object(
-            process_properties, ExecutionRequestProcessProperties
-        )
-        self.atom_id = atom_id
+        if atom_id is not SENTINEL:
+            self.atom_id = atom_id
+        if dynamic_process_properties is not SENTINEL:
+            self.dynamic_process_properties = self._define_object(
+                dynamic_process_properties, ExecutionRequestDynamicProcessProperties
+            )
+        if process_properties is not SENTINEL:
+            self.process_properties = self._define_object(
+                process_properties, ExecutionRequestProcessProperties
+            )
         if process_id is not SENTINEL:
             self.process_id = process_id
         if process_name is not SENTINEL:

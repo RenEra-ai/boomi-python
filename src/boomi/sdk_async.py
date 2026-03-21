@@ -34,6 +34,9 @@ from .services.async_.branch import BranchServiceAsync
 from .services.async_.change_listener_status import ChangeListenerStatusServiceAsync
 from .services.async_.clear_queue import ClearQueueServiceAsync
 from .services.async_.cloud import CloudServiceAsync
+from .services.async_.cloud_attachment_properties import (
+    CloudAttachmentPropertiesServiceAsync,
+)
 from .services.async_.component import ComponentServiceAsync
 from .services.async_.component_atom_attachment import (
     ComponentAtomAttachmentServiceAsync,
@@ -263,6 +266,9 @@ class BoomiAsync(Boomi):
         )
         self.clear_queue = ClearQueueServiceAsync(base_url=self._base_url)
         self.cloud = CloudServiceAsync(base_url=self._base_url)
+        self.cloud_attachment_properties = CloudAttachmentPropertiesServiceAsync(
+            base_url=self._base_url
+        )
         self.component = ComponentServiceAsync(base_url=self._base_url)
         self.component_atom_attachment = ComponentAtomAttachmentServiceAsync(
             base_url=self._base_url

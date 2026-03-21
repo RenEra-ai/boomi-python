@@ -22,6 +22,8 @@ from .public_certificate import PublicCertificate
         "reject_duplicate_messages": "rejectDuplicateMessages",
         "signing_public_certificate": "signingPublicCertificate",
         "enabled_folded_headers": "enabledFoldedHeaders",
+        "require_encrypted_messages": "requireEncryptedMessages",
+        "require_signed_messages": "requireSignedMessages",
     }
 )
 class As2PartnerInfo(BaseModel):
@@ -51,6 +53,10 @@ class As2PartnerInfo(BaseModel):
     :type signing_public_certificate: PublicCertificate, optional
     :param enabled_folded_headers: enabled_folded_headers, defaults to None
     :type enabled_folded_headers: bool, optional
+    :param require_encrypted_messages: require_encrypted_messages, defaults to None
+    :type require_encrypted_messages: bool, optional
+    :param require_signed_messages: require_signed_messages, defaults to None
+    :type require_signed_messages: bool, optional
     """
 
     def __init__(
@@ -67,6 +73,8 @@ class As2PartnerInfo(BaseModel):
         reject_duplicate_messages: bool = SENTINEL,
         signing_public_certificate: PublicCertificate = SENTINEL,
         enabled_folded_headers: bool = SENTINEL,
+        require_encrypted_messages: bool = SENTINEL,
+        require_signed_messages: bool = SENTINEL,
         **kwargs,
     ):
         """As2PartnerInfo
@@ -95,6 +103,10 @@ class As2PartnerInfo(BaseModel):
         :type signing_public_certificate: PublicCertificate, optional
         :param enabled_folded_headers: enabled_folded_headers, defaults to None
         :type enabled_folded_headers: bool, optional
+        :param require_encrypted_messages: require_encrypted_messages, defaults to None
+        :type require_encrypted_messages: bool, optional
+        :param require_signed_messages: require_signed_messages, defaults to None
+        :type require_signed_messages: bool, optional
         """
         if as2_id is not SENTINEL:
             self.as2_id = as2_id
@@ -132,4 +144,8 @@ class As2PartnerInfo(BaseModel):
             )
         if enabled_folded_headers is not SENTINEL:
             self.enabled_folded_headers = enabled_folded_headers
+        if require_encrypted_messages is not SENTINEL:
+            self.require_encrypted_messages = require_encrypted_messages
+        if require_signed_messages is not SENTINEL:
+            self.require_signed_messages = require_signed_messages
         self._kwargs = kwargs

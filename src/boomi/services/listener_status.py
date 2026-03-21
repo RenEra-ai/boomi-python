@@ -14,19 +14,53 @@ from ..models import (
 )
 
 
+def _has_container_id_equals(expr):
+    """Walk an expression tree and return True if it contains at least one
+    containerId EQUALS simple expression with a non-empty argument."""
+    # SimpleExpression: has .property and .operator attributes
+    if hasattr(expr, 'property') and hasattr(expr, 'operator'):
+        prop = getattr(expr.property, 'value', expr.property)
+        op = getattr(expr.operator, 'value', expr.operator)
+        if prop == "containerId" and op == "EQUALS":
+            arg = getattr(expr, 'argument', None)
+            if arg and isinstance(arg, list) and any(a for a in arg):
+                return True
+        return False
+    # GroupingExpression: has .nested_expression list
+    if hasattr(expr, 'nested_expression'):
+        nested = getattr(expr, 'nested_expression', None)
+        if nested:
+            return any(_has_container_id_equals(child) for child in nested)
+    return False
+
+
+def _validate_listener_status_query(request_body):
+    """Validate that a ListenerStatus query contains a required containerId EQUALS expression."""
+    if request_body is None:
+        raise ValueError("request_body is required for async_get_listener_status")
+    qf = getattr(request_body, 'query_filter', None)
+    if qf is None:
+        raise ValueError("request_body must have a query_filter with a containerId EQUALS expression")
+    expr = getattr(qf, 'expression', None)
+    if expr is None:
+        raise ValueError("query must contain at least one containerId EQUALS expression with a non-empty argument")
+    if not _has_container_id_equals(expr):
+        raise ValueError("query must contain at least one containerId EQUALS expression with a non-empty argument")
+
+
 class ListenerStatusService(BaseService):
 
     @cast_models
     def async_get_listener_status(
-        self, request_body: ListenerStatusQueryConfig = None
+        self, request_body: ListenerStatusQueryConfig
     ) -> Union[AsyncOperationTokenResult, str]:
         """Send an HTTP POST where {accountId} is the ID of the authenticating account for the request.
          >**Note:** For backward compatibility, Boomi continues to support the legacy URL: https://api.boomi.com/api/rest/v1/accountId/ListenerStatus/query/async.
 
          For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
-        :param request_body: The request body., defaults to None
-        :type request_body: ListenerStatusQueryConfig, optional
+        :param request_body: The request body. Must include a containerId EQUALS expression.
+        :type request_body: ListenerStatusQueryConfig
         ...
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
@@ -34,7 +68,10 @@ class ListenerStatusService(BaseService):
         :rtype: Union[AsyncOperationTokenResult, str]
         """
 
-        Validator(ListenerStatusQueryConfig).is_optional().validate(request_body)
+        if request_body is None:
+            raise ValueError("request_body is required for async_get_listener_status")
+        Validator(ListenerStatusQueryConfig).validate(request_body)
+        _validate_listener_status_query(request_body)
 
         serialized_request = (
             Serializer(

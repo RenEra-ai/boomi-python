@@ -14,3 +14,13 @@ class ProcessLogServiceAsync(ProcessLogService):
         self, request_body: ProcessLog = None
     ) -> Awaitable[Union[LogDownload, str]]:
         return to_async(super().create_process_log)(request_body)
+
+    def download_process_log(
+        self,
+        request_body: ProcessLog = None,
+        max_retries: int = 10,
+        initial_delay: float = 2.0,
+    ) -> Awaitable[bytes]:
+        return to_async(super().download_process_log)(
+            request_body, max_retries, initial_delay
+        )

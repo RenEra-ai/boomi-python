@@ -102,6 +102,13 @@ def _extract_component_data(parsed_dict):
                 if list(result_dict.keys()) == ['type']:
                     normalized_data['result'] = None
 
+            # Ensure result is always a list (mirrors QueryResult behavior at lines 121-122).
+            # xmltodict returns a single dict when there is one <result> element,
+            # but *AsyncResponse models expect List[...].
+            if 'result' in normalized_data and normalized_data['result'] is not None:
+                if not isinstance(normalized_data['result'], list):
+                    normalized_data['result'] = [normalized_data['result']]
+
             return normalized_data
 
     # Check if this is a Component response

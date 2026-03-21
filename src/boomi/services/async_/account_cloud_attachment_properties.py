@@ -19,7 +19,7 @@ class AccountCloudAttachmentPropertiesServiceAsync(
     """
 
     def update_account_cloud_attachment_properties(
-        self, id_: str, request_body: AccountCloudAttachmentProperties = None
+        self, id_: str, request_body: AccountCloudAttachmentProperties,
     ) -> Awaitable[Union[AccountCloudAttachmentProperties, str]]:
         return to_async(super().update_account_cloud_attachment_properties)(
             id_, request_body

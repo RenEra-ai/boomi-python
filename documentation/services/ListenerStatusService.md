@@ -16,9 +16,9 @@ Send an HTTP POST where {accountId} is the ID of the authenticating account for 
 
 **Parameters**
 
-| Name         | Type                                                                | Required | Description       |
-| :----------- | :------------------------------------------------------------------ | :------- | :---------------- |
-| request_body | [ListenerStatusQueryConfig](../models/ListenerStatusQueryConfig.md) | ❌       | The request body. |
+| Name         | Type                                                                | Required | Description                                                        |
+| :----------- | :------------------------------------------------------------------ | :------- | :----------------------------------------------------------------- |
+| request_body | [ListenerStatusQueryConfig](../models/ListenerStatusQueryConfig.md) | ✅       | The request body. Must include a containerId EQUALS expression.    |
 
 **Return Type**
 
@@ -41,10 +41,10 @@ request_body = ListenerStatusQueryConfig(
     query_filter={
         "expression": {
             "argument": [
-                "argument"
+                "your-container-id"
             ],
             "operator": "EQUALS",
-            "property": "listenerId"
+            "property": "containerId"
         }
     }
 )
@@ -87,4 +87,3 @@ result = sdk.listener_status.async_token_listener_status(token="token")
 
 print(result)
 ```
-

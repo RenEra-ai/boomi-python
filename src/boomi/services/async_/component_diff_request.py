@@ -22,7 +22,7 @@ class ComponentDiffRequestServiceAsync(ComponentDiffRequestService):
 
     def get_component_diff_request(
         self, component_id: str
-    ) -> Awaitable[Union[ComponentDiffRequest, str]]:
+    ) -> Awaitable[Union[ComponentDiffResponseCreate, str]]:
         return to_async(super().get_component_diff_request)(component_id)
 
     def bulk_component_diff_request(

@@ -15,7 +15,7 @@ from .custom_properties import CustomProperties
         "id_": "id",
         "use_default": "useDefault",
         "uses_encryption": "usesEncryption",
-        "cloud_managed_secret_config": "cloudManagedSecretConfig",
+        "cloud_managed_secret_config": "CloudManagedSecretConfig",
     }
 )
 class Field(BaseModel):

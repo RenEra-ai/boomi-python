@@ -10,5 +10,6 @@
 | id\_                | str              | ❌       |             |
 | use_default         | bool             | ❌       |             |
 | uses_encryption     | bool             | ❌       |             |
-| value               | str              | ❌       |             |
+| value                       | str                      | ❌       |             |
+| cloud_managed_secret_config | CloudManagedSecretConfig | ❌       |             |
 

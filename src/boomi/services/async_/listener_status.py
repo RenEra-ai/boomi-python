@@ -15,7 +15,7 @@ class ListenerStatusServiceAsync(ListenerStatusService):
     """
 
     def async_get_listener_status(
-        self, request_body: ListenerStatusQueryConfig = None
+        self, request_body: ListenerStatusQueryConfig
     ) -> Awaitable[Union[AsyncOperationTokenResult, str]]:
         return to_async(super().async_get_listener_status)(request_body)
 

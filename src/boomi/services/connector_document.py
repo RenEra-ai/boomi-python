@@ -34,6 +34,7 @@ class ConnectorDocumentService(BaseService):
                 f"{self.base_url or Environment.DEFAULT.url}/ConnectorDocument",
                 [self.get_access_token(), self.get_basic_auth()],
             )
+            .add_header("Accept", "application/json")
             .serialize()
             .set_method("POST")
             .set_body(request_body)
@@ -45,3 +46,30 @@ class ConnectorDocumentService(BaseService):
         if content == "application/xml":
             return ConnectorDocumentDownload._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
+
+    def download_connector_document(
+        self,
+        request_body: ConnectorDocument = None,
+        max_retries: int = 10,
+        initial_delay: float = 2.0,
+    ) -> bytes:
+        """Request and download raw document data for a specific Generic Connector Record.
+
+        Combines the two-phase download process: submits the download request via
+        create_connector_document(), then polls the returned URL until the content is ready.
+
+        :param request_body: The request body., defaults to None
+        :type request_body: ConnectorDocument, optional
+        :param max_retries: Maximum number of polling attempts., defaults to 10
+        :type max_retries: int
+        :param initial_delay: Initial delay in seconds between retries., defaults to 2.0
+        :type initial_delay: float
+        :return: The raw document content as bytes.
+        :rtype: bytes
+        """
+        result = self.create_connector_document(request_body=request_body)
+        if not hasattr(result, "url") or not result.url:
+            raise ApiError("No download URL in response", 0, result)
+        return self._poll_download_url(
+            result.url, max_retries=max_retries, initial_delay=initial_delay
+        )

@@ -39,7 +39,8 @@ Thumbs.db
 CLAUDE.md
 CLAUDE.local.md
 
-# Test files (keep only committed tests)
+# Test files and directory
+tests/
 test_*.py
 *_test.py
 
@@ -50,3 +51,6 @@ examples/_template_*.py
 artifacts/
 logs/
 test_artifacts/
+todo/
+@todo/
+docs/

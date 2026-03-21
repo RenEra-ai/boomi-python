@@ -97,7 +97,7 @@ class JsonMap:
             result_dict['@type'] = TYPE_NAME_MAPPING.get(class_name, class_name)
 
             for key, value in attribute_dict.items():
-                if key == "_kwargs" or not was_value_set(value):
+                if key.startswith("_") or not was_value_set(value):
                     continue
 
                 # Skip None values - Boomi API doesn't accept nulls
@@ -136,8 +136,14 @@ class JsonMap:
             mapped_attributes = {}
 
             for key, value in mapped_data.items():
-                # Handle Boomi BigInteger format: ['BigInteger', 2575] -> 2575
-                if isinstance(value, list) and len(value) == 2 and value[0] == 'BigInteger':
+                # Handle Boomi typed-array format: ['BigInteger', 2575] -> 2575, ['Long', 3496] -> 3496
+                # Only unwrap known Java type wrappers, not arbitrary [str, value] lists
+                _JAVA_TYPE_NAMES = {
+                    'BigInteger', 'BigDecimal', 'Long', 'Integer', 'Short', 'Byte',
+                    'Float', 'Double', 'Boolean', 'String', 'Character',
+                }
+                if (isinstance(value, list) and len(value) == 2
+                        and isinstance(value[0], str) and value[0] in _JAVA_TYPE_NAMES):
                     value = value[1]
                 mapped_key = reversed_map.get(key, key)
                 mapped_attributes[mapped_key] = value

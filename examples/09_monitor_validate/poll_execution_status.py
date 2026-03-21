@@ -46,9 +46,9 @@ from typing import Optional, Dict, Any, Tuple
 
 
 # Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'src'))
 
-from src.boomi import Boomi
+from boomi import Boomi
 
 
 class ExecutionStatusPoller:
@@ -74,7 +74,7 @@ class ExecutionStatusPoller:
         """Get current execution status and details using SDK"""
         try:
             # Import SDK models
-            from src.boomi.models import (
+            from boomi.models import (
                 ExecutionRecordQueryConfig,
                 ExecutionRecordQueryConfigQueryFilter,
                 ExecutionRecordSimpleExpression,
@@ -328,7 +328,7 @@ class ExecutionStatusPoller:
         # Try to find a recent execution to use as an example using SDK
         try:
             # Import SDK models
-            from src.boomi.models import (
+            from boomi.models import (
                 ExecutionRecordQueryConfig,
                 ExecutionRecordQueryConfigQueryFilter,
                 ExecutionRecordSimpleExpression,

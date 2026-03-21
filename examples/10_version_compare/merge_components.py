@@ -52,7 +52,7 @@ from datetime import datetime
 from typing import Optional, List, Dict, Any, Tuple
 
 # Add parent directory to path for imports
-sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'src'))
 
 # Load environment variables from .env file if available
 try:
@@ -61,8 +61,8 @@ try:
 except ImportError:
     pass  # dotenv is optional
 
-from src.boomi import Boomi
-from src.boomi.models import (
+from boomi import Boomi
+from boomi.models import (
     Component,
     ComponentMetadataQueryConfig,
     ComponentMetadataQueryConfigQueryFilter,

@@ -14,3 +14,13 @@ class ConnectorDocumentServiceAsync(ConnectorDocumentService):
         self, request_body: ConnectorDocument = None
     ) -> Awaitable[Union[ConnectorDocumentDownload, str]]:
         return to_async(super().create_connector_document)(request_body)
+
+    def download_connector_document(
+        self,
+        request_body: ConnectorDocument = None,
+        max_retries: int = 10,
+        initial_delay: float = 2.0,
+    ) -> Awaitable[bytes]:
+        return to_async(super().download_connector_document)(
+            request_body, max_retries, initial_delay
+        )
