@@ -69,10 +69,16 @@ class EnvironmentMapExtensionUserDefinedFunctionSummarySimpleExpressionProperty(
     :vartype ENVIRONMENTID: str
     :cvar EXTENSIONGROUPID: "extensionGroupId"
     :vartype EXTENSIONGROUPID: str
+    :cvar ENVIRONMENTMAPEXTENSIONID: "environmentMapExtensionId"
+    :vartype ENVIRONMENTMAPEXTENSIONID: str
+    :cvar COMPONENTID: "componentId"
+    :vartype COMPONENTID: str
     """
 
     ENVIRONMENTID = "environmentId"
     EXTENSIONGROUPID = "extensionGroupId"
+    ENVIRONMENTMAPEXTENSIONID = "environmentMapExtensionId"
+    COMPONENTID = "componentId"
 
     def list():
         """Lists all category values.

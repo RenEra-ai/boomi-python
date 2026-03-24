@@ -16117,7 +16117,7 @@
                 "description": "For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](https://developer.boomi.com/docs/APIs/PlatformAPI/Introduction/Query_filters) and [Query paging](https://developer.boomi.com/docs/APIs/PlatformAPI/Introduction/Query_paging).", 
                 "operationId": "QueryEnvironmentMapExtensionUserDefinedFunctionSummary", 
                 "requestBody": {
-                    "description": " Possible properties include: environmentId, extensionGroupId", 
+                    "description": " Possible properties include: environmentId, extensionGroupId, environmentMapExtensionId, componentId",
                     "content": {
                         "application/json": {
                             "schema": {
@@ -49290,21 +49290,23 @@
                         ]
                     }, 
                     "property": {
-                        "type": "string", 
+                        "type": "string",
                         "xml": {
                             "attribute": true
-                        }, 
+                        },
                         "enum": [
-                            "environmentId", 
-                            "extensionGroupId"
+                            "environmentId",
+                            "extensionGroupId",
+                            "environmentMapExtensionId",
+                            "componentId"
                         ]
                     }
-                }, 
+                },
                 "xml": {
-                    "name": "SimpleExpression", 
+                    "name": "SimpleExpression",
                     "namespace": "http://api.platform.boomi.com/"
                 }
-            }, 
+            },
             "EnvironmentMapExtensionsSummary": {
                 "required": [
                     "DestinationFieldSet", 
