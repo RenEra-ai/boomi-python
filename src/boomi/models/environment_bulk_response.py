@@ -18,8 +18,8 @@ from .environment import Environment
 class EnvironmentBulkResponseResponse(BaseModel):
     """EnvironmentBulkResponseResponse
 
-    :param result: result
-    :type result: Environment
+    :param result: result, defaults to None
+    :type result: Environment, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class EnvironmentBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: Environment,
+        result: Environment = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class EnvironmentBulkResponseResponse(BaseModel):
     ):
         """EnvironmentBulkResponseResponse
 
-        :param result: result
-        :type result: Environment
+        :param result: result, defaults to None
+        :type result: Environment, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class EnvironmentBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, Environment)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, Environment)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

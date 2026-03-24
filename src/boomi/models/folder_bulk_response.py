@@ -18,8 +18,8 @@ from .folder import Folder
 class FolderBulkResponseResponse(BaseModel):
     """FolderBulkResponseResponse
 
-    :param result: result
-    :type result: Folder
+    :param result: result, defaults to None
+    :type result: Folder, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class FolderBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: Folder,
+        result: Folder = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class FolderBulkResponseResponse(BaseModel):
     ):
         """FolderBulkResponseResponse
 
-        :param result: result
-        :type result: Folder
+        :param result: result, defaults to None
+        :type result: Folder, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class FolderBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, Folder)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, Folder)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

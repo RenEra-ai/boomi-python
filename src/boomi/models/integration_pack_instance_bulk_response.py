@@ -18,8 +18,8 @@ from .integration_pack_instance import IntegrationPackInstance
 class IntegrationPackInstanceBulkResponseResponse(BaseModel):
     """IntegrationPackInstanceBulkResponseResponse
 
-    :param result: result
-    :type result: IntegrationPackInstance
+    :param result: result, defaults to None
+    :type result: IntegrationPackInstance, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class IntegrationPackInstanceBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: IntegrationPackInstance,
+        result: IntegrationPackInstance = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class IntegrationPackInstanceBulkResponseResponse(BaseModel):
     ):
         """IntegrationPackInstanceBulkResponseResponse
 
-        :param result: result
-        :type result: IntegrationPackInstance
+        :param result: result, defaults to None
+        :type result: IntegrationPackInstance, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class IntegrationPackInstanceBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, IntegrationPackInstance)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, IntegrationPackInstance)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

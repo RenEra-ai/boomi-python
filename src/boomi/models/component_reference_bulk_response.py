@@ -18,8 +18,8 @@ from .component_reference import ComponentReference
 class ComponentReferenceBulkResponseResponse(BaseModel):
     """ComponentReferenceBulkResponseResponse
 
-    :param result: result
-    :type result: ComponentReference
+    :param result: result, defaults to None
+    :type result: ComponentReference, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class ComponentReferenceBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: ComponentReference,
+        result: ComponentReference = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class ComponentReferenceBulkResponseResponse(BaseModel):
     ):
         """ComponentReferenceBulkResponseResponse
 
-        :param result: result
-        :type result: ComponentReference
+        :param result: result, defaults to None
+        :type result: ComponentReference, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class ComponentReferenceBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, ComponentReference)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, ComponentReference)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

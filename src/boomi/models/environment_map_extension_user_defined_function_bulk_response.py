@@ -20,8 +20,8 @@ from .environment_map_extension_user_defined_function import (
 class EnvironmentMapExtensionUserDefinedFunctionBulkResponseResponse(BaseModel):
     """EnvironmentMapExtensionUserDefinedFunctionBulkResponseResponse
 
-    :param result: result
-    :type result: EnvironmentMapExtensionUserDefinedFunction
+    :param result: result, defaults to None
+    :type result: EnvironmentMapExtensionUserDefinedFunction, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -34,7 +34,7 @@ class EnvironmentMapExtensionUserDefinedFunctionBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: EnvironmentMapExtensionUserDefinedFunction,
+        result: EnvironmentMapExtensionUserDefinedFunction = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -43,8 +43,8 @@ class EnvironmentMapExtensionUserDefinedFunctionBulkResponseResponse(BaseModel):
     ):
         """EnvironmentMapExtensionUserDefinedFunctionBulkResponseResponse
 
-        :param result: result
-        :type result: EnvironmentMapExtensionUserDefinedFunction
+        :param result: result, defaults to None
+        :type result: EnvironmentMapExtensionUserDefinedFunction, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -54,9 +54,10 @@ class EnvironmentMapExtensionUserDefinedFunctionBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(
-            result, EnvironmentMapExtensionUserDefinedFunction
-        )
+        if result is not SENTINEL:
+            self.result = self._define_object(
+                result, EnvironmentMapExtensionUserDefinedFunction
+            )
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

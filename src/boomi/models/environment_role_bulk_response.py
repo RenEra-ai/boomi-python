@@ -18,8 +18,8 @@ from .environment_role import EnvironmentRole
 class EnvironmentRoleBulkResponseResponse(BaseModel):
     """EnvironmentRoleBulkResponseResponse
 
-    :param result: result
-    :type result: EnvironmentRole
+    :param result: result, defaults to None
+    :type result: EnvironmentRole, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class EnvironmentRoleBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: EnvironmentRole,
+        result: EnvironmentRole = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class EnvironmentRoleBulkResponseResponse(BaseModel):
     ):
         """EnvironmentRoleBulkResponseResponse
 
-        :param result: result
-        :type result: EnvironmentRole
+        :param result: result, defaults to None
+        :type result: EnvironmentRole, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class EnvironmentRoleBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, EnvironmentRole)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, EnvironmentRole)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

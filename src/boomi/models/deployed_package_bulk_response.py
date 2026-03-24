@@ -18,8 +18,8 @@ from .deployed_package import DeployedPackage
 class DeployedPackageBulkResponseResponse(BaseModel):
     """DeployedPackageBulkResponseResponse
 
-    :param result: result
-    :type result: DeployedPackage
+    :param result: result, defaults to None
+    :type result: DeployedPackage, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class DeployedPackageBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: DeployedPackage,
+        result: DeployedPackage = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class DeployedPackageBulkResponseResponse(BaseModel):
     ):
         """DeployedPackageBulkResponseResponse
 
-        :param result: result
-        :type result: DeployedPackage
+        :param result: result, defaults to None
+        :type result: DeployedPackage, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class DeployedPackageBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, DeployedPackage)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, DeployedPackage)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

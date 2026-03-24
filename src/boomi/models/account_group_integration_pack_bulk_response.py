@@ -18,8 +18,8 @@ from .account_group_integration_pack import AccountGroupIntegrationPack
 class AccountGroupIntegrationPackBulkResponseResponse(BaseModel):
     """AccountGroupIntegrationPackBulkResponseResponse
 
-    :param result: result
-    :type result: AccountGroupIntegrationPack
+    :param result: result, defaults to None
+    :type result: AccountGroupIntegrationPack, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class AccountGroupIntegrationPackBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: AccountGroupIntegrationPack,
+        result: AccountGroupIntegrationPack = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class AccountGroupIntegrationPackBulkResponseResponse(BaseModel):
     ):
         """AccountGroupIntegrationPackBulkResponseResponse
 
-        :param result: result
-        :type result: AccountGroupIntegrationPack
+        :param result: result, defaults to None
+        :type result: AccountGroupIntegrationPack, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class AccountGroupIntegrationPackBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, AccountGroupIntegrationPack)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, AccountGroupIntegrationPack)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

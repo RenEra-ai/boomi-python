@@ -18,8 +18,8 @@ from .shared_server_information import SharedServerInformation
 class SharedServerInformationBulkResponseResponse(BaseModel):
     """SharedServerInformationBulkResponseResponse
 
-    :param result: result
-    :type result: SharedServerInformation
+    :param result: result, defaults to None
+    :type result: SharedServerInformation, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class SharedServerInformationBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: SharedServerInformation,
+        result: SharedServerInformation = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class SharedServerInformationBulkResponseResponse(BaseModel):
     ):
         """SharedServerInformationBulkResponseResponse
 
-        :param result: result
-        :type result: SharedServerInformation
+        :param result: result, defaults to None
+        :type result: SharedServerInformation, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class SharedServerInformationBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, SharedServerInformation)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, SharedServerInformation)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

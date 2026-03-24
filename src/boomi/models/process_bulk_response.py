@@ -18,8 +18,8 @@ from .process import Process
 class ProcessBulkResponseResponse(BaseModel):
     """ProcessBulkResponseResponse
 
-    :param result: result
-    :type result: Process
+    :param result: result, defaults to None
+    :type result: Process, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class ProcessBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: Process,
+        result: Process = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class ProcessBulkResponseResponse(BaseModel):
     ):
         """ProcessBulkResponseResponse
 
-        :param result: result
-        :type result: Process
+        :param result: result, defaults to None
+        :type result: Process, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class ProcessBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, Process)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, Process)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

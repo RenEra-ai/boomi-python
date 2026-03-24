@@ -18,8 +18,8 @@ from .atom import Atom
 class AtomBulkResponseResponse(BaseModel):
     """AtomBulkResponseResponse
 
-    :param result: result
-    :type result: Atom
+    :param result: result, defaults to None
+    :type result: Atom, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class AtomBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: Atom,
+        result: Atom = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class AtomBulkResponseResponse(BaseModel):
     ):
         """AtomBulkResponseResponse
 
-        :param result: result
-        :type result: Atom
+        :param result: result, defaults to None
+        :type result: Atom, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class AtomBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, Atom)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, Atom)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

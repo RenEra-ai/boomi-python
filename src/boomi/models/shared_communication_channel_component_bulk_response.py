@@ -18,8 +18,8 @@ from .shared_communication_channel_component import SharedCommunicationChannelCo
 class SharedCommunicationChannelComponentBulkResponseResponse(BaseModel):
     """SharedCommunicationChannelComponentBulkResponseResponse
 
-    :param result: result
-    :type result: SharedCommunicationChannelComponent
+    :param result: result, defaults to None
+    :type result: SharedCommunicationChannelComponent, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class SharedCommunicationChannelComponentBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: SharedCommunicationChannelComponent,
+        result: SharedCommunicationChannelComponent = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class SharedCommunicationChannelComponentBulkResponseResponse(BaseModel):
     ):
         """SharedCommunicationChannelComponentBulkResponseResponse
 
-        :param result: result
-        :type result: SharedCommunicationChannelComponent
+        :param result: result, defaults to None
+        :type result: SharedCommunicationChannelComponent, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class SharedCommunicationChannelComponentBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, SharedCommunicationChannelComponent)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, SharedCommunicationChannelComponent)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

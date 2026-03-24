@@ -18,8 +18,8 @@ from .account_cloud_attachment_summary import AccountCloudAttachmentSummary
 class AccountCloudAttachmentSummaryBulkResponseResponse(BaseModel):
     """AccountCloudAttachmentSummaryBulkResponseResponse
 
-    :param result: result
-    :type result: AccountCloudAttachmentSummary
+    :param result: result, defaults to None
+    :type result: AccountCloudAttachmentSummary, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class AccountCloudAttachmentSummaryBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: AccountCloudAttachmentSummary,
+        result: AccountCloudAttachmentSummary = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class AccountCloudAttachmentSummaryBulkResponseResponse(BaseModel):
     ):
         """AccountCloudAttachmentSummaryBulkResponseResponse
 
-        :param result: result
-        :type result: AccountCloudAttachmentSummary
+        :param result: result, defaults to None
+        :type result: AccountCloudAttachmentSummary, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class AccountCloudAttachmentSummaryBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, AccountCloudAttachmentSummary)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, AccountCloudAttachmentSummary)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

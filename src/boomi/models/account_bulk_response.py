@@ -18,8 +18,8 @@ from .account import Account
 class AccountBulkResponseResponse(BaseModel):
     """AccountBulkResponseResponse
 
-    :param result: result
-    :type result: Account
+    :param result: result, defaults to None
+    :type result: Account, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class AccountBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: Account,
+        result: Account = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class AccountBulkResponseResponse(BaseModel):
     ):
         """AccountBulkResponseResponse
 
-        :param result: result
-        :type result: Account
+        :param result: result, defaults to None
+        :type result: Account, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class AccountBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, Account)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, Account)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

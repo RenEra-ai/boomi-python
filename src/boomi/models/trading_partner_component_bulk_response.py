@@ -18,8 +18,8 @@ from .trading_partner_component import TradingPartnerComponent
 class TradingPartnerComponentBulkResponseResponse(BaseModel):
     """TradingPartnerComponentBulkResponseResponse
 
-    :param result: result
-    :type result: TradingPartnerComponent
+    :param result: result, defaults to None
+    :type result: TradingPartnerComponent, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class TradingPartnerComponentBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: TradingPartnerComponent,
+        result: TradingPartnerComponent = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class TradingPartnerComponentBulkResponseResponse(BaseModel):
     ):
         """TradingPartnerComponentBulkResponseResponse
 
-        :param result: result
-        :type result: TradingPartnerComponent
+        :param result: result, defaults to None
+        :type result: TradingPartnerComponent, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class TradingPartnerComponentBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, TradingPartnerComponent)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, TradingPartnerComponent)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:

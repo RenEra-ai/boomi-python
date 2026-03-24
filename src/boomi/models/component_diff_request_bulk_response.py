@@ -18,8 +18,8 @@ from .component_diff_request import ComponentDiffRequest
 class ComponentDiffRequestBulkResponseResponse(BaseModel):
     """ComponentDiffRequestBulkResponseResponse
 
-    :param result: result
-    :type result: ComponentDiffRequest
+    :param result: result, defaults to None
+    :type result: ComponentDiffRequest, optional
     :param index: index, defaults to None
     :type index: int, optional
     :param id_: id_, defaults to None
@@ -32,7 +32,7 @@ class ComponentDiffRequestBulkResponseResponse(BaseModel):
 
     def __init__(
         self,
-        result: ComponentDiffRequest,
+        result: ComponentDiffRequest = SENTINEL,
         index: int = SENTINEL,
         id_: str = SENTINEL,
         status_code: int = SENTINEL,
@@ -41,8 +41,8 @@ class ComponentDiffRequestBulkResponseResponse(BaseModel):
     ):
         """ComponentDiffRequestBulkResponseResponse
 
-        :param result: result
-        :type result: ComponentDiffRequest
+        :param result: result, defaults to None
+        :type result: ComponentDiffRequest, optional
         :param index: index, defaults to None
         :type index: int, optional
         :param id_: id_, defaults to None
@@ -52,7 +52,8 @@ class ComponentDiffRequestBulkResponseResponse(BaseModel):
         :param error_message: error_message, defaults to None
         :type error_message: str, optional
         """
-        self.result = self._define_object(result, ComponentDiffRequest)
+        if result is not SENTINEL:
+            self.result = self._define_object(result, ComponentDiffRequest)
         if index is not SENTINEL:
             self.index = index
         if id_ is not SENTINEL:
