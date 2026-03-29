@@ -43,7 +43,8 @@ class BaseModel:
                 wrapper_key = list(json_mapping.values())[0]
                 return input_class._unmap({wrapper_key: input_data})
             raise TypeError(
-                f"Expected dict or {input_class.__name__} for object field, got list"
+                f"Expected dict or {input_class.__name__} for object field, got list. "
+                f"If this is a wrapper model, ensure it has exactly one @JsonMap field."
             )
         else:
             return input_class._unmap(input_data)
