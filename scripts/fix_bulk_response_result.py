@@ -14,8 +14,13 @@ MODEL_DIR = os.path.join(os.path.dirname(__file__), '..', 'src', 'boomi', 'model
 
 
 def fix_file(filepath):
+    """Returns 'modified', 'already_fixed', or 'skipped'."""
     with open(filepath, 'r') as f:
         content = f.read()
+
+    # Idempotency guard: if result already has = SENTINEL, skip
+    if re.search(r'result:.*= SENTINEL', content):
+        return 'already_fixed'
 
     original = content
 
@@ -60,8 +65,8 @@ def fix_file(filepath):
     if content != original:
         with open(filepath, 'w') as f:
             f.write(content)
-        return True
-    return False
+        return 'modified'
+    return 'skipped'
 
 
 def main():
@@ -69,16 +74,33 @@ def main():
     files = sorted(glob.glob(pattern))
     print(f"Found {len(files)} bulk response files")
 
-    modified = 0
+    modified = []
+    already_fixed = []
+    skipped = []
+    errors = []
+
     for filepath in files:
         basename = os.path.basename(filepath)
-        if fix_file(filepath):
-            print(f"  Fixed: {basename}")
-            modified += 1
-        else:
-            print(f"  Skipped (no changes): {basename}")
+        try:
+            result = fix_file(filepath)
+            if result == 'modified':
+                print(f"  Fixed: {basename}")
+                modified.append(basename)
+            elif result == 'already_fixed':
+                print(f"  Already fixed: {basename}")
+                already_fixed.append(basename)
+            else:
+                print(f"  Skipped (no changes): {basename}")
+                skipped.append(basename)
+        except Exception as e:
+            print(f"  Error: {basename}: {e}")
+            errors.append(basename)
 
-    print(f"\nModified {modified}/{len(files)} files")
+    print(f"\nSummary:")
+    print(f"  Modified: {len(modified)}")
+    print(f"  Already fixed: {len(already_fixed)}")
+    print(f"  Skipped: {len(skipped)}")
+    print(f"  Errors: {len(errors)}")
 
 
 if __name__ == '__main__':

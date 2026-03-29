@@ -20,19 +20,21 @@ def fix_async_response_file(filepath):
 
     Pattern: response_status_code: int, -> response_status_code: int = SENTINEL,
     Plus: self.response_status_code = response_status_code -> guarded assignment
+
+    Returns 'modified', 'already_fixed', or 'skipped'.
     """
     with open(filepath, 'r') as f:
         content = f.read()
 
     original = content
 
-    # Skip already-fixed files (have = SENTINEL on response_status_code)
-    if re.search(r'response_status_code: int = SENTINEL', content):
-        return False
+    # Idempotency guard: skip already-fixed files
+    if re.search(r'response_status_code:.*= SENTINEL', content):
+        return 'already_fixed'
 
     # Skip files that don't have the required positional pattern
     if not re.search(r'response_status_code: int[,)]', content):
-        return False
+        return 'skipped'
 
     # 1. Add = SENTINEL default to response_status_code in __init__ signature
     content = re.sub(
@@ -73,22 +75,24 @@ def fix_async_response_file(filepath):
     if content != original:
         with open(filepath, 'w') as f:
             f.write(content)
-        return True
-    return False
+        return 'modified'
+    return 'skipped'
 
 
 def fix_async_operation_token_result(filepath):
     """Fix AsyncOperationTokenResult which has two required positional args:
     async_token: AsyncToken and response_status_code: int.
+
+    Returns 'modified', 'already_fixed', or 'skipped'.
     """
     with open(filepath, 'r') as f:
         content = f.read()
 
     original = content
 
-    # Skip if already fixed
+    # Idempotency guard: skip if already fixed
     if 'SENTINEL' in content:
-        return False
+        return 'already_fixed'
 
     # 1. Add SENTINEL import
     content = content.replace(
@@ -132,44 +136,70 @@ def fix_async_operation_token_result(filepath):
     if content != original:
         with open(filepath, 'w') as f:
             f.write(content)
-        return True
-    return False
+        return 'modified'
+    return 'skipped'
+
+
+def _track(result, basename, modified, already_fixed, skipped):
+    """Helper to track and print per-file outcome."""
+    if result == 'modified':
+        print(f"  Fixed: {basename}")
+        modified.append(basename)
+    elif result == 'already_fixed':
+        print(f"  Already fixed: {basename}")
+        already_fixed.append(basename)
+    else:
+        print(f"  Skipped (no match): {basename}")
+        skipped.append(basename)
 
 
 def main():
+    modified = []
+    already_fixed = []
+    skipped = []
+    errors = []
+
     # 1. Fix all *_async_response.py files
     pattern = os.path.join(MODEL_DIR, '*_async_response.py')
     files = sorted(glob.glob(pattern))
     print(f"Found {len(files)} async response files")
 
-    modified = 0
     for filepath in files:
         basename = os.path.basename(filepath)
-        if fix_async_response_file(filepath):
-            print(f"  Fixed: {basename}")
-            modified += 1
-        else:
-            print(f"  Skipped (already fixed or no match): {basename}")
+        try:
+            result = fix_async_response_file(filepath)
+            _track(result, basename, modified, already_fixed, skipped)
+        except Exception as e:
+            print(f"  Error: {basename}: {e}")
+            errors.append(basename)
 
     # 2. Fix AsyncOperationTokenResult
     token_result = os.path.join(MODEL_DIR, 'async_operation_token_result.py')
     if os.path.exists(token_result):
-        if fix_async_operation_token_result(token_result):
-            print(f"  Fixed: async_operation_token_result.py")
-            modified += 1
-        else:
-            print(f"  Skipped: async_operation_token_result.py")
+        basename = 'async_operation_token_result.py'
+        try:
+            result = fix_async_operation_token_result(token_result)
+            _track(result, basename, modified, already_fixed, skipped)
+        except Exception as e:
+            print(f"  Error: {basename}: {e}")
+            errors.append(basename)
 
     # 3. Fix ReleaseIntegrationPackStatus (same pattern as async responses)
     release_status = os.path.join(MODEL_DIR, 'release_integration_pack_status.py')
     if os.path.exists(release_status):
-        if fix_async_response_file(release_status):
-            print(f"  Fixed: release_integration_pack_status.py")
-            modified += 1
-        else:
-            print(f"  Skipped: release_integration_pack_status.py")
+        basename = 'release_integration_pack_status.py'
+        try:
+            result = fix_async_response_file(release_status)
+            _track(result, basename, modified, already_fixed, skipped)
+        except Exception as e:
+            print(f"  Error: {basename}: {e}")
+            errors.append(basename)
 
-    print(f"\nModified {modified} files total")
+    print(f"\nSummary:")
+    print(f"  Modified: {len(modified)}")
+    print(f"  Already fixed: {len(already_fixed)}")
+    print(f"  Skipped: {len(skipped)}")
+    print(f"  Errors: {len(errors)}")
 
 
 if __name__ == '__main__':
