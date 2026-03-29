@@ -33,40 +33,39 @@ def fix_file(filepath):
 
     original = content
 
-    # Idempotency guard: skip if int() casts are already present
-    if 'int(response_status_code)' in content or 'int(number_of_results)' in content:
-        return 'already_fixed'
-
-    # Check if the file has any of the target assignments
-    has_rsc = re.search(
+    # Check each field independently — a file may have int() on one field
+    # but not the other (e.g., after fix_async_response_required_args.py
+    # adds int(response_status_code) but not int(number_of_results)).
+    needs_rsc = bool(re.search(
         r'^ +self\.response_status_code = response_status_code$',
         content,
         flags=re.MULTILINE,
-    )
-    has_nor = re.search(
+    ))
+    needs_nor = bool(re.search(
         r'^ +self\.number_of_results = number_of_results$',
         content,
         flags=re.MULTILINE,
-    )
+    ))
 
-    if not has_rsc and not has_nor:
-        return 'skipped'
+    if not needs_rsc and not needs_nor:
+        # Both fields are either already cast or absent
+        return 'already_fixed' if ('response_status_code' in content or 'number_of_results' in content) else 'skipped'
 
-    # Wrap response_status_code assignment with int()
-    content = re.sub(
-        r'^( +)(self\.response_status_code) = response_status_code$',
-        r'\1\2 = int(response_status_code)',
-        content,
-        flags=re.MULTILINE,
-    )
+    if needs_rsc:
+        content = re.sub(
+            r'^( +)(self\.response_status_code) = response_status_code$',
+            r'\1\2 = int(response_status_code)',
+            content,
+            flags=re.MULTILINE,
+        )
 
-    # Wrap number_of_results assignment with int()
-    content = re.sub(
-        r'^( +)(self\.number_of_results) = number_of_results$',
-        r'\1\2 = int(number_of_results)',
-        content,
-        flags=re.MULTILINE,
-    )
+    if needs_nor:
+        content = re.sub(
+            r'^( +)(self\.number_of_results) = number_of_results$',
+            r'\1\2 = int(number_of_results)',
+            content,
+            flags=re.MULTILINE,
+        )
 
     if content != original:
         with open(filepath, 'w') as f:
