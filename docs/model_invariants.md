@@ -73,6 +73,21 @@ This handles wrapper models like `MapExtensionsInputs` where the API returns `{"
 
 `_define_list()` auto-wraps a single dict into `[dict]` because xmltodict returns a bare dict instead of a 1-element list for single XML child elements.
 
+## XML Int Coercion
+
+`parse_xml_to_dict()` returns all values as strings. Fields typed as `int` in the model (`response_status_code`, `number_of_results`) must cast explicitly:
+
+```python
+if response_status_code is not SENTINEL:
+    self.response_status_code = int(response_status_code)
+if number_of_results is not SENTINEL:
+    self.number_of_results = int(number_of_results)
+```
+
+Applies to all 13 async response models plus `AsyncOperationTokenResult` and `ReleaseIntegrationPackStatus`.
+
+**Fix script:** `scripts/fix_int_coercion.py` — applies `int()` casts across all affected models.
+
 ## Batch Fix Scripts
 
 When a bug class affects many models, use a script in `scripts/` rather than hand-editing each file. Pattern:

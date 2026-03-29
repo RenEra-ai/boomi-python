@@ -74,6 +74,17 @@ class TestAsyncResponseSparsePayload:
         AtomCountersAsyncResponse,
         AtomDiskSpaceAsyncResponse,
     ])
+    def test_string_status_code_coerced_to_int(self, model_class):
+        """XML path returns strings — response_status_code must be coerced to int."""
+        obj = model_class._unmap({"responseStatusCode": "202"})
+        assert isinstance(obj.response_status_code, int)
+        assert obj.response_status_code == 202
+
+    @pytest.mark.parametrize("model_class", [
+        PersistedProcessPropertiesAsyncResponse,
+        AtomCountersAsyncResponse,
+        AtomDiskSpaceAsyncResponse,
+    ])
     def test_empty_unmap(self, model_class):
         obj = model_class._unmap({})
         assert obj is not None
