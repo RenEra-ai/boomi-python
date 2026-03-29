@@ -1,6 +1,6 @@
 # Boomi API SDK - Development Makefile
 
-.PHONY: help install install-dev run-examples lint format clean docs
+.PHONY: help install install-dev run-examples test test-coverage verify-schema lint format clean docs
 
 # Default target
 help:
@@ -13,6 +13,11 @@ help:
 	@echo ""
 	@echo "Examples:"
 	@echo "  run-examples   Run example scripts (requires BOOMI_* env vars)"
+	@echo ""
+	@echo "Testing:"
+	@echo "  test             Run all tests"
+	@echo "  test-coverage    Run tests with coverage report (requires 80% coverage)"
+	@echo "  verify-schema    Run all fix scripts + regression tests after schema update"
 	@echo ""
 	@echo "Code Quality:"
 	@echo "  lint           Run linting checks"
@@ -37,6 +42,16 @@ run-examples:
 		echo "Running $$file..."; \
 		PYTHONPATH=src python3 "$$file" || true; \
 	done
+
+# Testing targets
+test:  ## Run all tests
+	python3 -m pytest tests/ -v
+
+test-coverage:  ## Run tests with coverage report (requires 80% coverage)
+	python3 -m pytest tests/ --cov=src/boomi --cov-report=term-missing --cov-fail-under=80 -v
+
+verify-schema:  ## Run all fix scripts + regression tests after schema update
+	bash scripts/verify_after_schema_update.sh
 
 # Code quality targets
 lint:
