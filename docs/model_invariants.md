@@ -84,7 +84,7 @@ if number_of_results is not SENTINEL:
     self.number_of_results = int(number_of_results)
 ```
 
-Applies to all 13 async response models plus `AsyncOperationTokenResult` and `ReleaseIntegrationPackStatus`.
+Applies to 13 models total: 11 `*_async_response.py` files + `async_operation_token_result.py` + `release_integration_pack_status.py`.
 
 **Fix script:** `scripts/fix_int_coercion.py` — applies `int()` casts across all affected models.
 
