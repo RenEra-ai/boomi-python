@@ -11,7 +11,7 @@ A list of all methods in the `GetAssignableRolesService` service. Click on the m
 You can use the Get Assignable Roles operation to retrieve a list of roles that are assignable under a account.
 
 - HTTP Method: `GET`
-- Endpoint: `/GetAssignableRoles`
+- Endpoint: `/getAssignableRoles`
 
 **Return Type**
 

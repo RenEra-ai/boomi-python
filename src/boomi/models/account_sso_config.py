@@ -11,6 +11,7 @@ from .utils.sentinel import SENTINEL
         "assertion_encryption": "assertionEncryption",
         "authn_context": "authnContext",
         "authn_context_comparison": "authnContextComparison",
+        "case_insensitive_federation_id": "caseInsensitiveFederationId",
         "cert_info": "certInfo",
         "fed_id_from_name_id": "fedIdFromNameId",
         "idp_url": "idpUrl",
@@ -29,6 +30,8 @@ class AccountSsoConfig(BaseModel):
     :type authn_context: str, optional
     :param authn_context_comparison: EXACT - The resulting authentication context in the authentication statement must be the exact match to at least one of the specified authentication contexts.\<br /\>MINUMUM - The resulting authentication context in the authentication statement must be at least as strong \(as deemed by the responder\) as one of the specified authentication contexts., defaults to None
     :type authn_context_comparison: str, optional
+    :param case_insensitive_federation_id: Indicates that federation Id comparisons should be case-sensitive or case-insensitive. You must have the CASE\_INSENSITIVE\_FEDERATION\_ID\_COMPARISON feature on the chosen account to use this option. Reach out to your Boomi account representative to activate this optional feature., defaults to None
+    :type case_insensitive_federation_id: bool, optional
     :param cert_info: Metadata for the public certificate of the identity provider., defaults to None
     :type cert_info: str, optional
     :param certificate: Base64-encoded certificate bytes for the identity provider., defaults to None
@@ -51,6 +54,7 @@ class AccountSsoConfig(BaseModel):
         assertion_encryption: bool = SENTINEL,
         authn_context: str = SENTINEL,
         authn_context_comparison: str = SENTINEL,
+        case_insensitive_federation_id: bool = SENTINEL,
         cert_info: str = SENTINEL,
         certificate: List[str] = SENTINEL,
         enabled: bool = SENTINEL,
@@ -93,6 +97,8 @@ class AccountSsoConfig(BaseModel):
             self.authn_context = authn_context
         if authn_context_comparison is not SENTINEL:
             self.authn_context_comparison = authn_context_comparison
+        if case_insensitive_federation_id is not SENTINEL:
+            self.case_insensitive_federation_id = case_insensitive_federation_id
         if cert_info is not SENTINEL:
             self.cert_info = cert_info
         if certificate is not SENTINEL:

@@ -31,8 +31,15 @@
 
 **Properties**
 
-| Name             | Type | Required | Description        |
-| :--------------- | :--- | :------- | :----------------- |
-| ENVIRONMENTID    | str  | ✅       | "environmentId"    |
-| EXTENSIONGROUPID | str  | ✅       | "extensionGroupId" |
+| Name                      | Type | Required | Description                 |
+| :------------------------ | :--- | :------- | :-------------------------- |
+| ENVIRONMENTID             | str  | ✅       | "environmentId"             |
+| EXTENSIONGROUPID          | str  | ✅       | "extensionGroupId"          |
+| ENVIRONMENTMAPEXTENSIONID | str  | ✅       | "environmentMapExtensionId" |
+| COMPONENTID               | str  | ✅       | "componentId"               |
+
+> Note: The Boomi `platformOpenAPISpec.json` currently lists only `environmentId` and
+> `extensionGroupId` for this property enum. The SDK retains `environmentMapExtensionId`
+> and `componentId` for backward compatibility with prior Boomi spec variants that
+> exposed them. Removing them would be a breaking change.
 

@@ -10,6 +10,7 @@ class Environment(Enum):
     """The environments available for the SDK"""
 
     DEFAULT = "https://api.boomi.com/api/rest/v1/{accountId}"
+    GB = "https://api.platform.gb.boomi.com/api/rest/v1/{accountId}"
 
     def __new__(cls, url):
         parsed_url = urlparse(url)

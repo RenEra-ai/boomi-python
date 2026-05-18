@@ -25,7 +25,7 @@ class GetAssignableRolesService(BaseService):
 
         serialized_request = (
             Serializer(
-                f"{self.base_url or Environment.DEFAULT.url}/GetAssignableRoles",
+                f"{self.base_url or Environment.DEFAULT.url}/getAssignableRoles",
                 [self.get_access_token(), self.get_basic_auth()],
             )
             .serialize()
