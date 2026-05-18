@@ -54,3 +54,7 @@ test_artifacts/
 todo/
 @todo/
 docs/
+
+# Local tooling
+.codex/
+scripts/platform_openapi_live_review.py
