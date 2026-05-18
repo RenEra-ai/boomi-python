@@ -55,14 +55,17 @@ def test_get_assignable_roles_live(sync_sdk: Boomi, live_credentials: dict) -> N
         print(f"[live] sample role: name={getattr(first, 'name', None)!r} id={getattr(first, 'id_', getattr(first, 'id', None))!r}")
 
 
-def test_get_assignable_roles_old_path_is_404(live_credentials: dict) -> None:
+def test_get_assignable_roles_old_path_is_404(sync_sdk: Boomi, live_credentials: dict) -> None:
     """Direct REST sanity-check: the OLD CamelCase path must NOT work, the
-    NEW lowercase path MUST work. Proves we shipped the right fix."""
+    NEW lowercase path MUST work. Proves we shipped the right fix.
 
-    account = live_credentials["account_id"]
+    Uses the SDK service's resolved base_url so this honors BOOMI_BASE_URL
+    (e.g. running against the GB region) instead of always hitting US.
+    """
+
     auth = (live_credentials["username"], live_credentials["password"])
     headers = {"Accept": "application/json"}
-    base = f"https://api.boomi.com/api/rest/v1/{account}"
+    base = sync_sdk.get_assignable_roles.base_url
 
     old = requests.get(f"{base}/GetAssignableRoles", auth=auth, headers=headers, timeout=30)
     new = requests.get(f"{base}/getAssignableRoles", auth=auth, headers=headers, timeout=30)
@@ -111,16 +114,19 @@ def test_account_sso_config_get_live(sync_sdk: Boomi, live_credentials: dict) ->
         )
 
 
-def test_account_sso_config_raw_xml_contains_field(live_credentials: dict) -> None:
+def test_account_sso_config_raw_xml_contains_field(sync_sdk: Boomi, live_credentials: dict) -> None:
     """Direct API hit: inspect the raw XML/JSON the server returned and
     confirm caseInsensitiveFederationId is something the SDK is allowed
-    to parse (presence is optional, but if present must be bool-shaped)."""
+    to parse (presence is optional, but if present must be bool-shaped).
+
+    Uses the SDK service's resolved base_url so this honors BOOMI_BASE_URL.
+    """
 
     account = live_credentials["account_id"]
     auth = (live_credentials["username"], live_credentials["password"])
 
     # Try XML first (Boomi's native format), then JSON.
-    url = f"https://api.boomi.com/api/rest/v1/{account}/AccountSSOConfig/{account}"
+    url = f"{sync_sdk.account_sso_config.base_url}/AccountSSOConfig/{account}"
     xml_resp = requests.get(url, auth=auth, headers={"Accept": "application/xml"}, timeout=30)
     json_resp = requests.get(url, auth=auth, headers={"Accept": "application/json"}, timeout=30)
 
