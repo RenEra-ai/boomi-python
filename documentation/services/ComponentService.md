@@ -51,6 +51,16 @@ result = sdk.component.create_component(request_body=request_body)
 print(result)
 ```
 
+> **Response handling:** The Component endpoint only supports `application/xml`
+> responses, so `create_component`, `get_component`, and `update_component`
+> request and parse XML. On success they return a `Component` whose
+> `_original_xml` and `object_xml` fields are populated, so the model can be
+> round-tripped back through `update_component` via `to_xml()` without losing
+> the original structure. If a successful (2xx) XML response cannot be mapped
+> onto the model, the raw XML string is returned instead (per the declared
+> `Union[Component, str]` return type) so a created component's id is never
+> lost.
+
 ## get_component
 
 - When using the GET operation by componentId, it returns the latest component if you do not provide the version. - When you provide the version in the format of `\<componentId\>` ~ `\<version\>`, it returns the specific version of the component. - The GET operation only accepts mediaType `application/xml` for the API response. - The limit is 5 requests for the BULK GET operation. All other API objects have a limit of 100 BULK GET requests. - If you want information for a component on a specific branch, include the branchId in the GET request: `https://api.boomi.com/api/rest/v1/{accountId}/Component/{componentId}~{branchId}`

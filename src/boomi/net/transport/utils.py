@@ -46,25 +46,58 @@ def extract_original_data(data: Any) -> Any:
     return data
 
 
+def _strip_key_namespace(key):
+    """Strip an XML namespace from a single dictionary key.
+
+    Handles both notations the parsers produce, preserving a leading ``@``
+    attribute marker:
+
+    * Clark notation ``{http://namespace}name`` (ElementTree fallback) -> ``name``
+    * Prefix notation ``bns:name`` (xmltodict default) -> ``name``
+
+    Without prefix-notation handling, xmltodict-parsed responses keep keys like
+    ``bns:Component`` / ``@xsi:type``, which breaks ``_extract_component_data``
+    (it looks for ``Component``) and attribute normalization. Stripping makes
+    both parser paths produce identical local-name keys.
+
+    :param key: The dictionary key to normalize.
+    :return: The key with any namespace removed.
+    """
+    if not isinstance(key, str):
+        return key
+
+    marker = ''
+    local = key
+    if local.startswith('@'):
+        marker = '@'
+        local = local[1:]
+
+    if local.startswith('{') and '}' in local:
+        # Clark notation: {uri}name
+        local = local.split('}', 1)[1]
+    elif ':' in local:
+        # Prefix notation: prefix:name (e.g. bns:Component, xsi:type)
+        local = local.split(':', 1)[1]
+
+    return marker + local
+
+
 def _remove_namespaces(obj):
     """Recursively remove XML namespaces from dictionary keys.
-    
-    Converts keys like '{http://namespace}elementName' to 'elementName'.
-    Handles nested dictionaries, lists, and preserves data structure.
-    
+
+    Converts keys like '{http://namespace}elementName' or 'bns:elementName'
+    to 'elementName'. Handles nested dictionaries, lists, and preserves data
+    structure.
+
     :param obj: The object to process (dict, list, or other)
     :return: Object with namespaces removed from dictionary keys
     """
     if isinstance(obj, dict):
         cleaned_dict = {}
         for key, value in obj.items():
-            # Remove namespace from key: {namespace}name -> name
-            if isinstance(key, str) and key.startswith('{') and '}' in key:
-                # Extract the local name after the namespace
-                clean_key = key.split('}', 1)[1]
-            else:
-                clean_key = key
-            
+            # Remove namespace from key (Clark or prefix notation)
+            clean_key = _strip_key_namespace(key)
+
             # Recursively clean the value
             cleaned_dict[clean_key] = _remove_namespaces(value)
         return cleaned_dict

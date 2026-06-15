@@ -8,10 +8,56 @@ from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import Component, ComponentBulkRequest, ComponentBulkResponse
-from ..net.transport.utils import parse_xml_to_dict, parse_xml_to_dict_with_preservation
+from ..net.transport.utils import parse_xml_to_dict_with_preservation
 
 
 class ComponentService(BaseService):
+
+    def _deserialize_component_response(
+        self, response: Any, status: int, content: str
+    ) -> Union[Component, str]:
+        """Deserialize a Component API response into a ``Component`` model.
+
+        Shared by ``create_component``, ``get_component`` and
+        ``update_component`` so all three handle XML/JSON responses
+        identically. Content-type matching uses substring checks so values
+        like ``application/xml; charset=UTF-8`` are tolerated, and XML bodies
+        that arrive as ``bytes`` are decoded defensively.
+
+        For a successful (2xx) XML response that cannot be mapped onto the
+        model, the raw XML string is returned instead of raising — honoring
+        the declared ``Union[Component, str]`` contract so a created
+        component's id is never lost on a deserialization miss.
+
+        :param response: The response body (dict for JSON, str/bytes for XML).
+        :param status: The HTTP status code.
+        :param content: The lowercased Content-Type header.
+        :return: A ``Component`` model, or the raw XML string on a 2xx miss.
+        :rtype: Union[Component, str]
+        :raises ApiError: If the response cannot be deserialized.
+        """
+        content = content or ""
+
+        if "json" in content:
+            return Component._unmap(response)
+
+        if "xml" in content:
+            xml = (
+                response.decode("utf-8")
+                if isinstance(response, (bytes, bytearray))
+                else response
+            )
+            try:
+                return Component._unmap(parse_xml_to_dict_with_preservation(xml))
+            except Exception:
+                # Created/updated successfully but the body could not be
+                # mapped onto the model: return the raw XML per the
+                # Union[Component, str] contract rather than raising.
+                if 200 <= status < 300 and isinstance(xml, str):
+                    return xml
+                raise
+
+        raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def create_component(self, request_body: str = None) -> Union[Component, str]:
@@ -38,17 +84,17 @@ class ComponentService(BaseService):
                 f"{self.base_url or Environment.DEFAULT.url}/Component",
                 [self.get_access_token(), self.get_basic_auth()],
             )
+            # The Component endpoint only supports application/xml responses;
+            # without this header the request defaults to application/json and
+            # the XML-preservation deserialization path is skipped.
+            .add_header("Accept", "application/xml")
             .serialize()
             .set_method("POST")
             .set_body(request_body, "application/xml")
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Component._unmap(response)
-        if content == "application/xml":
-            return Component._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_component_response(response, status, content)
 
     @cast_models
     def get_component(self, component_id: str) -> Union[Component, str]:
@@ -83,12 +129,7 @@ class ComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Component._unmap(response)
-        if content == "application/xml":
-            # Phase 2: Use XML preservation parsing for Component objects
-            return Component._unmap(parse_xml_to_dict_with_preservation(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_component_response(response, status, content)
 
     @cast_models
     def update_component(
@@ -152,18 +193,17 @@ class ComponentService(BaseService):
                 [self.get_access_token(), self.get_basic_auth()],
             )
             .add_path("componentId", component_id)
+            # The Component endpoint only supports application/xml responses;
+            # without this header the request defaults to application/json and
+            # the XML-preservation deserialization path is skipped.
+            .add_header("Accept", "application/xml")
             .serialize()
             .set_method("POST")
             .set_body(xml_body, "application/xml")
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Component._unmap(response)
-        if content == "application/xml":
-            # Phase 2: Use XML preservation parsing for response too
-            return Component._unmap(parse_xml_to_dict_with_preservation(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_component_response(response, status, content)
 
     def bulk_component_raw(self, request_body: ComponentBulkRequest = None) -> str:
         """Get multiple components as raw XML string.
