@@ -36,3 +36,14 @@ class ChangeListenerStatusService(BaseService):
         )
 
         response, status, _ = self.send_request(serialized_request)
+
+    def update_listener_status(
+        self, request_body: ChangeListenerStatusRequest = None
+    ) -> None:
+        """Alias for :meth:`create_change_listener_status` matching the OpenAPI
+        operationId ``UpdateListenerStatus`` (POST /changeListenerStatus).
+
+        :param request_body: The request body., defaults to None
+        :type request_body: ChangeListenerStatusRequest, optional
+        """
+        return self.create_change_listener_status(request_body)

@@ -38,3 +38,12 @@ class GetAssignableRolesService(BaseService):
         if content == "application/xml":
             return Roles._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
+
+    def list_assignable_roles(self) -> Union[Roles, str]:
+        """Alias for :meth:`get_get_assignable_roles` matching the OpenAPI
+        operationId ``ListAssignableRoles`` (GET /getAssignableRoles).
+
+        :return: The parsed response data.
+        :rtype: Union[Roles, str]
+        """
+        return self.get_get_assignable_roles()

@@ -117,6 +117,12 @@ class RuntimeObservabilitySettingsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
+        # A 204 / empty body (e.g. the runtime has no observability settings
+        # configured) must not be forced through _unmap, which rejects a
+        # non-dict (bytes/str) body and would raise instead of returning a
+        # usable result. Treat it as "no settings available".
+        if response is None or response == b"" or response == "":
+            return None
         if content == "application/json":
             return RuntimeObservabilitySettingsAsyncResponse._unmap(response)
         if content == "application/xml":

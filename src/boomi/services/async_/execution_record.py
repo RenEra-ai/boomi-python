@@ -29,3 +29,8 @@ class ExecutionRecordServiceAsync(ExecutionRecordService):
         self, id_: str
     ) -> Awaitable[Union[ExecutionRecord, str]]:
         return to_async(super().get_execution_record)(id_)
+
+    def async_get_response_execution_record(
+        self, id_: str
+    ) -> Awaitable[Union[ExecutionRecord, str]]:
+        return to_async(super().async_get_execution_record)(id_)

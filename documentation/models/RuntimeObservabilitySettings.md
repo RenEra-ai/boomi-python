@@ -4,7 +4,7 @@
 
 | Name                   | Type            | Required | Description |
 | :--------------------- | :-------------- | :------- | :---------- |
-| runtime_id             | str             | ✅       |             |
+| runtime_id             | str             | ❌       |             |
 | general_settings       | GeneralSettings | ❌       |             |
 | log_settings           | LogSettings     | ❌       |             |
 | metric_settings        | MetricSettings  | ❌       |             |

@@ -24,25 +24,25 @@ class SharedWebServer(BaseModel):
 
     :param atom_id: atom_id
     :type atom_id: str
-    :param cloud_tennant_general: cloud_tennant_general
-    :type cloud_tennant_general: SharedWebServerCloudTennantGeneral
-    :param cors_configuration: cors_configuration
-    :type cors_configuration: SharedWebServerCors
-    :param general_settings: general_settings
-    :type general_settings: SharedWebServerGeneral
+    :param cloud_tennant_general: cloud_tennant_general, defaults to None
+    :type cloud_tennant_general: SharedWebServerCloudTennantGeneral, optional
+    :param cors_configuration: cors_configuration, defaults to None
+    :type cors_configuration: SharedWebServerCors, optional
+    :param general_settings: general_settings, defaults to None
+    :type general_settings: SharedWebServerGeneral, optional
     :param should_restart_plugin: should_restart_plugin, defaults to None
     :type should_restart_plugin: bool, optional
-    :param user_management: user_management
-    :type user_management: SharedWebServerUserManagement
+    :param user_management: user_management, defaults to None
+    :type user_management: SharedWebServerUserManagement, optional
     """
 
     def __init__(
         self,
         atom_id: str,
-        cloud_tennant_general: SharedWebServerCloudTennantGeneral,
-        cors_configuration: SharedWebServerCors,
-        general_settings: SharedWebServerGeneral,
-        user_management: SharedWebServerUserManagement,
+        cloud_tennant_general: SharedWebServerCloudTennantGeneral = SENTINEL,
+        cors_configuration: SharedWebServerCors = SENTINEL,
+        general_settings: SharedWebServerGeneral = SENTINEL,
+        user_management: SharedWebServerUserManagement = SENTINEL,
         should_restart_plugin: bool = SENTINEL,
         **kwargs,
     ):
@@ -50,30 +50,34 @@ class SharedWebServer(BaseModel):
 
         :param atom_id: atom_id
         :type atom_id: str
-        :param cloud_tennant_general: cloud_tennant_general
-        :type cloud_tennant_general: SharedWebServerCloudTennantGeneral
-        :param cors_configuration: cors_configuration
-        :type cors_configuration: SharedWebServerCors
-        :param general_settings: general_settings
-        :type general_settings: SharedWebServerGeneral
+        :param cloud_tennant_general: cloud_tennant_general, defaults to None
+        :type cloud_tennant_general: SharedWebServerCloudTennantGeneral, optional
+        :param cors_configuration: cors_configuration, defaults to None
+        :type cors_configuration: SharedWebServerCors, optional
+        :param general_settings: general_settings, defaults to None
+        :type general_settings: SharedWebServerGeneral, optional
         :param should_restart_plugin: should_restart_plugin, defaults to None
         :type should_restart_plugin: bool, optional
-        :param user_management: user_management
-        :type user_management: SharedWebServerUserManagement
+        :param user_management: user_management, defaults to None
+        :type user_management: SharedWebServerUserManagement, optional
         """
         self.atom_id = atom_id
-        self.cloud_tennant_general = self._define_object(
-            cloud_tennant_general, SharedWebServerCloudTennantGeneral
-        )
-        self.cors_configuration = self._define_object(
-            cors_configuration, SharedWebServerCors
-        )
-        self.general_settings = self._define_object(
-            general_settings, SharedWebServerGeneral
-        )
+        if cloud_tennant_general is not SENTINEL:
+            self.cloud_tennant_general = self._define_object(
+                cloud_tennant_general, SharedWebServerCloudTennantGeneral
+            )
+        if cors_configuration is not SENTINEL:
+            self.cors_configuration = self._define_object(
+                cors_configuration, SharedWebServerCors
+            )
+        if general_settings is not SENTINEL:
+            self.general_settings = self._define_object(
+                general_settings, SharedWebServerGeneral
+            )
         if should_restart_plugin is not SENTINEL:
             self.should_restart_plugin = should_restart_plugin
-        self.user_management = self._define_object(
-            user_management, SharedWebServerUserManagement
-        )
+        if user_management is not SENTINEL:
+            self.user_management = self._define_object(
+                user_management, SharedWebServerUserManagement
+            )
         self._kwargs = kwargs

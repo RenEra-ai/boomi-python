@@ -52,3 +52,21 @@ class CloudAttachmentSecretsConfigurationService(BaseService):
         if content == "application/xml":
             return CloudAttachmentSecretsConfigurationResponse._unmap(parse_xml_to_dict(response))
         raise ApiError("Error on deserializing the response.", status, response)
+
+    def createcloud_attachment_secrets_configuration(
+        self, container_id: str, request_body: CloudAttachmentSecretsConfigurationRequest = None
+    ) -> Union[CloudAttachmentSecretsConfigurationResponse, str]:
+        """Alias for :meth:`create_cloud_attachment_secrets_configuration` matching
+        the OpenAPI operationId ``CreatecloudAttachmentSecretsConfiguration``
+        (POST /cloudAttachmentSecretsConfiguration/{containerId}).
+
+        :param container_id: The container ID.
+        :type container_id: str
+        :param request_body: The request body., defaults to None
+        :type request_body: CloudAttachmentSecretsConfigurationRequest, optional
+        :return: The parsed response data.
+        :rtype: Union[CloudAttachmentSecretsConfigurationResponse, str]
+        """
+        return self.create_cloud_attachment_secrets_configuration(
+            container_id, request_body=request_body
+        )

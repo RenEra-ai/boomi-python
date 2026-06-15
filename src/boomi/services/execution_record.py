@@ -166,3 +166,16 @@ class ExecutionRecordService(BaseService):
         :rtype: Union[ExecutionRecord, str]
         """
         return self.async_get_execution_record(id_)
+
+    def async_get_response_execution_record(
+        self, id_: str
+    ) -> Union[ExecutionRecord, str]:
+        """Alias for :meth:`async_get_execution_record` matching the OpenAPI
+        operationId ``AsyncGetResponseExecutionRecord`` (GET /ExecutionRecord/async/{id}).
+
+        :param id_: The execution record ID.
+        :type id_: str
+        :return: The parsed response data.
+        :rtype: Union[ExecutionRecord, str]
+        """
+        return self.async_get_execution_record(id_)

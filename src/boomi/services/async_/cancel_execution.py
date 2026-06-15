@@ -11,3 +11,6 @@ class CancelExecutionServiceAsync(CancelExecutionService):
 
     def cancel_execution(self, execution_id: str) -> Awaitable[None]:
         return to_async(super().cancel_execution)(execution_id)
+
+    def cancel_execution_operation(self, execution_id: str) -> Awaitable[None]:
+        return to_async(super().cancel_execution)(execution_id)

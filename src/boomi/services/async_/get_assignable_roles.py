@@ -12,3 +12,6 @@ class GetAssignableRolesServiceAsync(GetAssignableRolesService):
 
     def get_get_assignable_roles(self) -> Awaitable[Union[Roles, str]]:
         return to_async(super().get_get_assignable_roles)()
+
+    def list_assignable_roles(self) -> Awaitable[Union[Roles, str]]:
+        return to_async(super().get_get_assignable_roles)()

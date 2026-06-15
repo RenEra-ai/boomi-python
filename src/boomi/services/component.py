@@ -348,7 +348,40 @@ class ComponentService(BaseService):
         if status >= 200 and status < 300:
             return response  # Return raw XML response
         raise ApiError(f"Failed to update component: HTTP {status}", status, response)
-    
+
+    def create_component_raw(self, xml: str) -> str:
+        """Create a component from a raw XML string and return the raw XML response.
+
+        Mirrors ``get_component_raw`` and ``update_component_raw``: the XML is
+        sent to the API exactly as provided and the response is returned without
+        any parsing or conversion, preserving namespaces, element order, and
+        attributes. Use this when you need full control over the XML or when a
+        complex component fails with dict-based approaches.
+
+        :param xml: Raw XML string to send to the API
+        :type xml: str
+        :return: Raw XML response exactly as returned by the API
+        :rtype: str
+        """
+        Validator(str).validate(xml)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/Component",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            # The Component endpoint only supports application/xml responses.
+            .add_header("Accept", "application/xml")
+            .serialize()
+            .set_method("POST")
+            .set_body(xml, "application/xml")
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        if status >= 200 and status < 300:
+            return response  # Return raw XML response
+        raise ApiError(f"Failed to create component: HTTP {status}", status, response)
+
     def get_component_etree(self, component_id: str) -> ET.Element:
         """Get component as ElementTree for DOM manipulation.
         

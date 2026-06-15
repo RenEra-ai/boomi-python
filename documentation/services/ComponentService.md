@@ -11,6 +11,7 @@ A list of all methods in the `ComponentService` service. Click on the method nam
 | [bulk_component](#bulk_component)             | Returns a list of raw component XML strings from successful bulk GET results.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 | [get_component_raw](#get_component_raw)       | Returns the raw component XML exactly as the API sends it.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | [update_component_raw](#update_component_raw) | Updates a component using a raw XML payload and returns the raw XML response.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| [create_component_raw](#create_component_raw) | Creates a component using a raw XML payload and returns the raw XML response.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
 | [get_component_etree](#get_component_etree)   | Returns the component XML as an `ElementTree` element for DOM-style edits.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | [update_component_etree](#update_component_etree) | Updates a component from an `ElementTree` element and returns the raw XML response. |
 
@@ -301,6 +302,44 @@ xml_response = sdk.component.update_component_raw(
     component_id="componentId",
     xml=xml_body
 )
+
+print(xml_response[:200])
+```
+
+## create_component_raw
+
+Creates a component using a raw XML payload and returns the raw XML response exactly as the API sends it, without any parsing or conversion. Mirrors `get_component_raw` and `update_component_raw`; use it when you need full control over the XML or when a complex component fails with dict-based approaches.
+
+- HTTP Method: `POST`
+- Endpoint: `/Component`
+
+**Parameters**
+
+| Name | Type | Required | Description              |
+| :--- | :--- | :------- | :----------------------- |
+| xml  | str  | ✅       | Raw XML content to send. |
+
+**Return Type**
+
+`str`
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(
+    access_token="YOUR_ACCESS_TOKEN",
+    username="YOUR_USERNAME",
+    password="YOUR_PASSWORD",
+    account_id="YOUR_ACCOUNT_ID",
+    timeout=10000
+)
+
+with open("component.xml", "r") as f:
+    xml_body = f.read()
+
+xml_response = sdk.component.create_component_raw(xml=xml_body)
 
 print(xml_response[:200])
 ```

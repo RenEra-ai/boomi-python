@@ -32,3 +32,12 @@ class CancelExecutionService(BaseService):
         )
 
         self.send_request(serialized_request)
+
+    def cancel_execution_operation(self, execution_id: str) -> None:
+        """Alias for :meth:`cancel_execution` matching the OpenAPI operationId
+        ``cancelExecutionOperation`` (POST /cancelExecution/{executionId}).
+
+        :param execution_id: The execution ID to cancel.
+        :type execution_id: str
+        """
+        return self.cancel_execution(execution_id)

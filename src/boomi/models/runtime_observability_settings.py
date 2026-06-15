@@ -22,8 +22,8 @@ from .trace_settings import TraceSettings
 class RuntimeObservabilitySettings(BaseModel):
     """RuntimeObservabilitySettings
 
-    :param runtime_id: runtime_id
-    :type runtime_id: str
+    :param runtime_id: runtime_id, defaults to None
+    :type runtime_id: str, optional
     :param general_settings: general_settings, defaults to None
     :type general_settings: GeneralSettings, optional
     :param log_settings: log_settings, defaults to None
@@ -38,7 +38,7 @@ class RuntimeObservabilitySettings(BaseModel):
 
     def __init__(
         self,
-        runtime_id: str,
+        runtime_id: str = SENTINEL,
         general_settings: GeneralSettings = SENTINEL,
         log_settings: LogSettings = SENTINEL,
         metric_settings: MetricSettings = SENTINEL,
@@ -61,7 +61,8 @@ class RuntimeObservabilitySettings(BaseModel):
         :param should_restart_plugin: should_restart_plugin, defaults to None
         :type should_restart_plugin: bool, optional
         """
-        self.runtime_id = runtime_id
+        if runtime_id is not SENTINEL:
+            self.runtime_id = runtime_id
         if general_settings is not SENTINEL:
             self.general_settings = self._define_object(
                 general_settings, GeneralSettings

@@ -4,7 +4,7 @@
 
 | Name         | Type                       | Required | Description |
 | :----------- | :------------------------- | :------- | :---------- |
-| query_filter | RoleQueryConfigQueryFilter | ✅       |             |
+| query_filter | RoleQueryConfigQueryFilter | ❌       |             |
 
 # RoleQueryConfigQueryFilter
 
@@ -12,5 +12,5 @@
 
 | Name       | Type           | Required | Description |
 | :--------- | :------------- | :------- | :---------- |
-| expression | RoleExpression | ✅       |             |
+| expression | RoleExpression | ❌       |             |
 

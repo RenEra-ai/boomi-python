@@ -17,10 +17,10 @@ from .utils.sentinel import SENTINEL
 class SharedWebServerPort(BaseModel):
     """SharedWebServerPort
 
-    :param auth_type: auth_type
-    :type auth_type: str
-    :param base_url_for_request: base_url_for_request
-    :type base_url_for_request: str
+    :param auth_type: auth_type, defaults to None
+    :type auth_type: str, optional
+    :param base_url_for_request: base_url_for_request, defaults to None
+    :type base_url_for_request: str, optional
     :param default_port: default_port, defaults to None
     :type default_port: bool, optional
     :param enable_port: enable_port, defaults to None
@@ -37,8 +37,8 @@ class SharedWebServerPort(BaseModel):
 
     def __init__(
         self,
-        auth_type: str,
-        base_url_for_request: str,
+        auth_type: str = SENTINEL,
+        base_url_for_request: str = SENTINEL,
         default_port: bool = SENTINEL,
         enable_port: bool = SENTINEL,
         external_port: int = SENTINEL,
@@ -66,8 +66,10 @@ class SharedWebServerPort(BaseModel):
         :param ssl: ssl, defaults to None
         :type ssl: bool, optional
         """
-        self.auth_type = auth_type
-        self.base_url_for_request = base_url_for_request
+        if auth_type is not SENTINEL:
+            self.auth_type = auth_type
+        if base_url_for_request is not SENTINEL:
+            self.base_url_for_request = base_url_for_request
         if default_port is not SENTINEL:
             self.default_port = default_port
         if enable_port is not SENTINEL:

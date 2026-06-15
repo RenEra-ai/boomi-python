@@ -14,3 +14,8 @@ class ChangeListenerStatusServiceAsync(ChangeListenerStatusService):
         self, request_body: ChangeListenerStatusRequest = None
     ) -> Awaitable[None]:
         return to_async(super().create_change_listener_status)(request_body)
+
+    def update_listener_status(
+        self, request_body: ChangeListenerStatusRequest = None
+    ) -> Awaitable[None]:
+        return to_async(super().create_change_listener_status)(request_body)
