@@ -57,6 +57,7 @@ except ImportError:
     pass  # dotenv is optional
 
 from boomi import Boomi
+from boomi.net.transport.api_error import ApiError
 from boomi.models import (
     ComponentDiffRequest,
     ComponentDiffRequestBulkRequest,
@@ -116,24 +117,23 @@ class ComponentDiffer:
             return []
     
     def get_component_xml(self, component_id: str, version: Optional[int] = None) -> Optional[str]:
-        """Get component XML for a specific version"""
+        """Get component raw XML for a specific version (as a string)"""
         try:
-            # Get component (specific version if provided)
-            component = self.sdk.component.get_component(component_id=component_id)
-            
-            if component:
-                # Convert to XML string if it's a Component object
-                if hasattr(component, 'to_xml'):
-                    return component.to_xml()
-                elif isinstance(component, str):
-                    return component
-                else:
-                    # Try to get XML representation
-                    return str(component)
-            
+            # Build a versioned identifier when a version is requested
+            identifier = f"{component_id}~{version}" if version is not None else component_id
+
+            # Response IS the raw XML bytes (the SDK never parses component XML)
+            xml_bytes = self.sdk.component.get_component(component_id=identifier)
+
+            if xml_bytes:
+                # Decode to a str for downstream string diff operations
+                if isinstance(xml_bytes, (bytes, bytearray)):
+                    return xml_bytes.decode('utf-8')
+                return xml_bytes
+
             return None
-            
-        except Exception as e:
+
+        except ApiError as e:
             if self.verbose:
                 print(f"Failed to get component XML: {e}")
             return None

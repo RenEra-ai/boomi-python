@@ -6,9 +6,8 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
+from ..net.transport.utils import parse_xml_to_dict, require_raw_xml
 from ..models import (
-    OrganizationComponent,
     OrganizationComponentBulkRequest,
     OrganizationComponentBulkResponse,
     OrganizationComponentQueryConfig,
@@ -18,60 +17,58 @@ from ..models import (
 
 class OrganizationComponentService(BaseService):
 
-    @cast_models
     def create_organization_component(
-        self, request_body: OrganizationComponent = None
-    ) -> Union[OrganizationComponent, str, dict]:
-        """The CREATE operation creates an Organization Component object with the specified component name.
+        self, request_body: Union[str, bytes] = None
+    ) -> bytes:
+        """Create an Organization Component from raw XML; return the raw XML response bytes.
 
-         The request body requires the `componentName` field. If you omit the `folderName` field, it requires the `folderId` field — and vice versa. If you omit the `componentID` field, it assigns the value when you create the component. If you omit the `folderID` field, it assigns the value when you create the component.
+        The Organization Component XML is treated as an **opaque** payload: it is
+        sent exactly as provided and the response is returned byte-for-byte, with
+        no parsing or conversion. Export an existing component via
+        ``get_organization_component`` to use as a template.
 
-        :param request_body: The request body., defaults to None
-        :type request_body: OrganizationComponent, optional
-        ...
-        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
-        ...
-        :return: The parsed response data.
-        :rtype: Union[OrganizationComponent, str, dict]
+        :param request_body: Raw Organization Component XML (``str`` or ``bytes``).
+        :type request_body: Union[str, bytes]
+        :raises UnsafeComponentXmlSerializationError: If a non-raw body is passed.
+        :raises ApiError: If the request fails.
+        :return: The raw XML response exactly as returned by the API.
+        :rtype: bytes
         """
 
-        Validator(OrganizationComponent).is_optional().validate(request_body)
+        body = require_raw_xml(request_body)
 
         serialized_request = (
             Serializer(
                 f"{self.base_url or Environment.DEFAULT.url}/OrganizationComponent",
                 [self.get_access_token(), self.get_basic_auth()],
             )
+            .add_header("Accept", "application/xml")
             .serialize()
             .set_method("POST")
-            .set_body(request_body)
+            .set_body(body, "application/xml")
         )
 
-        response, status, content = self.send_request(serialized_request)
-        # Return the raw payload on a 2xx hydration miss rather than raising,
-        # so a sparse-but-valid response still reaches the caller (Union[..., str]).
-        try:
-            if content == "application/json":
-                return OrganizationComponent._unmap(response)
-            if content == "application/xml":
-                return OrganizationComponent._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        response, status, _ = self.send_request_raw(serialized_request)
+        if 200 <= status < 300:
+            return response
+        raise ApiError(
+            f"Failed to create organization component: HTTP {status}",
+            status,
+            response,
+        )
 
-    @cast_models
-    def get_organization_component(self, id_: str) -> Union[OrganizationComponent, str, dict]:
-        """The GET operation returns a single Organization Component object based on the supplied ID. A GET operation specifying the ID of a deleted Organization Component retrieves the component. In the component, the deleted field’s value is *true*.
+    def get_organization_component(self, id_: str) -> bytes:
+        """Get an Organization Component as raw XML response bytes, without parsing.
+
+        Preserves the exact XML structure returned by the API. A GET specifying
+        the ID of a deleted Organization Component retrieves it (with
+        ``deleted="true"``).
 
         :param id_: Organization component ID
         :type id_: str
-        ...
-        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
-        ...
-        :return: The parsed response data.
-        :rtype: Union[OrganizationComponent, str, dict]
+        :raises ApiError: If the request fails.
+        :return: The raw XML response exactly as returned by the API.
+        :rtype: bytes
         """
 
         Validator(str).validate(id_)
@@ -82,43 +79,41 @@ class OrganizationComponentService(BaseService):
                 [self.get_access_token(), self.get_basic_auth()],
             )
             .add_path("id", id_)
+            .add_header("Accept", "application/xml")
             .serialize()
             .set_method("GET")
         )
 
-        response, status, content = self.send_request(serialized_request)
-        # Return the raw payload on a 2xx hydration miss rather than raising,
-        # so a sparse-but-valid response still reaches the caller (Union[..., str]).
-        try:
-            if content == "application/json":
-                return OrganizationComponent._unmap(response)
-            if content == "application/xml":
-                return OrganizationComponent._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        response, status, _ = self.send_request_raw(serialized_request)
+        if 200 <= status < 300:
+            return response
+        raise ApiError(
+            f"Failed to get organization component: HTTP {status}",
+            status,
+            response,
+        )
 
-    @cast_models
     def update_organization_component(
-        self, id_: str, request_body: OrganizationComponent = None
-    ) -> Union[OrganizationComponent, str, dict]:
-        """The UPDATE operation overwrites the Organization Component object with the specified component ID. An UPDATE operation specifying the ID of a deleted Organization component restores the component to a non-deleted state, assuming the request is otherwise valid.
+        self, id_: str, request_body: Union[str, bytes] = None
+    ) -> bytes:
+        """Update an Organization Component with raw XML; return the raw XML response bytes.
 
-        :param request_body: The request body., defaults to None
-        :type request_body: OrganizationComponent, optional
+        Full updates only: supply the complete component XML you want persisted.
+        The body is sent exactly as provided. An UPDATE specifying the ID of a
+        deleted component restores it.
+
         :param id_: Organization component ID
         :type id_: str
-        ...
-        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
-        ...
-        :return: The parsed response data.
-        :rtype: Union[OrganizationComponent, str, dict]
+        :param request_body: Raw Organization Component XML (``str`` or ``bytes``).
+        :type request_body: Union[str, bytes]
+        :raises UnsafeComponentXmlSerializationError: If a non-raw body is passed.
+        :raises ApiError: If the request fails.
+        :return: The raw XML response exactly as returned by the API.
+        :rtype: bytes
         """
 
-        Validator(OrganizationComponent).is_optional().validate(request_body)
         Validator(str).validate(id_)
+        body = require_raw_xml(request_body)
 
         serialized_request = (
             Serializer(
@@ -126,24 +121,20 @@ class OrganizationComponentService(BaseService):
                 [self.get_access_token(), self.get_basic_auth()],
             )
             .add_path("id", id_)
+            .add_header("Accept", "application/xml")
             .serialize()
             .set_method("POST")
-            .set_body(request_body)
+            .set_body(body, "application/xml")
         )
 
-        response, status, content = self.send_request(serialized_request)
-        # Return the raw payload on a 2xx hydration miss rather than raising,
-        # so a sparse-but-valid response still reaches the caller (Union[..., str]).
-        try:
-            if content == "application/json":
-                return OrganizationComponent._unmap(response)
-            if content == "application/xml":
-                return OrganizationComponent._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        response, status, _ = self.send_request_raw(serialized_request)
+        if 200 <= status < 300:
+            return response
+        raise ApiError(
+            f"Failed to update organization component: HTTP {status}",
+            status,
+            response,
+        )
 
     @cast_models
     def delete_organization_component(self, id_: str) -> None:

@@ -70,7 +70,8 @@ from typing import List, Optional, Dict, Any
 # Add the src directory to the path to import the SDK
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
+from boomi.net.transport.api_error import ApiError
 from boomi.models import (
     ComponentMetadataQueryConfig,
     ComponentMetadataQueryConfigQueryFilter,
@@ -171,16 +172,16 @@ class ComponentManager:
             print(f"❌ Error listing components: {e}")
             return []
     
-    def get_component(self, component_id: str, version: Optional[str] = None) -> Optional[Any]:
+    def get_component(self, component_id: str, version: Optional[str] = None) -> Optional[bytes]:
         """
-        Get detailed information about a specific component.
-        
+        Get the raw XML for a specific component.
+
         Args:
             component_id: The component ID
             version: Specific version (optional, defaults to latest)
-            
+
         Returns:
-            Component object or None if not found
+            Raw component XML bytes or None if not found
         """
         try:
             # Construct component identifier
@@ -188,14 +189,14 @@ class ComponentManager:
                 component_identifier = f"{component_id}~{version}"
             else:
                 component_identifier = component_id
-            
+
             print(f"🔍 Getting component: {component_identifier}")
-            component = self.sdk.component.get_component(component_id=component_identifier)
-            return component
-            
-        except Exception as e:
+            # Response IS the raw XML bytes (the SDK never parses component XML)
+            return self.sdk.component.get_component(component_id=component_identifier)
+
+        except ApiError as e:
             print(f"❌ Error getting component {component_id}: {e}")
-            if hasattr(e, 'status') and e.status == 404:
+            if getattr(e, 'status', None) == 404:
                 print("   Component not found")
             return None
     
@@ -216,22 +217,15 @@ class ComponentManager:
             print(f"🔄 Cloning component: {source_component_id}")
             print(f"   New name: {new_name}")
             
-            # Get source component
-            source_component = self.get_component(source_component_id)
-            if not source_component:
+            # Get source component as raw XML bytes
+            source_xml = self.get_component(source_component_id)
+            if not source_xml:
                 print("❌ Source component not found")
                 return None
-            
-            # Generate XML for cloning
-            if hasattr(source_component, 'to_xml') and callable(source_component.to_xml):
-                xml_str = source_component.to_xml()
-            else:
-                print("❌ Cannot extract XML from source component")
-                return None
-            
-            # Parse and modify XML
-            root = ET.fromstring(xml_str)
-            
+
+            # Parse the raw XML ourselves and modify it
+            root = ET.fromstring(source_xml)
+
             # Update name and remove unique identifiers
             root.set('name', new_name)
             if description:
@@ -242,22 +236,29 @@ class ComponentManager:
                 else:
                     # Add description as attribute if no element found
                     root.set('description', description)
-            
+
             # Remove unique identifiers for creation
-            for attr in ['componentId', 'version', 'currentVersion', 'createdDate', 
+            for attr in ['componentId', 'version', 'currentVersion', 'createdDate',
                         'createdBy', 'modifiedDate', 'modifiedBy']:
                 if attr in root.attrib:
                     del root.attrib[attr]
-            
+
+            # Serialize once back to a string for the create body
             new_xml = ET.tostring(root, encoding='unicode')
-            
-            # Create new component
+
+            # Create new component (returns raw XML bytes)
             print("   Creating cloned component...")
             result = self.sdk.component.create_component(request_body=new_xml)
+            new_meta = extract_component_xml_metadata(result)
             print("✅ Component cloned successfully!")
-            
+            print(f"   New component ID: {new_meta.get('componentId', 'N/A')}")
+            print(f"   Name: {new_meta.get('name', new_name)}")
+
             return result
-            
+
+        except ApiError as e:
+            print(f"❌ Error cloning component: {e}")
+            return None
         except Exception as e:
             print(f"❌ Error cloning component: {e}")
             return None
@@ -284,25 +285,18 @@ class ComponentManager:
                 print("❌ No updates specified")
                 return None
             
-            # Get current component
-            component = self.get_component(component_id)
-            if not component:
+            # Get current component as raw XML bytes
+            current_xml = self.get_component(component_id)
+            if not current_xml:
                 return None
-            
-            # Generate updated XML
-            if hasattr(component, 'to_xml') and callable(component.to_xml):
-                xml_str = component.to_xml()
-            else:
-                print("❌ Cannot extract XML from component")
-                return None
-            
-            # Parse and modify XML
-            root = ET.fromstring(xml_str)
-            
+
+            # Parse the raw XML ourselves and modify it
+            root = ET.fromstring(current_xml)
+
             if new_name:
                 root.set('name', new_name)
                 print(f"   Updated name to: {new_name}")
-            
+
             if new_description:
                 # Try to set description
                 desc_elem = root.find('.//description') or root.find('.//{*}description')
@@ -311,18 +305,25 @@ class ComponentManager:
                 else:
                     root.set('description', new_description)
                 print(f"   Updated description to: {new_description}")
-            
+
+            # Serialize once back to a string for the update body (full update)
             modified_xml = ET.tostring(root, encoding='unicode')
-            
-            # Update component
+
+            # Update component (returns raw XML bytes)
             result = self.sdk.component.update_component(
                 component_id=component_id,
                 request_body=modified_xml
             )
-            
+
+            updated = extract_component_xml_metadata(result)
             print("✅ Component updated successfully!")
+            print(f"   Component ID: {updated.get('componentId', component_id)}")
+            print(f"   Version: {updated.get('version', 'N/A')}")
             return result
-            
+
+        except ApiError as e:
+            print(f"❌ Error updating component: {e}")
+            return None
         except Exception as e:
             print(f"❌ Error updating component: {e}")
             return None
@@ -400,52 +401,53 @@ class ComponentManager:
             Dictionary with analysis results
         """
         try:
-            component = self.get_component(component_id, version)
-            if not component:
+            # Raw component XML bytes
+            xml_bytes = self.get_component(component_id, version)
+            if not xml_bytes:
                 return {"error": "Component not found"}
-            
+
+            metadata = extract_component_xml_metadata(xml_bytes)
             analysis = {
                 "basic_info": {
-                    "name": getattr(component, 'name', 'N/A'),
-                    "type": getattr(component, 'type_', 'N/A'),
-                    "version": getattr(component, 'version', 'N/A'),
-                    "deleted": getattr(component, 'deleted', 'false'),
-                    "current": getattr(component, 'current_version', 'false')
+                    "name": metadata.get('name', 'N/A'),
+                    "type": metadata.get('type', 'N/A'),
+                    "version": metadata.get('version', 'N/A'),
+                    "deleted": metadata.get('deleted', 'false'),
+                    "current": metadata.get('currentVersion', 'false')
                 },
                 "xml_structure": {},
                 "complexity_metrics": {}
             }
-            
-            # Analyze XML structure
-            xml_obj = getattr(component, 'object', None)
-            if xml_obj:
+
+            # Parse the raw XML ourselves to analyze its structure
+            try:
+                root = ET.fromstring(xml_bytes)
+            except ET.ParseError:
+                analysis["xml_structure"]["has_config"] = False
+                analysis["complexity_metrics"]["parse_error"] = True
+                return analysis
+
+            # Locate the <object> element (namespace-agnostic)
+            object_elem = root.find('object') or root.find('{*}object')
+            if object_elem is not None and len(list(object_elem)):
                 analysis["xml_structure"]["has_config"] = True
-                
-                # Try to analyze structure if it's a dict-like object
-                if hasattr(xml_obj, '__dict__'):
-                    obj_dict = xml_obj.__dict__
-                    analysis["xml_structure"]["top_level_elements"] = len([k for k in obj_dict.keys() if not k.startswith('_')])
-                    analysis["xml_structure"]["element_names"] = [k for k in obj_dict.keys() if not k.startswith('_')][:10]  # First 10
-                
-                # Complexity metrics
-                xml_str = ""
-                if hasattr(component, 'to_xml') and callable(component.to_xml):
-                    xml_str = component.to_xml()
-                    analysis["complexity_metrics"]["xml_length"] = len(xml_str)
-                    analysis["complexity_metrics"]["xml_lines"] = xml_str.count('\n') + 1
-                    
-                    # Count XML elements
-                    try:
-                        root = ET.fromstring(xml_str)
-                        analysis["complexity_metrics"]["xml_elements"] = len(list(root.iter()))
-                        analysis["complexity_metrics"]["xml_depth"] = self._calculate_xml_depth(root)
-                    except ET.ParseError:
-                        analysis["complexity_metrics"]["parse_error"] = True
+                top_children = list(object_elem)
+                analysis["xml_structure"]["top_level_elements"] = len(top_children)
+                analysis["xml_structure"]["element_names"] = [
+                    child.tag.split('}')[-1] for child in top_children
+                ][:10]
             else:
                 analysis["xml_structure"]["has_config"] = False
-            
+
+            # Complexity metrics based on the full raw XML
+            xml_str = xml_bytes.decode('utf-8') if isinstance(xml_bytes, (bytes, bytearray)) else xml_bytes
+            analysis["complexity_metrics"]["xml_length"] = len(xml_str)
+            analysis["complexity_metrics"]["xml_lines"] = xml_str.count('\n') + 1
+            analysis["complexity_metrics"]["xml_elements"] = len(list(root.iter()))
+            analysis["complexity_metrics"]["xml_depth"] = self._calculate_xml_depth(root)
+
             return analysis
-            
+
         except Exception as e:
             return {"error": str(e)}
     
@@ -905,33 +907,47 @@ def main():
             print(f"🔍 Component Details")
             print("-" * 25)
             
-            component = comp_manager.get_component(args.get, args.version)
-            if component:
+            xml_bytes = comp_manager.get_component(args.get, args.version)
+            if xml_bytes:
                 # Display basic metadata
                 print(f"✅ Component retrieved successfully!")
-                
-                # Extract and display component info
-                if hasattr(component, '_kwargs') and component._kwargs:
-                    comp_data = component._kwargs.get('Component', component)
-                else:
-                    comp_data = component
-                
-                # Create pseudo-component for display
+
+                # Read root <Component> attributes from the raw XML
+                metadata = extract_component_xml_metadata(xml_bytes)
+
+                # Create pseudo-component for display (maps metadata -> model-style attrs)
                 class ComponentDisplay:
                     pass
-                
+
+                attr_map = {
+                    'name': 'name',
+                    'component_id': 'componentId',
+                    'type_': 'type',
+                    'version': 'version',
+                    'current_version': 'currentVersion',
+                    'deleted': 'deleted',
+                    'created_by': 'createdBy',
+                    'created_date': 'createdDate',
+                    'modified_by': 'modifiedBy',
+                    'modified_date': 'modifiedDate',
+                    'folder_full_path': 'folderFullPath',
+                    'branch_name': 'branchName',
+                }
                 display_comp = ComponentDisplay()
-                for attr in ['name', 'component_id', 'type_', 'version', 'current_version', 
-                           'deleted', 'created_by', 'created_date', 'modified_by', 
-                           'modified_date', 'folder_full_path', 'branch_name']:
-                    setattr(display_comp, attr, getattr(comp_data, attr, 'N/A'))
-                
+                for attr, meta_key in attr_map.items():
+                    setattr(display_comp, attr, metadata.get(meta_key, 'N/A'))
+
                 display_component(display_comp, detailed=True)
-                
-                # Show XML info if available
-                if hasattr(component, 'object'):
-                    print("🔧 XML Configuration: Available")
-                else:
+
+                # Show XML info: check whether an <object> element is present
+                try:
+                    root = ET.fromstring(xml_bytes)
+                    object_elem = root.find('object') or root.find('{*}object')
+                    if object_elem is not None and len(list(object_elem)):
+                        print("🔧 XML Configuration: Available")
+                    else:
+                        print("🔧 XML Configuration: Not available")
+                except ET.ParseError:
                     print("🔧 XML Configuration: Not available")
         
         elif args.clone:

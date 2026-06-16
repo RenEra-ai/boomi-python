@@ -25,7 +25,8 @@ try:
 except ImportError:
     pass  # dotenv is optional
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
+from boomi.net.transport.api_error import ApiError
 
 def main():
     if len(sys.argv) < 2:
@@ -50,11 +51,11 @@ def main():
         print(f"\n{i}/{len(component_ids)}. Updating component: {component_id}")
 
         try:
-            # First, get the existing component XML
+            # First, get the existing component - response IS the raw XML bytes
             print(f"   📥 Retrieving component...")
-            xml_content = sdk.component.get_component_raw(component_id=component_id)
+            xml_content = sdk.component.get_component(component_id=component_id)
 
-            # Parse and modify the XML (add/update description)
+            # Parse and modify the raw XML ourselves (add/update description)
             import xml.etree.ElementTree as ET
             root = ET.fromstring(xml_content)
 
@@ -65,19 +66,22 @@ def main():
                 desc_elem = ET.SubElement(root, '{http://api.platform.boomi.com/}description')
             desc_elem.text = f'Batch updated via SDK example - Component {i}'
 
-            # Convert back to string
+            # Serialize once back to a string for the update body (full update)
             updated_xml = ET.tostring(root, encoding='unicode')
 
-            # Update the component
+            # Update the component (returns raw XML bytes)
             print(f"   📤 Updating component...")
             result = sdk.component.update_component(
                 component_id=component_id,
                 request_body=updated_xml
             )
 
-            print(f"   ✅ Success - Version: {result.version}")
+            updated = extract_component_xml_metadata(result)
+            print(f"   ✅ Success - Version: {updated.get('version', 'N/A')}")
             success_count += 1
 
+        except ApiError as e:
+            print(f"   ❌ Error: {str(e)}")
         except Exception as e:
             print(f"   ❌ Error: {str(e)}")
     

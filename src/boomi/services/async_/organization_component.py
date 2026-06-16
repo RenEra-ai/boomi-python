@@ -3,7 +3,6 @@ from typing import Awaitable, Union
 from .utils.to_async import to_async
 from ..organization_component import OrganizationComponentService
 from ...models import (
-    OrganizationComponent,
     OrganizationComponentBulkResponse,
     OrganizationComponentBulkRequest,
     OrganizationComponentQueryResponse,
@@ -17,18 +16,16 @@ class OrganizationComponentServiceAsync(OrganizationComponentService):
     """
 
     def create_organization_component(
-        self, request_body: OrganizationComponent = None
-    ) -> Awaitable[Union[OrganizationComponent, str, dict]]:
+        self, request_body: Union[str, bytes] = None
+    ) -> Awaitable[bytes]:
         return to_async(super().create_organization_component)(request_body)
 
-    def get_organization_component(
-        self, id_: str
-    ) -> Awaitable[Union[OrganizationComponent, str, dict]]:
+    def get_organization_component(self, id_: str) -> Awaitable[bytes]:
         return to_async(super().get_organization_component)(id_)
 
     def update_organization_component(
-        self, id_: str, request_body: OrganizationComponent = None
-    ) -> Awaitable[Union[OrganizationComponent, str, dict]]:
+        self, id_: str, request_body: Union[str, bytes] = None
+    ) -> Awaitable[bytes]:
         return to_async(super().update_organization_component)(id_, request_body)
 
     def delete_organization_component(self, id_: str) -> Awaitable[None]:

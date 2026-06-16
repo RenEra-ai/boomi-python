@@ -11,7 +11,8 @@ import os
 import sys
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
+from boomi.net.transport.api_error import ApiError
 
 # Simple process XML definition (inline for easier distribution)
 SIMPLE_PROCESS_XML = '''<Component xmlns="http://api.platform.boomi.com/"
@@ -83,25 +84,27 @@ def create_demo_process():
     print(f"\n🔄 Creating process via Component API...")
     
     try:
+        # create_component returns the raw XML response bytes
         result = sdk.component.create_component(request_body=SIMPLE_PROCESS_XML)
-        
+
         print("✅ Process creation successful!")
-        print(f"📊 Response type: {type(result).__name__}")
-        
-        # Extract useful information from the result if available
-        if hasattr(result, '__dict__'):
-            for key, value in result.__dict__.items():
-                if not key.startswith('_') and value is not None:
-                    if key in ['name', 'type', 'id', 'componentId']:
-                        print(f"  {key}: {value}")
-        
+        print(f"📊 Response type: {type(result).__name__} ({len(result)} bytes)")
+
+        # Read root <Component> attributes from the raw XML (read-only helper)
+        metadata = extract_component_xml_metadata(result)
+        for key in ('componentId', 'name', 'type', 'version'):
+            if metadata.get(key):
+                print(f"  {key}: {metadata[key]}")
+
         print(f"\n🎉 SUCCESS!")
+        print(f"📍 Created component '{metadata.get('name', 'N/A')}' "
+              f"(ID: {metadata.get('componentId', 'N/A')})")
         print(f"📍 Check your Boomi Build page to see the new process")
         print(f"🔧 The process demonstrates the SDK's component creation capabilities")
-        
+
         return True
-        
-    except Exception as e:
+
+    except ApiError as e:
         error_msg = str(e)
         print(f"❌ Process creation failed: {error_msg}")
         

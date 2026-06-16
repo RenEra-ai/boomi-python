@@ -56,7 +56,8 @@ try:
 except ImportError:
     pass  # dotenv is optional
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
+from boomi.net.transport.api_error import ApiError
 from boomi.models import (
     PackagedComponent,
     PackagedComponentQueryConfig,
@@ -152,25 +153,27 @@ class PackageInspector:
             if self.verbose:
                 print(f"   🔍 Getting component details for {component_id}...")
             
-            component = self.sdk.component.get_component(component_id=component_id)
-            
-            if component:
+            # Response IS the raw XML bytes; read the root attributes
+            component_xml = self.sdk.component.get_component(component_id=component_id)
+
+            if component_xml:
+                metadata = extract_component_xml_metadata(component_xml)
                 return {
-                    'name': getattr(component, 'name', 'N/A'),
-                    'type': getattr(component, 'type', 'N/A'),
-                    'description': getattr(component, 'description', ''),
-                    'folder_id': getattr(component, 'folder_id', 'N/A'),
-                    'current_version': getattr(component, 'current_version', 'N/A'),
-                    'version': getattr(component, 'version', 'N/A'),
-                    'created_date': getattr(component, 'created_date', 'N/A'),
-                    'created_by': getattr(component, 'created_by', 'N/A'),
-                    'modified_date': getattr(component, 'modified_date', 'N/A'),
-                    'modified_by': getattr(component, 'modified_by', 'N/A')
+                    'name': metadata.get('name', 'N/A'),
+                    'type': metadata.get('type', 'N/A'),
+                    'description': '',
+                    'folder_id': metadata.get('folderId', 'N/A'),
+                    'current_version': metadata.get('currentVersion', 'N/A'),
+                    'version': metadata.get('version', 'N/A'),
+                    'created_date': metadata.get('createdDate', 'N/A'),
+                    'created_by': metadata.get('createdBy', 'N/A'),
+                    'modified_date': metadata.get('modifiedDate', 'N/A'),
+                    'modified_by': metadata.get('modifiedBy', 'N/A')
                 }
             else:
                 return None
-                
-        except Exception as e:
+
+        except ApiError as e:
             if self.verbose:
                 print(f"   ⚠️ Could not get component details: {e}")
             return None

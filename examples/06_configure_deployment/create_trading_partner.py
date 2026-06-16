@@ -42,7 +42,8 @@ import sys
 import argparse
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
+from boomi.net.transport.api_error import ApiError
 from boomi.models import (
     TradingPartnerComponentQueryConfig,
     TradingPartnerComponentQueryConfigQueryFilter,
@@ -117,31 +118,27 @@ def create_trading_partner(sdk, name="SDK Created Trading Partner", folder_name=
 
     try:
         xml_body = build_trading_partner_xml(name, folder_name, description)
+        # create_component returns the raw XML response bytes
         result = sdk.component.create_component(request_body=xml_body)
 
         print("✅ Trading partner created successfully!")
-        print(f"   Type: {type(result).__name__}")
+        print(f"   Type: {type(result).__name__} ({len(result)} bytes)")
 
-        # Extract component ID
-        component_id = None
-        if hasattr(result, 'id_'):
-            component_id = result.id_
-            print(f"   ID: {component_id}")
-        elif hasattr(result, 'component_id'):
-            component_id = result.component_id
+        # Read root <Component> attributes from the raw XML response
+        metadata = extract_component_xml_metadata(result)
+        component_id = metadata.get('componentId')
+        if component_id:
             print(f"   Component ID: {component_id}")
-
-        if hasattr(result, 'name'):
-            print(f"   Name: {result.name}")
-
-        if hasattr(result, 'standard'):
-            print(f"   Standard: {result.standard}")
+        if metadata.get('name'):
+            print(f"   Name: {metadata['name']}")
+        if metadata.get('type'):
+            print(f"   Type: {metadata['type']}")
 
         print("\n🎉 SUCCESS!")
 
         return component_id
 
-    except Exception as e:
+    except ApiError as e:
         print(f"❌ Trading partner creation failed: {e}")
         return None
 

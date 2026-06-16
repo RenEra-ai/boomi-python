@@ -38,7 +38,8 @@ from typing import Optional
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
+from boomi.net.transport.api_error import ApiError
 
 
 class ComponentCloner:
@@ -74,34 +75,26 @@ class ComponentCloner:
         print(f"\n🔄 Cloning component {source_id}...")
         
         try:
-            # Step 1: Get the source component
+            # Step 1: Get the source component (response IS the raw XML bytes)
             print(f"📥 Retrieving source component...")
-            source_component = self.sdk.component.get_component(component_id=source_id)
-            
-            if not source_component:
-                print(f"❌ Component not found: {source_id}")
+            try:
+                source_xml = self.sdk.component.get_component(component_id=source_id)
+            except ApiError as e:
+                print(f"❌ Component not found: {source_id} ({e})")
                 return None
-            
-            # Display source component info
+
+            # Display source component info from the raw XML metadata
+            source_meta = extract_component_xml_metadata(source_xml)
             print(f"✅ Found source component:")
-            print(f"   Name: {source_component.name}")
-            print(f"   Type: {source_component.type_}")
-            print(f"   Folder: {source_component.folder_full_path}")
-            if hasattr(source_component, 'description') and source_component.description:
-                print(f"   Description: {source_component.description}")
-            
-            # Step 2: Convert to XML and modify
+            print(f"   Name: {source_meta.get('name', 'N/A')}")
+            print(f"   Type: {source_meta.get('type', 'N/A')}")
+            print(f"   Folder: {source_meta.get('folderFullPath', 'N/A')}")
+
+            # Step 2: Parse the raw XML and modify it
             print(f"\n🔧 Preparing clone...")
-            
-            # Get the XML representation
-            if hasattr(source_component, 'to_xml'):
-                xml_str = source_component.to_xml()
-            else:
-                print("❌ Component doesn't support XML conversion")
-                return None
-            
-            # Parse the XML
-            root = ET.fromstring(xml_str)
+
+            # Parse the raw component XML ourselves
+            root = ET.fromstring(source_xml)
             
             # Update the name
             root.set('name', new_name)
@@ -140,37 +133,32 @@ class ComponentCloner:
                     desc_elem.text = description
                 print(f"   ✓ Set description: {description}")
             
-            # Convert back to XML string
+            # Serialize once back to an XML string for the create body
             new_xml = ET.tostring(root, encoding='unicode')
-            
-            # Step 3: Create the new component
+
+            # Step 3: Create the new component (returns raw XML bytes)
             print(f"\n📤 Creating cloned component...")
             result = self.sdk.component.create_component(request_body=new_xml)
-            
-            # Extract the new component ID from the result
-            new_component_id = None
-            
-            if isinstance(result, str):
-                # Result is XML string, parse it
-                result_root = ET.fromstring(result)
-                new_component_id = result_root.get('componentId')
-            elif hasattr(result, 'component_id'):
-                # Result is a Component object
-                new_component_id = result.component_id
-            
+
+            # Extract the new component ID from the raw XML response
+            new_component_id = extract_component_xml_metadata(result).get('componentId')
+
             if new_component_id:
                 print(f"✅ Clone created successfully!")
                 print(f"   New component ID: {new_component_id}")
                 print(f"   Name: {new_name}")
-                
+
                 # Verify the clone
                 self._verify_clone(new_component_id)
-                
+
                 return new_component_id
             else:
                 print(f"⚠️ Component created but couldn't extract ID from response")
                 return None
-            
+
+        except ApiError as e:
+            print(f"❌ Failed to clone component: {e}")
+            return None
         except Exception as e:
             print(f"❌ Failed to clone component: {e}")
             import traceback
@@ -181,18 +169,15 @@ class ComponentCloner:
         """Verify the cloned component was created correctly"""
         try:
             print(f"\n🔍 Verifying clone...")
-            cloned = self.sdk.component.get_component(component_id=component_id)
-            
-            if cloned:
-                print(f"   ✓ Clone verified:")
-                print(f"     Name: {cloned.name}")
-                print(f"     Type: {cloned.type_}")
-                print(f"     Folder: {cloned.folder_full_path}")
-                return True
-            else:
-                print(f"   ⚠️ Could not verify clone")
-                return False
-        except Exception as e:
+            cloned_xml = self.sdk.component.get_component(component_id=component_id)
+
+            cloned = extract_component_xml_metadata(cloned_xml)
+            print(f"   ✓ Clone verified:")
+            print(f"     Name: {cloned.get('name', 'N/A')}")
+            print(f"     Type: {cloned.get('type', 'N/A')}")
+            print(f"     Folder: {cloned.get('folderFullPath', 'N/A')}")
+            return True
+        except ApiError as e:
             print(f"   ⚠️ Verification failed: {e}")
             return False
     

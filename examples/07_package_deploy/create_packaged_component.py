@@ -50,7 +50,8 @@ try:
 except ImportError:
     pass  # dotenv is optional
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
+from boomi.net.transport.api_error import ApiError
 
 
 class PackagedComponentCreator:
@@ -71,27 +72,28 @@ class PackagedComponentCreator:
         print(f"\n🔍 Validating component exists: {component_id}")
         
         try:
-            # Use SDK to get component - this should work for component validation
-            component = self.sdk.component.get_component(component_id=component_id)
-            
-            if component:
+            # Use SDK to get component - response IS the raw XML bytes
+            component_xml = self.sdk.component.get_component(component_id=component_id)
+
+            if component_xml:
                 print("✅ Component found and accessible")
-                
-                # Extract component details for display
+
+                # Extract component details from the raw XML for display
+                metadata = extract_component_xml_metadata(component_xml)
                 component_info = {
-                    'component_id': component_id,
-                    'name': getattr(component, 'name', 'Unknown'),
-                    'type': getattr(component, 'type', 'Unknown'),
-                    'current_version': getattr(component, 'current_version', 'Unknown')
+                    'component_id': metadata.get('componentId', component_id),
+                    'name': metadata.get('name', 'Unknown'),
+                    'type': metadata.get('type', 'Unknown'),
+                    'current_version': metadata.get('currentVersion', 'Unknown')
                 }
                 return component_info
             else:
                 print("❌ Component not found")
                 return None
-                
-        except Exception as e:
+
+        except ApiError as e:
             print(f"❌ Failed to validate component: {e}")
-            if hasattr(e, 'status') and e.status == 404:
+            if getattr(e, 'status', None) == 404:
                 print("   Component not found or not accessible")
             return None
     

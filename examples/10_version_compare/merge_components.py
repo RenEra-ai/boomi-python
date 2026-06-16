@@ -61,9 +61,9 @@ try:
 except ImportError:
     pass  # dotenv is optional
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
+from boomi.net.transport.api_error import ApiError
 from boomi.models import (
-    Component,
     ComponentMetadataQueryConfig,
     ComponentMetadataQueryConfigQueryFilter,
     ComponentMetadataSimpleExpression,
@@ -96,21 +96,21 @@ class ComponentMerger:
         self.conflicts = []
         self.rollback_stack = []
     
-    def get_component_from_branch(self, component_id: str, branch_name: str) -> Optional[Any]:
-        """Get component from specific branch"""
+    def get_component_from_branch(self, component_id: str, branch_name: str) -> Optional[bytes]:
+        """Get component raw XML from specific branch"""
         try:
             # Note: In Boomi, branch operations might be handled differently
             # This is a simplified example showing the pattern
-            
-            # Get component with branch context
-            component = self.sdk.component.get_component(component_id=component_id)
-            
+
+            # Get component with branch context - response IS the raw XML bytes
+            component_xml = self.sdk.component.get_component(component_id=component_id)
+
             if self.verbose:
                 print(f"   Retrieved component from branch '{branch_name}'")
-            
-            return component
-            
-        except Exception as e:
+
+            return component_xml
+
+        except ApiError as e:
             print(f"❌ Failed to get component from branch {branch_name}: {e}")
             return None
     
@@ -125,13 +125,9 @@ class ComponentMerger:
         }
         
         try:
-            # Convert components to XML for comparison
-            source_xml = source.to_xml() if hasattr(source, 'to_xml') else str(source)
-            target_xml = target.to_xml() if hasattr(target, 'to_xml') else str(target)
-            
-            # Parse XML
-            source_root = ET.fromstring(source_xml)
-            target_root = ET.fromstring(target_xml)
+            # source / target are raw component XML (bytes); parse them directly
+            source_root = ET.fromstring(source)
+            target_root = ET.fromstring(target)
             
             # Compare attributes
             source_attrs = set(source_root.attrib.items())
@@ -268,39 +264,42 @@ class ComponentMerger:
             # 2. Update the component in target branch
             # 3. Handle any API-specific merge operations
             
-            # For demonstration, we'll update the component
-            if hasattr(source_component, 'to_xml'):
-                merged_xml = source_component.to_xml()
-                
-                # Apply conflict resolutions if any
-                if self.conflicts and strategy != 'manual':
-                    root = ET.fromstring(merged_xml)
-                    for resolution in resolved:
-                        root.set(resolution['attribute'], resolution['resolved_value'])
-                    merged_xml = ET.tostring(root, encoding='unicode')
-                
-                # Update component in target branch
-                result = self.sdk.component.update_component(
-                    component_id=component_id,
-                    request_body=merged_xml
-                )
-                
-                print("   ✅ Component merged successfully")
-                
-                # Record in history
-                self.merge_history.append({
-                    'component_id': component_id,
-                    'source_branch': source_branch,
-                    'target_branch': target_branch,
-                    'timestamp': datetime.now().isoformat(),
-                    'conflicts_resolved': len(resolved) if target_component else 0
-                })
-                
-                return True
-            else:
-                print("   ⚠️ Component merge requires manual intervention")
-                return False
-                
+            # For demonstration, we'll update the component.
+            # source_component is the raw XML bytes from the source branch.
+            merged_xml = source_component
+
+            # Apply conflict resolutions if any (parse once, edit, serialize once)
+            if self.conflicts and strategy != 'manual':
+                root = ET.fromstring(merged_xml)
+                for resolution in resolved:
+                    root.set(resolution['attribute'], resolution['resolved_value'])
+                merged_xml = ET.tostring(root, encoding='unicode')
+
+            # Update component in target branch (full update with raw XML)
+            result = self.sdk.component.update_component(
+                component_id=component_id,
+                request_body=merged_xml
+            )
+
+            merged_meta = extract_component_xml_metadata(result)
+            print("   ✅ Component merged successfully")
+            print(f"      Component ID: {merged_meta.get('componentId', component_id)}")
+            print(f"      Version: {merged_meta.get('version', 'N/A')}")
+
+            # Record in history
+            self.merge_history.append({
+                'component_id': component_id,
+                'source_branch': source_branch,
+                'target_branch': target_branch,
+                'timestamp': datetime.now().isoformat(),
+                'conflicts_resolved': len(resolved) if target_component else 0
+            })
+
+            return True
+
+        except ApiError as e:
+            print(f"❌ Merge failed: {e}")
+            return False
         except Exception as e:
             print(f"❌ Merge failed: {e}")
             if self.verbose:
@@ -347,19 +346,19 @@ class ComponentMerger:
             rollback_item = self.rollback_stack.pop()
             
             try:
-                # Restore previous state
+                # Restore previous state (stored as raw component XML bytes)
                 component_id = rollback_item['component_id']
                 previous_state = rollback_item['state']
-                
-                if hasattr(previous_state, 'to_xml'):
+
+                if previous_state:
                     self.sdk.component.update_component(
                         component_id=component_id,
-                        request_body=previous_state.to_xml()
+                        request_body=previous_state
                     )
-                    
+
                     print(f"   ✅ Rolled back: {component_id}")
                     success_count += 1
-                    
+
             except Exception as e:
                 print(f"   ❌ Failed to rollback {component_id}: {e}")
         

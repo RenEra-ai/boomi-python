@@ -4,11 +4,10 @@ from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
-from ..net.transport.utils import parse_xml_to_dict
+from ..net.transport.utils import parse_xml_to_dict, require_raw_xml
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
-    SharedCommunicationChannelComponent,
     SharedCommunicationChannelComponentBulkRequest,
     SharedCommunicationChannelComponentBulkResponse,
     SharedCommunicationChannelComponentQueryConfig,
@@ -18,55 +17,57 @@ from ..models import (
 
 class SharedCommunicationChannelComponentService(BaseService):
 
-    @cast_models
     def create_shared_communication_channel_component(
-        self, request_body: SharedCommunicationChannelComponent = None
-    ) -> Union[str, SharedCommunicationChannelComponent]:
-        """The sample request creates a Shared Communication Component named `Disk Comms Channel`.
+        self, request_body: Union[str, bytes] = None
+    ) -> bytes:
+        """Create a Shared Communication Channel Component from raw XML; return raw XML response bytes.
 
-        :param request_body: The request body., defaults to None
-        :type request_body: SharedCommunicationChannelComponent, optional
-        ...
-        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
-        ...
-        :return: The parsed response data.
-        :rtype: Union[str, SharedCommunicationChannelComponent]
+        The component XML (with its open-ended communication-config subtree) is
+        treated as an **opaque** payload: it is sent exactly as provided and the
+        response is returned byte-for-byte, with no parsing or conversion. Export
+        an existing component via ``get_shared_communication_channel_component``
+        to use as a template.
+
+        :param request_body: Raw component XML (``str`` or ``bytes``).
+        :type request_body: Union[str, bytes]
+        :raises UnsafeComponentXmlSerializationError: If a non-raw body is passed.
+        :raises ApiError: If the request fails.
+        :return: The raw XML response exactly as returned by the API.
+        :rtype: bytes
         """
 
-        Validator(SharedCommunicationChannelComponent).is_optional().validate(
-            request_body
-        )
+        body = require_raw_xml(request_body)
 
         serialized_request = (
             Serializer(
                 f"{self.base_url or Environment.DEFAULT.url}/SharedCommunicationChannelComponent",
                 [self.get_access_token(), self.get_basic_auth()],
             )
+            .add_header("Accept", "application/xml")
             .serialize()
             .set_method("POST")
-            .set_body(request_body)
+            .set_body(body, "application/xml")
         )
 
-        response, status, content = self.send_request(serialized_request)
-        if content == "application/xml":
-            return SharedCommunicationChannelComponent._unmap(parse_xml_to_dict(response))
-        if content == "application/json":
-            return SharedCommunicationChannelComponent._unmap(response)
-        raise ApiError("Error on deserializing the response.", status, response)
+        response, status, _ = self.send_request_raw(serialized_request)
+        if 200 <= status < 300:
+            return response
+        raise ApiError(
+            f"Failed to create shared communication channel component: HTTP {status}",
+            status,
+            response,
+        )
 
-    @cast_models
-    def get_shared_communication_channel_component(
-        self, id_: str
-    ) -> Union[SharedCommunicationChannelComponent, str]:
-        """Send an HTTP GET request where `{accountId}` is the ID of the authenticating account for the request and `{componentId}` is the ID of the component being retrieved.
+    def get_shared_communication_channel_component(self, id_: str) -> bytes:
+        """Get a Shared Communication Channel Component as raw XML response bytes, without parsing.
+
+        Preserves the exact XML structure returned by the API.
 
         :param id_: ID of the component being retrieved.
         :type id_: str
-        ...
-        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
-        ...
-        :return: The parsed response data.
-        :rtype: Union[SharedCommunicationChannelComponent, str]
+        :raises ApiError: If the request fails.
+        :return: The raw XML response exactly as returned by the API.
+        :rtype: bytes
         """
 
         Validator(str).validate(id_)
@@ -77,38 +78,40 @@ class SharedCommunicationChannelComponentService(BaseService):
                 [self.get_access_token(), self.get_basic_auth()],
             )
             .add_path("id", id_)
+            .add_header("Accept", "application/xml")
             .serialize()
             .set_method("GET")
         )
 
-        response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return SharedCommunicationChannelComponent._unmap(response)
-        if content == "application/xml":
-            return SharedCommunicationChannelComponent._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        response, status, _ = self.send_request_raw(serialized_request)
+        if 200 <= status < 300:
+            return response
+        raise ApiError(
+            f"Failed to get shared communication channel component: HTTP {status}",
+            status,
+            response,
+        )
 
-    @cast_models
     def update_shared_communication_channel_component(
-        self, id_: str, request_body: SharedCommunicationChannelComponent = None
-    ) -> Union[SharedCommunicationChannelComponent, str]:
-        """The sample request updates the component named `Disk Comms Channel`.
+        self, id_: str, request_body: Union[str, bytes] = None
+    ) -> bytes:
+        """Update a Shared Communication Channel Component with raw XML; return raw XML response bytes.
 
-        :param request_body: The request body., defaults to None
-        :type request_body: SharedCommunicationChannelComponent, optional
+        Full updates only: supply the complete component XML you want persisted.
+        The body is sent exactly as provided.
+
         :param id_: ID of the component that needs updating.
         :type id_: str
-        ...
-        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
-        ...
-        :return: The parsed response data.
-        :rtype: Union[SharedCommunicationChannelComponent, str]
+        :param request_body: Raw component XML (``str`` or ``bytes``).
+        :type request_body: Union[str, bytes]
+        :raises UnsafeComponentXmlSerializationError: If a non-raw body is passed.
+        :raises ApiError: If the request fails.
+        :return: The raw XML response exactly as returned by the API.
+        :rtype: bytes
         """
 
-        Validator(SharedCommunicationChannelComponent).is_optional().validate(
-            request_body
-        )
         Validator(str).validate(id_)
+        body = require_raw_xml(request_body)
 
         serialized_request = (
             Serializer(
@@ -116,17 +119,20 @@ class SharedCommunicationChannelComponentService(BaseService):
                 [self.get_access_token(), self.get_basic_auth()],
             )
             .add_path("id", id_)
+            .add_header("Accept", "application/xml")
             .serialize()
             .set_method("POST")
-            .set_body(request_body)
+            .set_body(body, "application/xml")
         )
 
-        response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return SharedCommunicationChannelComponent._unmap(response)
-        if content == "application/xml":
-            return SharedCommunicationChannelComponent._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        response, status, _ = self.send_request_raw(serialized_request)
+        if 200 <= status < 300:
+            return response
+        raise ApiError(
+            f"Failed to update shared communication channel component: HTTP {status}",
+            status,
+            response,
+        )
 
     @cast_models
     def delete_shared_communication_channel_component(self, id_: str) -> None:

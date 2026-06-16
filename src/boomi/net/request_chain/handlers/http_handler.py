@@ -125,7 +125,10 @@ class HttpHandler(BaseHandler):
         :rtype: dict
         """
         headers = request.headers or {}
-        data = request.body or {}
+        # Preserve falsy-but-present raw bodies (e.g. empty bytes) verbatim;
+        # only substitute {} when there is genuinely no body. Using ``or {}``
+        # would silently turn an empty raw payload into a JSON object.
+        data = request.body if request.body is not None else {}
         content_type = headers.get("Content-Type", "application/json")
 
         if request.method == "GET" and not data:

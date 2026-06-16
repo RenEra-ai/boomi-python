@@ -1,5 +1,16 @@
 # TradingPartnerComponentService
 
+> **Breaking change (v3.0.0): the component XML payload is now opaque / raw-only.**
+> `create_trading_partner_component`, `get_trading_partner_component`, and
+> `update_trading_partner_component` now send and return **raw XML `bytes`**
+> (byte-for-byte identical to a direct REST call) instead of a typed
+> `TradingPartnerComponent` model. Write bodies must be raw `str`/`bytes`;
+> passing a model/dict/ElementTree raises `UnsafeComponentXmlSerializationError`.
+> Read root attributes from the returned bytes with
+> `boomi.extract_component_xml_metadata(xml)`. The `query_*`, `bulk_*`, and
+> `delete_*` methods are unchanged (still typed). See
+> [ComponentService](./ComponentService.md) for the full rationale and examples.
+
 A list of all methods in the `TradingPartnerComponentService` service. Click on the method name to view detailed information about that method.
 
 | Methods                                                                       | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |

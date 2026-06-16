@@ -10,6 +10,7 @@ from .default_headers import DefaultHeaders, DefaultHeadersKeys
 from ...net.headers.base_header import BaseHeader
 
 from ...net.transport.request import Request
+from ...net.transport.response import base_media_type
 from ...net.transport.api_error import ApiError
 from ...net.request_chain.request_chain import RequestChain
 from ...net.request_chain.handlers.hook_handler import HookHandler
@@ -120,7 +121,29 @@ class BaseService:
         return (
             response.body,
             response.status,
-            response.headers.get("Content-Type", "").lower(),
+            # Normalize to the bare media type so services that branch on
+            # ``content == "application/xml"`` / ``== "application/json"`` still
+            # match when the server adds a charset (e.g. "; charset=UTF-8").
+            base_media_type(response.headers.get("Content-Type", "").lower()),
+        )
+
+    def send_request_raw(self, request: Request) -> Tuple[bytes, int, str]:
+        """Send a request and return the raw, undecoded response body bytes.
+
+        Unlike :meth:`send_request`, this bypasses all content-type-based body
+        parsing and text decoding, so opaque payloads (e.g. Component XML) are
+        returned byte-for-byte identical to a direct API call. Used by the
+        raw-only Component endpoints.
+
+        :param Request request: The request to be sent.
+        :return: ``(raw_bytes, status, content_type)``.
+        :rtype: Tuple[bytes, int, str]
+        """
+        response = self._request_handler.send(request)
+        return (
+            response.raw_body,
+            response.status,
+            base_media_type(response.headers.get("Content-Type", "").lower()),
         )
 
     def stream_request(self, request: Request) -> Generator[Dict, None, None]:
@@ -135,7 +158,7 @@ class BaseService:
             yield (
                 response.body,
                 response.status,
-                response.headers.get("Content-Type", "").lower(),
+                base_media_type(response.headers.get("Content-Type", "").lower()),
             )
 
     def get_default_headers(self) -> list:

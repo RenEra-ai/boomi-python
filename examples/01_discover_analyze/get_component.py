@@ -38,9 +38,10 @@ Usage:
 
 import os
 import sys
+import xml.etree.ElementTree as ET
 from typing import Optional
 
-# Add parent directory to path for imports  
+# Add parent directory to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
 # Load environment variables from .env file if available
@@ -50,7 +51,8 @@ try:
 except ImportError:
     pass  # dotenv is optional
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
+from boomi.net.transport.api_error import ApiError
 
 
 def validate_environment() -> tuple[str, str, str]:
@@ -118,105 +120,128 @@ def analyze_object_structure(obj, prefix="", max_depth=3, current_depth=0):
     
     return "\n".join(result)
 
-def print_component_metadata(component):
-    """Print formatted component metadata information"""
+def print_component_metadata(metadata):
+    """Print formatted component metadata information from the raw XML attributes"""
     print("📋 Component Metadata:")
     print("=" * 50)
-    print(f"  Name: {getattr(component, 'name', 'N/A')}")
-    print(f"  Component ID: {getattr(component, 'component_id', 'N/A')}")
-    print(f"  Type: {getattr(component, 'type_', 'N/A')}")
-    print(f"  Version: {getattr(component, 'version', 'N/A')}")
-    
+    print(f"  Name: {metadata.get('name', 'N/A')}")
+    print(f"  Component ID: {metadata.get('componentId', 'N/A')}")
+    print(f"  Type: {metadata.get('type', 'N/A')}")
+    print(f"  Version: {metadata.get('version', 'N/A')}")
+
     # Status information
-    current_version = getattr(component, 'current_version', 'false')
-    deleted = getattr(component, 'deleted', 'false')
+    current_version = metadata.get('currentVersion', 'false')
+    deleted = metadata.get('deleted', 'false')
     status_parts = []
-    
+
     if str(current_version).lower() == 'true':
         status_parts.append("CURRENT")
     if str(deleted).lower() == 'true':
         status_parts.append("DELETED")
-    
+
     if status_parts:
         print(f"  Status: {' | '.join(status_parts)}")
-    
-    print(f"  Created: {format_date(getattr(component, 'created_date', 'N/A'))} by {getattr(component, 'created_by', 'N/A')}")
-    print(f"  Modified: {format_date(getattr(component, 'modified_date', 'N/A'))} by {getattr(component, 'modified_by', 'N/A')}")
-    
+
+    print(f"  Created: {format_date(metadata.get('createdDate', 'N/A'))} by {metadata.get('createdBy', 'N/A')}")
+    print(f"  Modified: {format_date(metadata.get('modifiedDate', 'N/A'))} by {metadata.get('modifiedBy', 'N/A')}")
+
     # Folder information
-    folder_path = getattr(component, 'folder_full_path', None) or getattr(component, 'folder_name', None)
+    folder_path = metadata.get('folderFullPath') or metadata.get('folderName')
     if folder_path:
         print(f"  Folder: {folder_path}")
-    
+
     # Branch information
-    branch_name = getattr(component, 'branch_name', None)
+    branch_name = metadata.get('branchName')
     if branch_name and branch_name != 'main':
         print(f"  Branch: {branch_name}")
-    
-    # Description
-    description = getattr(component, 'description', None)
-    if description:
-        print(f"  Description: {description}")
 
-def print_component_xml(component, detailed=False):
-    """Print component XML configuration with optional detailed analysis"""
+def _find_child(element, local_name):
+    """Find a direct child by local name, ignoring namespaces."""
+    for child in element:
+        if child.tag.split('}')[-1] == local_name:
+            return child
+    return None
+
+
+def _describe_element(element, prefix="", max_depth=3, current_depth=0):
+    """Recursively describe an ElementTree element's structure."""
+    if current_depth >= max_depth:
+        return f"{prefix}... (max depth reached)"
+
+    result = []
+    local_tag = element.tag.split('}')[-1]
+    children = list(element)
+    attr_note = f" [{len(element.attrib)} attrs]" if element.attrib else ""
+
+    if children:
+        result.append(f"{prefix}<{local_tag}>{attr_note} ({len(children)} children)")
+        for child in children[:5]:
+            sub = _describe_element(child, prefix + "  ", max_depth, current_depth + 1)
+            result.append(sub)
+        if len(children) > 5:
+            result.append(f"{prefix}  ... and {len(children) - 5} more")
+    else:
+        text_preview = (element.text or '').strip()
+        if len(text_preview) > 50:
+            text_preview = text_preview[:50] + "..."
+        suffix = f" = {text_preview}" if text_preview else ""
+        result.append(f"{prefix}<{local_tag}>{attr_note}{suffix}")
+
+    return "\n".join(result)
+
+
+def print_component_xml(root, detailed=False):
+    """Print component XML configuration with optional detailed analysis.
+
+    ``root`` is the parsed ElementTree root of the raw component XML.
+    """
     print("\n🔧 Component Configuration:")
     print("=" * 50)
-    
-    # Check for XML object
-    obj = getattr(component, 'object', None)
-    if obj:
+
+    # Check for the <object> configuration element
+    obj = _find_child(root, 'object')
+    if obj is not None and len(list(obj)):
         print("📄 Component has XML configuration object")
-        
+
         if detailed:
             # Detailed structural analysis
             print("\n🔍 Detailed XML Structure Analysis:")
             print("-" * 40)
-            analysis = analyze_object_structure(obj)
-            print(analysis)
+            print(_describe_element(obj))
         else:
             # Basic structure info
-            if hasattr(obj, '__dict__'):
-                obj_dict = obj.__dict__ if hasattr(obj, '__dict__') else {}
-                print(f"📊 Configuration contains {len(obj_dict)} top-level elements")
-                
-                # Show top-level keys
-                if obj_dict:
-                    print("🔑 Top-level configuration elements:")
-                    for key in sorted(obj_dict.keys()):
-                        if not key.startswith('_'):
-                            value = obj_dict[key]
-                            value_type = type(value).__name__
-                            if isinstance(value, (dict, list)):
-                                count = len(value) if hasattr(value, '__len__') else 0
-                                print(f"    • {key}: {value_type} ({count} items)")
-                            else:
-                                print(f"    • {key}: {value_type}")
-            else:
-                print(f"📄 Configuration object type: {type(obj).__name__}")
+            top_children = list(obj)
+            print(f"📊 Configuration contains {len(top_children)} top-level elements")
+            print("🔑 Top-level configuration elements:")
+            for child in top_children:
+                local_tag = child.tag.split('}')[-1]
+                count = len(list(child))
+                if count:
+                    print(f"    • {local_tag}: element ({count} children)")
+                else:
+                    print(f"    • {local_tag}: element")
     else:
         print("❌ No XML configuration object found")
-    
+
     # Check for encrypted values
-    encrypted_values = getattr(component, 'encrypted_values', None)
-    if encrypted_values:
+    if _find_child(root, 'encryptedValues') is not None:
         print(f"\n🔒 Component has encrypted values configured")
-    
+
     # Check for process overrides
-    process_overrides = getattr(component, 'process_overrides', None)
-    if process_overrides:
+    if _find_child(root, 'processOverrides') is not None:
         print(f"\n⚙️ Component has process overrides configured")
 
-def print_raw_response_structure(result):
-    """Print raw response structure for debugging"""
+
+def print_raw_response_structure(root):
+    """Print raw response structure for debugging (top-level XML elements)"""
     print("\n🔍 Raw Response Structure:")
     print("-" * 40)
-    if hasattr(result, '__dict__'):
-        for key, value in result.__dict__.items():
-            if not key.startswith('_'):
-                print(f"  {key}: {type(value).__name__}")
-                if key == 'object' and value:
-                    print("    📄 XML Configuration Object Found!")
+    for child in root:
+        local_tag = child.tag.split('}')[-1]
+        count = len(list(child))
+        print(f"  {local_tag}: element ({count} children)")
+        if local_tag == 'object' and count:
+            print("    📄 XML Configuration Object Found!")
 
 def get_component(component_id, version=None, detailed=False, xml_only=False):
     """Retrieve and display component with specified options"""
@@ -257,58 +282,44 @@ def get_component(component_id, version=None, detailed=False, xml_only=False):
         else:
             component_identifier = component_id
         
-        # Get the component
+        # Get the component - response IS the raw XML bytes
         result = sdk.component.get_component(component_id=component_identifier)
-        
+
         if not xml_only:
             print("✅ Component retrieved successfully!")
-            print(f"📊 Response type: {type(result).__name__}")
-        
-        # Handle response - check if it's wrapped in _kwargs
-        component = None
-        if hasattr(result, '_kwargs') and result._kwargs:
-            if 'Component' in result._kwargs:
-                component = result._kwargs['Component']
-            else:
-                # Try to find the component in the response
-                for key, value in result._kwargs.items():
-                    if hasattr(value, 'component_id') or hasattr(value, 'name'):
-                        component = value
-                        break
-        else:
-            component = result
-        
-        if component:
-            if xml_only:
-                # Only show XML configuration
-                print_component_xml(component, detailed=detailed)
-            else:
-                # Show metadata
-                print_component_metadata(component)
-                
-                # Show XML configuration
-                print_component_xml(component, detailed=detailed)
-                
-                # Show raw structure if detailed mode
-                if detailed:
-                    print_raw_response_structure(result)
-                
-                print(f"\n🎉 SUCCESS!")
-                print(f"📍 Component '{getattr(component, 'name', 'N/A')}' retrieved successfully")
-                print(f"🔧 Component contains full XML configuration for deployment/analysis")
-            
-            return True
-        else:
-            print("❌ No component data found in response")
-            if detailed:
-                print("Response structure:")
-                if hasattr(result, '__dict__'):
-                    for key, value in result.__dict__.items():
-                        if not key.startswith('_'):
-                            print(f"  {key}: {type(value).__name__}")
+            print(f"📊 Response type: {type(result).__name__} ({len(result)} bytes)")
+
+        # Parse the raw XML ourselves (the SDK never parses component XML)
+        try:
+            root = ET.fromstring(result)
+        except ET.ParseError as e:
+            print(f"❌ Failed to parse component XML: {e}")
             return False
-            
-    except Exception as e:
+
+        # Read root <Component> attributes via the read-only metadata helper
+        metadata = extract_component_xml_metadata(result)
+
+        if xml_only:
+            # Only show XML configuration
+            print_component_xml(root, detailed=detailed)
+        else:
+            # Show metadata
+            print_component_metadata(metadata)
+
+            # Show XML configuration
+            print_component_xml(root, detailed=detailed)
+
+            # Show raw structure if detailed mode
+            if detailed:
+                print_raw_response_structure(root)
+
+            print(f"\n🎉 SUCCESS!")
+            print(f"📍 Component '{metadata.get('name', 'N/A')}' retrieved successfully")
+            print(f"🔧 Component contains full XML configuration for deployment/analysis")
+
+        return True
+
+    except ApiError as e:
         error_msg = str(e)
         print(f"❌ Component retrieval failed: {error_msg}")
         

@@ -19,7 +19,8 @@ import xml.etree.ElementTree as ET
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
+from boomi.net.transport.api_error import ApiError
 from boomi.models import (
     ComponentMetadataQueryConfig,
     ComponentMetadataQueryConfigQueryFilter,
@@ -62,36 +63,37 @@ class ComponentDeleter:
         """
         try:
             print(f"\n🗑️ Soft deleting component: {component_id}")
-            
-            # Get the component
-            component = self.sdk.component.get_component(component_id=component_id)
-            
-            # Get component name for confirmation
-            xml_str = component.to_xml()
-            root = ET.fromstring(xml_str)
+
+            # Get the component (response IS the raw XML bytes)
+            xml_bytes = self.sdk.component.get_component(component_id=component_id)
+
+            # Parse the raw XML ourselves to read name/type and edit it
+            root = ET.fromstring(xml_bytes)
             comp_name = root.get('name', 'Unknown')
             comp_type = root.get('type', 'Unknown')
-            
+
             print(f"   Component: {comp_name}")
             print(f"   Type: {comp_type}")
-            
+
             if self.dry_run:
                 print("   🔒 DRY RUN - Would mark component as deleted")
                 return True
-            
-            # Set deleted flag
+
+            # Set deleted flag and serialize once for the update body
             root.set('deleted', 'true')
             modified_xml = ET.tostring(root, encoding='unicode')
-            
-            # Update component
+
+            # Update component with the modified raw XML (full update)
             result = self.sdk.component.update_component(
                 component_id=component_id,
                 request_body=modified_xml
             )
-            
+
+            updated = extract_component_xml_metadata(result)
             print("   ✅ Component marked as deleted")
+            print(f"      Component ID: {updated.get('componentId', component_id)}")
             return True
-            
+
         except Exception as e:
             print(f"   ❌ Error deleting component: {e}")
             if self.verbose:

@@ -45,6 +45,7 @@ except ImportError:
     pass  # dotenv is optional
 
 from boomi import Boomi
+from boomi.net.transport.api_error import ApiError
 from boomi.models import ComponentBulkRequest, ComponentBulkRequestType, BulkId
 
 
@@ -70,11 +71,40 @@ def format_date(date_str):
     return date_str or 'N/A'
 
 
-def parse_component_xml(xml_string: str) -> Dict:
-    """Parse component XML and extract metadata"""
+def extract_component_elements(envelope) -> List[ET.Element]:
+    """Parse the bulk-response envelope (bytes/str) and return each <Component>.
+
+    ``bulk_component`` now returns the whole raw XML envelope as bytes. The
+    envelope wraps one ``bns:result`` per request, each containing a
+    ``bns:Component`` element. We parse it once and collect those Component
+    elements (namespace-agnostic to tolerate prefix differences).
+    """
+    components = []
     try:
-        root = ET.fromstring(xml_string)
-        
+        env_root = ET.fromstring(envelope)
+    except ET.ParseError as e:
+        print(f"❌ Failed to parse bulk-response envelope: {e}")
+        return components
+
+    # Find every Component element anywhere in the envelope, regardless of prefix
+    for elem in env_root.iter():
+        if elem.tag.split('}')[-1] == 'Component':
+            components.append(elem)
+    return components
+
+
+def parse_component_xml(xml_source) -> Dict:
+    """Parse component XML and extract metadata.
+
+    ``xml_source`` may be a raw XML string/bytes or an already-parsed
+    ElementTree ``Element`` (as extracted from the bulk envelope).
+    """
+    try:
+        if isinstance(xml_source, ET.Element):
+            root = xml_source
+        else:
+            root = ET.fromstring(xml_source)
+
         # Extract attributes from the root element  
         component_data = {
             'name': root.get('name', 'N/A'),
@@ -120,7 +150,7 @@ def parse_component_xml(xml_string: str) -> Dict:
     except ET.ParseError as e:
         return {
             'error': f'XML parse error: {e}',
-            'raw_xml_length': len(xml_string)
+            'raw_xml_length': 0
         }
 
 
@@ -231,44 +261,46 @@ def main():
             type_=ComponentBulkRequestType.GET
         )
         
-        # Execute bulk get - SDK returns list of XML strings
+        # Execute bulk get - SDK now returns the whole raw XML envelope (bytes)
         result = sdk.component.bulk_component(request_body=bulk_request)
-        
+
         print("✅ Bulk retrieval successful!")
-        print(f"📊 Response type: {type(result).__name__}")
-        
-        # Process XML responses
-        if isinstance(result, list) and result:
+        print(f"📊 Response type: {type(result).__name__} ({len(result)} bytes)")
+
+        # Parse the single envelope and extract each <Component> element
+        component_elements = extract_component_elements(result)
+
+        if component_elements:
             print(f"\n{'='*80}")
-            print(f"📋 BULK COMPONENT RETRIEVAL RESULTS ({len(result)} components)")
+            print(f"📋 BULK COMPONENT RETRIEVAL RESULTS ({len(component_elements)} components)")
             print(f"{'='*80}")
-            
+
             component_types = []
-            for i, xml_string in enumerate(result, 1):
-                component_data = parse_component_xml(xml_string)
+            for i, comp_elem in enumerate(component_elements, 1):
+                component_data = parse_component_xml(comp_elem)
                 print_component_info(component_data, i)
-                
+
                 if 'type' in component_data and component_data['type'] != 'N/A':
                     component_types.append(component_data['type'])
-            
+
             # Summary
             print(f"\n{'='*60}")
             print(f"📊 BULK RETRIEVAL SUMMARY")
             print(f"{'='*60}")
-            print(f"  • Total components retrieved: {len(result)}")
+            print(f"  • Total components retrieved: {len(component_elements)}")
             print(f"  • Component types: {', '.join(set(component_types)) if component_types else 'Unknown'}")
-            print(f"  • Average XML length: {sum(len(xml) for xml in result) // len(result)} characters")
-            
-            print(f"\n✅ Successfully retrieved {len(result)} component(s) in bulk!")
+            print(f"  • Envelope size: {len(result)} bytes")
+
+            print(f"\n✅ Successfully retrieved {len(component_elements)} component(s) in bulk!")
         else:
             print(f"\n❌ No components retrieved. Check component IDs and permissions.")
-            print(f"   Result type: {type(result)}")
-            print(f"   Result: {result}")
+            print(f"   Raw envelope ({len(result)} bytes):")
+            print(f"   {result[:500]!r}{'...' if len(result) > 500 else ''}")
             sys.exit(1)
-            
-    except Exception as e:
+
+    except ApiError as e:
         print(f"❌ Error during bulk component retrieval: {e}")
-        
+
         # Provide helpful troubleshooting hints
         error_msg = str(e)
         if "404" in error_msg or "not found" in error_msg.lower():

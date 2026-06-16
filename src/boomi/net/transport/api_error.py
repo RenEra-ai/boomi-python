@@ -42,11 +42,24 @@ class ApiError(BaseModel, Exception):
             return None
 
         body = self.response.body
+        # Error bodies may arrive as bytes (e.g. charset-suffixed or non-XML
+        # content types). Decode defensively for best-effort detail extraction;
+        # the verbatim bytes remain available on ``self.response.raw_body``.
+        if isinstance(body, (bytes, bytearray)):
+            try:
+                body = body.decode('utf-8', errors='replace')
+            except Exception:
+                return None
         if not body or not isinstance(body, str):
             return None
 
         # Only try to parse XML error responses
         if not body.strip().startswith('<?xml') and not body.strip().startswith('<error'):
+            return None
+
+        # Defend against XML entity-expansion (billion laughs) / XXE: refuse to
+        # parse documents that declare a DOCTYPE or custom entities.
+        if '<!doctype' in body[:4096].lower() or '<!entity' in body[:4096].lower():
             return None
 
         try:

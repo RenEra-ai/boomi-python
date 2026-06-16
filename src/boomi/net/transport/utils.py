@@ -327,44 +327,102 @@ def parse_xml_to_dict(xml_string: str) -> dict:
     return _extract_component_data(cleaned)
 
 
-def parse_xml_to_dict_with_preservation(xml_string: str) -> dict:
-    """Parse XML to dict while preserving original XML for round-tripping.
-    
-    This function works like parse_xml_to_dict but also stores the original
-    XML and object element for perfect round-trip preservation. Used by
-    Component model to enable lossless XML updates.
-    
-    :param xml_string: The XML string to parse
-    :type xml_string: str
-    :return: Dict with additional XML preservation fields
+def require_raw_xml(body):
+    """Validate an opaque-XML write body is raw ``str``/``bytes``; return it unchanged.
+
+    Shared by the component-family services (Component, TradingPartnerComponent,
+    OrganizationComponent, SharedCommunicationChannelComponent) whose XML payload
+    is opaque. Only ``str``/``bytes`` are accepted; ``bytearray``/``memoryview``
+    are normalized to ``bytes``. Any other type — a generated model, ``dict``,
+    ``ElementTree.Element``, any ``BaseModel``, or an object exposing
+    ``to_xml``/``_map`` — is rejected *before* the request is sent, because
+    serializing it would silently corrupt the XML.
+
+    :param body: The request body provided by the caller.
+    :return: The raw ``str`` or ``bytes`` payload, unchanged.
+    :raises UnsafeComponentXmlSerializationError: If ``body`` is not raw XML.
+    :raises ValueError: If ``body`` is ``None`` or empty/whitespace-only.
+    """
+    from .request_error import UnsafeComponentXmlSerializationError
+
+    if body is None:
+        raise ValueError("request_body is required and must be raw XML")
+    if isinstance(body, str):
+        payload = body
+    elif isinstance(body, (bytes, bytearray, memoryview)):
+        payload = bytes(body)
+    else:
+        raise UnsafeComponentXmlSerializationError(type(body).__name__)
+    if isinstance(payload, str):
+        if not payload.strip():
+            raise ValueError("request_body must not be empty")
+    elif len(payload) == 0:
+        raise ValueError("request_body must not be empty")
+    return payload
+
+
+def extract_component_xml_metadata(xml) -> dict:
+    """Read the root ``<Component>`` attributes from component XML (read-only).
+
+    Returns a flat dict of the root element's attributes with namespace prefixes
+    stripped — e.g. ``componentId``, ``name``, ``type``, ``subType``,
+    ``folderId``, ``folderName``, ``folderFullPath``, ``version``, ``branchId``,
+    ``branchName``, ``currentVersion``, ``deleted``, ``createdDate``,
+    ``createdBy``, ``modifiedDate``, ``modifiedBy``.
+
+    This is a best-effort, READ-ONLY convenience. It never reconstructs or
+    re-serializes XML and has no inverse, so it cannot be used to build an
+    update payload — for updates, pass the exact raw XML to ``update_component``.
+
+    Hardened against XML entity-expansion (billion laughs) / XXE: documents
+    declaring a DOCTYPE or custom entities are refused, external entity
+    resolution is disabled, and parsing aborts at the first start element so the
+    (potentially large) ``<object>`` subtree is never traversed.
+
+    :param xml: Component XML as ``str`` or ``bytes``.
+    :return: Root attributes as a dict of strings; ``{}`` on parse error or bad input.
     :rtype: dict
     """
-    from xml.etree import ElementTree as ET
-    
-    # First, do the normal parsing for backward compatibility
-    result = parse_xml_to_dict(xml_string)
-    
-    # Now add XML preservation data
-    try:
-        root = ET.fromstring(xml_string)
-        
-        # Store the original XML
-        result['_original_xml'] = xml_string
-        
-        # Extract and store the object element as raw XML
-        ns = "http://api.platform.boomi.com/"
-        obj_elem = root.find(f"{{{ns}}}object")
-        if obj_elem is not None:
-            # Store the inner XML (the content inside <bns:object>)
-            inner_xml = ""
-            for child in obj_elem:
-                inner_xml += ET.tostring(child, encoding='unicode')
-            result['object_xml'] = inner_xml
-            result['_object_element'] = obj_elem
-        
-    except ET.ParseError:
-        # If XML parsing fails, just use the regular result
+    import xml.parsers.expat as expat
+
+    if isinstance(xml, (bytes, bytearray, memoryview)):
+        try:
+            text = bytes(xml).decode("utf-8", errors="replace")
+        except Exception:
+            return {}
+    elif isinstance(xml, str):
+        text = xml
+    else:
+        return {}
+
+    # Refuse DOCTYPE / custom entity declarations (defense against entity
+    # expansion); external entity resolution is also disabled below.
+    head = text[:4096].lower()
+    if "<!doctype" in head or "<!entity" in head:
+        return {}
+
+    class _Stop(Exception):
         pass
-    
-    return result
+
+    found: dict = {}
+
+    def _start(_name, attrs):
+        for key, value in attrs.items():
+            # Skip namespace declarations (reported as plain attributes by expat
+            # when namespace processing is off).
+            if key == "xmlns" or key.startswith("xmlns:"):
+                continue
+            found[_strip_key_namespace(key)] = value
+        raise _Stop()
+
+    parser = expat.ParserCreate()
+    parser.StartElementHandler = _start
+    parser.ExternalEntityRefHandler = lambda *args: False
+    try:
+        parser.Parse(text, True)
+    except _Stop:
+        pass
+    except expat.ExpatError:
+        return {}
+    return found
 

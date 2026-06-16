@@ -6,6 +6,33 @@ from requests import Response as RequestsResponse
 from urllib.parse import parse_qs
 
 
+def base_media_type(content_type: str) -> str:
+    """Return the bare media type, stripped of parameters and whitespace.
+
+    ``application/xml; charset=UTF-8`` -> ``application/xml``. Used so XML
+    detection is not defeated by a charset (or other) parameter.
+
+    :param content_type: A raw, already-lowercased Content-Type header value.
+    :return: The media type without parameters.
+    :rtype: str
+    """
+    return (content_type or "").split(";", 1)[0].strip()
+
+
+def is_xml_content_type(content_type: str) -> bool:
+    """Whether a Content-Type denotes XML, tolerant of charset suffixes.
+
+    Matches ``application/xml``, ``text/xml`` and structured-syntax suffixes
+    like ``application/atom+xml`` — with or without a trailing ``; charset=...``.
+
+    :param content_type: A raw, already-lowercased Content-Type header value.
+    :return: True if the response body is XML.
+    :rtype: bool
+    """
+    media_type = base_media_type(content_type)
+    return media_type.endswith("/xml") or media_type.endswith("+xml")
+
+
 class Response:
     """
     A simple HTTP response wrapper class using the requests library.
@@ -29,6 +56,12 @@ class Response:
         """
         self.status = response.status_code
         self.headers = response.headers
+
+        # Retain the undecoded response bytes so opaque/raw endpoints can be
+        # returned byte-for-byte identical to a direct API call (see
+        # BaseService.send_request_raw). ``self.body`` remains the parsed/
+        # decoded body for typed endpoints.
+        self.raw_body = raw_chunk if raw_chunk is not None else response.content
 
         self.body = self._parse_response_body(
             content_type=response.headers.get("Content-Type", "").lower(),
@@ -93,7 +126,7 @@ class Response:
                 # Note: this assumes that the content of data is a valid JSON string
                 return json.loads(json_body)
 
-            if "text/" in content_type or content_type == "application/xml":
+            if "text/" in content_type or is_xml_content_type(content_type):
                 return body
 
             if content_type == "application/x-www-form-urlencoded":

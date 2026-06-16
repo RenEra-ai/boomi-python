@@ -5,7 +5,6 @@ from ..shared_communication_channel_component import (
     SharedCommunicationChannelComponentService,
 )
 from ...models import (
-    SharedCommunicationChannelComponent,
     SharedCommunicationChannelComponentBulkResponse,
     SharedCommunicationChannelComponentBulkRequest,
     SharedCommunicationChannelComponentQueryResponse,
@@ -21,20 +20,20 @@ class SharedCommunicationChannelComponentServiceAsync(
     """
 
     def create_shared_communication_channel_component(
-        self, request_body: SharedCommunicationChannelComponent = None
-    ) -> Awaitable[Union[str, SharedCommunicationChannelComponent]]:
+        self, request_body: Union[str, bytes] = None
+    ) -> Awaitable[bytes]:
         return to_async(super().create_shared_communication_channel_component)(
             request_body
         )
 
     def get_shared_communication_channel_component(
         self, id_: str
-    ) -> Awaitable[Union[SharedCommunicationChannelComponent, str]]:
+    ) -> Awaitable[bytes]:
         return to_async(super().get_shared_communication_channel_component)(id_)
 
     def update_shared_communication_channel_component(
-        self, id_: str, request_body: SharedCommunicationChannelComponent = None
-    ) -> Awaitable[Union[SharedCommunicationChannelComponent, str]]:
+        self, id_: str, request_body: Union[str, bytes] = None
+    ) -> Awaitable[bytes]:
         return to_async(super().update_shared_communication_channel_component)(
             id_, request_body
         )
