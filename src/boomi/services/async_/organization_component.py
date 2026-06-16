@@ -18,17 +18,17 @@ class OrganizationComponentServiceAsync(OrganizationComponentService):
 
     def create_organization_component(
         self, request_body: OrganizationComponent = None
-    ) -> Awaitable[Union[OrganizationComponent, str]]:
+    ) -> Awaitable[Union[OrganizationComponent, str, dict]]:
         return to_async(super().create_organization_component)(request_body)
 
     def get_organization_component(
         self, id_: str
-    ) -> Awaitable[Union[OrganizationComponent, str]]:
+    ) -> Awaitable[Union[OrganizationComponent, str, dict]]:
         return to_async(super().get_organization_component)(id_)
 
     def update_organization_component(
         self, id_: str, request_body: OrganizationComponent = None
-    ) -> Awaitable[Union[OrganizationComponent, str]]:
+    ) -> Awaitable[Union[OrganizationComponent, str, dict]]:
         return to_async(super().update_organization_component)(id_, request_body)
 
     def delete_organization_component(self, id_: str) -> Awaitable[None]:
@@ -41,10 +41,10 @@ class OrganizationComponentServiceAsync(OrganizationComponentService):
 
     def query_organization_component(
         self, request_body: OrganizationComponentQueryConfig = None
-    ) -> Awaitable[Union[OrganizationComponentQueryResponse, str]]:
+    ) -> Awaitable[Union[OrganizationComponentQueryResponse, str, dict]]:
         return to_async(super().query_organization_component)(request_body)
 
     def query_more_organization_component(
         self, request_body: str
-    ) -> Awaitable[Union[OrganizationComponentQueryResponse, str]]:
+    ) -> Awaitable[Union[OrganizationComponentQueryResponse, str, dict]]:
         return to_async(super().query_more_organization_component)(request_body)
