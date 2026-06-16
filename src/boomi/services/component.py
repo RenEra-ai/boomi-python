@@ -245,8 +245,11 @@ class ComponentService(BaseService):
         :return: List of Component objects from successful responses
         :rtype: List[Component]
         """
-        # Get raw XML response first
-        xml_response = self.bulk_component_raw(request_body)
+        # Get raw XML response first. Call the raw helper via the class (not
+        # self) so the async subclass override — which returns a coroutine —
+        # is not picked up by dynamic dispatch when this sync method runs on
+        # an async instance inside a thread.
+        xml_response = ComponentService.bulk_component_raw(self, request_body)
         
         # Parse XML response  
         try:
@@ -393,7 +396,10 @@ class ComponentService(BaseService):
         :return: ElementTree Element root
         :rtype: xml.etree.ElementTree.Element
         """
-        xml = self.get_component_raw(component_id)
+        # Call via the class (not self) so the async subclass override does
+        # not return a coroutine when this sync method runs on an async
+        # instance inside a thread.
+        xml = ComponentService.get_component_raw(self, component_id)
         root = ET.fromstring(xml)
         
         # Register namespaces to preserve them on serialization
@@ -428,8 +434,10 @@ class ComponentService(BaseService):
         # Convert Element to XML string
         xml = ET.tostring(element, encoding='unicode', xml_declaration=True)
         
-        # Update using raw XML method
-        return self.update_component_raw(component_id, xml)
+        # Update using the raw XML method, called via the class (not self) so
+        # the async subclass override does not return a coroutine when this
+        # sync method runs on an async instance inside a thread.
+        return ComponentService.update_component_raw(self, component_id, xml)
     
     @staticmethod
     def _get_default_namespace(element: ET.Element) -> str:
