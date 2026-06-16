@@ -123,8 +123,20 @@ class RuntimeObservabilitySettingsService(BaseService):
         # usable result. Treat it as "no settings available".
         if response is None or response == b"" or response == "":
             return None
-        if content == "application/json":
-            return RuntimeObservabilitySettingsAsyncResponse._unmap(response)
-        if content == "application/xml":
-            return RuntimeObservabilitySettingsAsyncResponse._unmap(parse_xml_to_dict(response))
+        # Hydrate onto the strict response model, but if a sparse/unexpected
+        # 2xx body cannot be mapped, return the raw response content instead of
+        # raising (honoring the Union[..., str] contract). This keeps the
+        # response path resilient without relaxing the settings models, which
+        # are shared with the strict RuntimeObservabilitySettingsRequest body.
+        try:
+            if content == "application/json":
+                return RuntimeObservabilitySettingsAsyncResponse._unmap(response)
+            if content == "application/xml":
+                return RuntimeObservabilitySettingsAsyncResponse._unmap(
+                    parse_xml_to_dict(response)
+                )
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)

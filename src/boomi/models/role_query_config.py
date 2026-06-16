@@ -48,7 +48,10 @@ class RoleQueryConfig(BaseModel):
         if query_filter is SENTINEL or query_filter is None or query_filter == {}:
             self.query_filter = {}
         else:
-            self.query_filter = self._define_object(
-                query_filter, RoleQueryConfigQueryFilter
-            )
+            obj = self._define_object(query_filter, RoleQueryConfigQueryFilter)
+            # An expression-less filter (RoleQueryConfigQueryFilter() or
+            # expression=None) is the documented "list all roles" empty filter;
+            # serialize it as {} so the wire body is {"QueryFilter": {}} rather
+            # than {"QueryFilter": {"@type": "RoleQueryConfigQueryFilter"}}.
+            self.query_filter = obj if (obj is not None and hasattr(obj, "expression")) else {}
         self._kwargs = kwargs

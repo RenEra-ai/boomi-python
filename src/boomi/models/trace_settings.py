@@ -22,16 +22,16 @@ from .observability_endpoint import ObservabilityEndpoint
 class TraceSettings(BaseModel):
     """TraceSettings
 
-    :param observability_endpoint: observability_endpoint, defaults to None
-    :type observability_endpoint: ObservabilityEndpoint, optional
-    :param trace_batch_size: trace_batch_size, defaults to None
-    :type trace_batch_size: int, optional
-    :param trace_flush_interval: trace_flush_interval, defaults to None
-    :type trace_flush_interval: int, optional
-    :param trace_max_queue_size: trace_max_queue_size, defaults to None
-    :type trace_max_queue_size: int, optional
-    :param trace_timeout_seconds: trace_timeout_seconds, defaults to None
-    :type trace_timeout_seconds: int, optional
+    :param observability_endpoint: observability_endpoint
+    :type observability_endpoint: ObservabilityEndpoint
+    :param trace_batch_size: trace_batch_size
+    :type trace_batch_size: int
+    :param trace_flush_interval: trace_flush_interval
+    :type trace_flush_interval: int
+    :param trace_max_queue_size: trace_max_queue_size
+    :type trace_max_queue_size: int
+    :param trace_timeout_seconds: trace_timeout_seconds
+    :type trace_timeout_seconds: int
     :param enabled: enabled, defaults to None
     :type enabled: bool, optional
     :param override_general_observability_endpoint: override_general_observability_endpoint, defaults to None
@@ -44,11 +44,11 @@ class TraceSettings(BaseModel):
 
     def __init__(
         self,
-        observability_endpoint: ObservabilityEndpoint = SENTINEL,
-        trace_batch_size: int = SENTINEL,
-        trace_flush_interval: int = SENTINEL,
-        trace_max_queue_size: int = SENTINEL,
-        trace_timeout_seconds: int = SENTINEL,
+        observability_endpoint: ObservabilityEndpoint,
+        trace_batch_size: int,
+        trace_flush_interval: int,
+        trace_max_queue_size: int,
+        trace_timeout_seconds: int,
         enabled: bool = SENTINEL,
         override_general_observability_endpoint: bool = SENTINEL,
         process_filter_enabled: bool = SENTINEL,
@@ -57,16 +57,16 @@ class TraceSettings(BaseModel):
     ):
         """TraceSettings
 
-        :param observability_endpoint: observability_endpoint, defaults to None
-        :type observability_endpoint: ObservabilityEndpoint, optional
-        :param trace_batch_size: trace_batch_size, defaults to None
-        :type trace_batch_size: int, optional
-        :param trace_flush_interval: trace_flush_interval, defaults to None
-        :type trace_flush_interval: int, optional
-        :param trace_max_queue_size: trace_max_queue_size, defaults to None
-        :type trace_max_queue_size: int, optional
-        :param trace_timeout_seconds: trace_timeout_seconds, defaults to None
-        :type trace_timeout_seconds: int, optional
+        :param observability_endpoint: observability_endpoint
+        :type observability_endpoint: ObservabilityEndpoint
+        :param trace_batch_size: trace_batch_size
+        :type trace_batch_size: int
+        :param trace_flush_interval: trace_flush_interval
+        :type trace_flush_interval: int
+        :param trace_max_queue_size: trace_max_queue_size
+        :type trace_max_queue_size: int
+        :param trace_timeout_seconds: trace_timeout_seconds
+        :type trace_timeout_seconds: int
         :param enabled: enabled, defaults to None
         :type enabled: bool, optional
         :param override_general_observability_endpoint: override_general_observability_endpoint, defaults to None
@@ -76,18 +76,13 @@ class TraceSettings(BaseModel):
         :param process_filter_ids: process_filter_ids, defaults to None
         :type process_filter_ids: List[str], optional
         """
-        if observability_endpoint is not SENTINEL:
-            self.observability_endpoint = self._define_object(
-                observability_endpoint, ObservabilityEndpoint
-            )
-        if trace_batch_size is not SENTINEL:
-            self.trace_batch_size = trace_batch_size
-        if trace_flush_interval is not SENTINEL:
-            self.trace_flush_interval = trace_flush_interval
-        if trace_max_queue_size is not SENTINEL:
-            self.trace_max_queue_size = trace_max_queue_size
-        if trace_timeout_seconds is not SENTINEL:
-            self.trace_timeout_seconds = trace_timeout_seconds
+        self.observability_endpoint = self._define_object(
+            observability_endpoint, ObservabilityEndpoint
+        )
+        self.trace_batch_size = trace_batch_size
+        self.trace_flush_interval = trace_flush_interval
+        self.trace_max_queue_size = trace_max_queue_size
+        self.trace_timeout_seconds = trace_timeout_seconds
         if enabled is not SENTINEL:
             self.enabled = enabled
         if override_general_observability_endpoint is not SENTINEL:

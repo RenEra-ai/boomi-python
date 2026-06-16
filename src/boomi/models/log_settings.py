@@ -56,16 +56,16 @@ class LogFilterType(Enum):
 class LogSettings(BaseModel):
     """LogSettings
 
-    :param log_batch_size: log_batch_size, defaults to None
-    :type log_batch_size: int, optional
-    :param log_flush_interval: log_flush_interval, defaults to None
-    :type log_flush_interval: int, optional
-    :param log_max_queue_size: log_max_queue_size, defaults to None
-    :type log_max_queue_size: int, optional
-    :param log_timeout_seconds: log_timeout_seconds, defaults to None
-    :type log_timeout_seconds: int, optional
-    :param observability_endpoint: observability_endpoint, defaults to None
-    :type observability_endpoint: ObservabilityEndpoint, optional
+    :param log_batch_size: log_batch_size
+    :type log_batch_size: int
+    :param log_flush_interval: log_flush_interval
+    :type log_flush_interval: int
+    :param log_max_queue_size: log_max_queue_size
+    :type log_max_queue_size: int
+    :param log_timeout_seconds: log_timeout_seconds
+    :type log_timeout_seconds: int
+    :param observability_endpoint: observability_endpoint
+    :type observability_endpoint: ObservabilityEndpoint
     :param enabled: enabled, defaults to None
     :type enabled: bool, optional
     :param log_filter_enabled: log_filter_enabled, defaults to None
@@ -78,11 +78,11 @@ class LogSettings(BaseModel):
 
     def __init__(
         self,
-        log_batch_size: int = SENTINEL,
-        log_flush_interval: int = SENTINEL,
-        log_max_queue_size: int = SENTINEL,
-        log_timeout_seconds: int = SENTINEL,
-        observability_endpoint: ObservabilityEndpoint = SENTINEL,
+        log_batch_size: int,
+        log_flush_interval: int,
+        log_max_queue_size: int,
+        log_timeout_seconds: int,
+        observability_endpoint: ObservabilityEndpoint,
         enabled: bool = SENTINEL,
         log_filter_enabled: bool = SENTINEL,
         log_filter_types: List[str] = SENTINEL,
@@ -91,16 +91,16 @@ class LogSettings(BaseModel):
     ):
         """LogSettings
 
-        :param log_batch_size: log_batch_size, defaults to None
-        :type log_batch_size: int, optional
-        :param log_flush_interval: log_flush_interval, defaults to None
-        :type log_flush_interval: int, optional
-        :param log_max_queue_size: log_max_queue_size, defaults to None
-        :type log_max_queue_size: int, optional
-        :param log_timeout_seconds: log_timeout_seconds, defaults to None
-        :type log_timeout_seconds: int, optional
-        :param observability_endpoint: observability_endpoint, defaults to None
-        :type observability_endpoint: ObservabilityEndpoint, optional
+        :param log_batch_size: log_batch_size
+        :type log_batch_size: int
+        :param log_flush_interval: log_flush_interval
+        :type log_flush_interval: int
+        :param log_max_queue_size: log_max_queue_size
+        :type log_max_queue_size: int
+        :param log_timeout_seconds: log_timeout_seconds
+        :type log_timeout_seconds: int
+        :param observability_endpoint: observability_endpoint
+        :type observability_endpoint: ObservabilityEndpoint
         :param enabled: enabled, defaults to None
         :type enabled: bool, optional
         :param log_filter_enabled: log_filter_enabled, defaults to None
@@ -110,18 +110,13 @@ class LogSettings(BaseModel):
         :param override_general_observability_endpoint: override_general_observability_endpoint, defaults to None
         :type override_general_observability_endpoint: bool, optional
         """
-        if log_batch_size is not SENTINEL:
-            self.log_batch_size = log_batch_size
-        if log_flush_interval is not SENTINEL:
-            self.log_flush_interval = log_flush_interval
-        if log_max_queue_size is not SENTINEL:
-            self.log_max_queue_size = log_max_queue_size
-        if log_timeout_seconds is not SENTINEL:
-            self.log_timeout_seconds = log_timeout_seconds
-        if observability_endpoint is not SENTINEL:
-            self.observability_endpoint = self._define_object(
-                observability_endpoint, ObservabilityEndpoint
-            )
+        self.log_batch_size = log_batch_size
+        self.log_flush_interval = log_flush_interval
+        self.log_max_queue_size = log_max_queue_size
+        self.log_timeout_seconds = log_timeout_seconds
+        self.observability_endpoint = self._define_object(
+            observability_endpoint, ObservabilityEndpoint
+        )
         if enabled is not SENTINEL:
             self.enabled = enabled
         if log_filter_enabled is not SENTINEL:

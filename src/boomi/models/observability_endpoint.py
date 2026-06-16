@@ -2,7 +2,6 @@
 from __future__ import annotations
 from .utils.json_map import JsonMap
 from .utils.base_model import BaseModel
-from .utils.sentinel import SENTINEL
 from .observability_endpoint_authentication import ObservabilityEndpointAuthentication
 
 
@@ -10,29 +9,27 @@ from .observability_endpoint_authentication import ObservabilityEndpointAuthenti
 class ObservabilityEndpoint(BaseModel):
     """ObservabilityEndpoint
 
-    :param authentication: authentication, defaults to None
-    :type authentication: ObservabilityEndpointAuthentication, optional
-    :param url: url, defaults to None
-    :type url: str, optional
+    :param authentication: authentication
+    :type authentication: ObservabilityEndpointAuthentication
+    :param url: url
+    :type url: str
     """
 
     def __init__(
         self,
-        authentication: ObservabilityEndpointAuthentication = SENTINEL,
-        url: str = SENTINEL,
+        authentication: ObservabilityEndpointAuthentication,
+        url: str,
         **kwargs,
     ):
         """ObservabilityEndpoint
 
-        :param authentication: authentication, defaults to None
-        :type authentication: ObservabilityEndpointAuthentication, optional
-        :param url: url, defaults to None
-        :type url: str, optional
+        :param authentication: authentication
+        :type authentication: ObservabilityEndpointAuthentication
+        :param url: url
+        :type url: str
         """
-        if authentication is not SENTINEL:
-            self.authentication = self._define_object(
-                authentication, ObservabilityEndpointAuthentication
-            )
-        if url is not SENTINEL:
-            self.url = url
+        self.authentication = self._define_object(
+            authentication, ObservabilityEndpointAuthentication
+        )
+        self.url = url
         self._kwargs = kwargs

@@ -10,15 +10,15 @@ from .observability_endpoint import ObservabilityEndpoint
 class GeneralSettings(BaseModel):
     """GeneralSettings
 
-    :param observability_endpoint: observability_endpoint, defaults to None
-    :type observability_endpoint: ObservabilityEndpoint, optional
+    :param observability_endpoint: observability_endpoint
+    :type observability_endpoint: ObservabilityEndpoint
     :param enabled: enabled, defaults to None
     :type enabled: bool, optional
     """
 
     def __init__(
         self,
-        observability_endpoint: ObservabilityEndpoint = SENTINEL,
+        observability_endpoint: ObservabilityEndpoint,
         enabled: bool = SENTINEL,
         **kwargs,
     ):
@@ -29,10 +29,9 @@ class GeneralSettings(BaseModel):
         :param enabled: enabled, defaults to None
         :type enabled: bool, optional
         """
-        if observability_endpoint is not SENTINEL:
-            self.observability_endpoint = self._define_object(
-                observability_endpoint, ObservabilityEndpoint
-            )
+        self.observability_endpoint = self._define_object(
+            observability_endpoint, ObservabilityEndpoint
+        )
         if enabled is not SENTINEL:
             self.enabled = enabled
         self._kwargs = kwargs
