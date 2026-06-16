@@ -21,7 +21,7 @@ class OrganizationComponentService(BaseService):
     @cast_models
     def create_organization_component(
         self, request_body: OrganizationComponent = None
-    ) -> Union[OrganizationComponent, str]:
+    ) -> Union[OrganizationComponent, str, dict]:
         """The CREATE operation creates an Organization Component object with the specified component name.
 
          The request body requires the `componentName` field. If you omit the `folderName` field, it requires the `folderId` field — and vice versa. If you omit the `componentID` field, it assigns the value when you create the component. If you omit the `folderID` field, it assigns the value when you create the component.
@@ -32,7 +32,7 @@ class OrganizationComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[OrganizationComponent, str]
+        :rtype: Union[OrganizationComponent, str, dict]
         """
 
         Validator(OrganizationComponent).is_optional().validate(request_body)
@@ -62,7 +62,7 @@ class OrganizationComponentService(BaseService):
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
-    def get_organization_component(self, id_: str) -> Union[OrganizationComponent, str]:
+    def get_organization_component(self, id_: str) -> Union[OrganizationComponent, str, dict]:
         """The GET operation returns a single Organization Component object based on the supplied ID. A GET operation specifying the ID of a deleted Organization Component retrieves the component. In the component, the deleted field’s value is *true*.
 
         :param id_: Organization component ID
@@ -71,7 +71,7 @@ class OrganizationComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[OrganizationComponent, str]
+        :rtype: Union[OrganizationComponent, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -103,7 +103,7 @@ class OrganizationComponentService(BaseService):
     @cast_models
     def update_organization_component(
         self, id_: str, request_body: OrganizationComponent = None
-    ) -> Union[OrganizationComponent, str]:
+    ) -> Union[OrganizationComponent, str, dict]:
         """The UPDATE operation overwrites the Organization Component object with the specified component ID. An UPDATE operation specifying the ID of a deleted Organization component restores the component to a non-deleted state, assuming the request is otherwise valid.
 
         :param request_body: The request body., defaults to None
@@ -114,7 +114,7 @@ class OrganizationComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[OrganizationComponent, str]
+        :rtype: Union[OrganizationComponent, str, dict]
         """
 
         Validator(OrganizationComponent).is_optional().validate(request_body)
@@ -207,7 +207,7 @@ class OrganizationComponentService(BaseService):
     @cast_models
     def query_organization_component(
         self, request_body: OrganizationComponentQueryConfig = None
-    ) -> Union[OrganizationComponentQueryResponse, str]:
+    ) -> Union[OrganizationComponentQueryResponse, str, dict]:
         """- Only the LIKE operator is allowed with a name filter. Likewise, only the EQUALS operator is permitted with a contactName, email, or phone filter.
 
          -   If the QUERY request includes multiple filters, you can connect the filters with a logical AND operator — the query does not support the logical OR operator .
@@ -222,7 +222,7 @@ class OrganizationComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[OrganizationComponentQueryResponse, str]
+        :rtype: Union[OrganizationComponentQueryResponse, str, dict]
         """
 
         Validator(OrganizationComponentQueryConfig).is_optional().validate(request_body)
@@ -258,7 +258,7 @@ class OrganizationComponentService(BaseService):
     @cast_models
     def query_more_organization_component(
         self, request_body: str
-    ) -> Union[OrganizationComponentQueryResponse, str]:
+    ) -> Union[OrganizationComponentQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -267,7 +267,7 @@ class OrganizationComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[OrganizationComponentQueryResponse, str]
+        :rtype: Union[OrganizationComponentQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)

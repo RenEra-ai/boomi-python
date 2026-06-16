@@ -27,7 +27,7 @@ The CREATE operation creates an Organization Component object with the specified
 
 **Return Type**
 
-`OrganizationComponent`
+`Union[OrganizationComponent, str, dict]`
 
 **Example Usage Code Snippet**
 
@@ -84,7 +84,7 @@ The GET operation returns a single Organization Component object based on the su
 
 **Return Type**
 
-`OrganizationComponent`
+`Union[OrganizationComponent, str, dict]`
 
 **Example Usage Code Snippet**
 
@@ -119,7 +119,7 @@ The UPDATE operation overwrites the Organization Component object with the speci
 
 **Return Type**
 
-`OrganizationComponent`
+`Union[OrganizationComponent, str, dict]`
 
 **Example Usage Code Snippet**
 
@@ -254,7 +254,11 @@ with open("output-file.ext", "w") as f:
 
 **Return Type**
 
-`OrganizationComponentQueryResponse`
+`Union[OrganizationComponentQueryResponse, str, dict]`
+
+Returns the typed response when the body maps onto the model. A sparse 2xx body
+that cannot be mapped (e.g. a row omitting `OrganizationContactInfo`) is returned
+as the raw response content (`dict` for JSON, `str` for XML).
 
 **Example Usage Code Snippet**
 
@@ -301,7 +305,11 @@ To learn about using `queryMore`, refer to [Query paging](#section/Introduction/
 
 **Return Type**
 
-`OrganizationComponentQueryResponse`
+`Union[OrganizationComponentQueryResponse, str, dict]`
+
+Returns the typed response when the body maps onto the model. A sparse 2xx body
+that cannot be mapped (e.g. a row omitting `OrganizationContactInfo`) is returned
+as the raw response content (`dict` for JSON, `str` for XML).
 
 **Example Usage Code Snippet**
 
