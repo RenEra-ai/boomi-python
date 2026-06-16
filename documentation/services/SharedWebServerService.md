@@ -56,8 +56,10 @@ Updates a Shared Web Server object based on the supplied Runtime ID.
 | request_body | [SharedWebServer](../models/SharedWebServer.md) | ❌       | The request body. |
 | id\_         | str                                             | ✅       |                   |
 
-Sparse GET responses may omit some settings sections, but update payloads must
-include the OpenAPI-required `SharedWebServer` fields.
+An update payload must include `atom_id` and the runtime's settings section —
+`cloud_tennant_general` (cloud runtime) or `general_settings` (local runtime). A
+runtime exposes only one of the two sections, so a GET response can be modified
+and sent back as-is; field-level requirements are validated by the server.
 
 **Return Type**
 

@@ -25,54 +25,31 @@ class SharedWebServerService(BaseService):
 
     @classmethod
     def _validate_shared_web_server_update_body(cls, request_body: SharedWebServer):
-        """Validate write-time fields that the read model keeps optional.
+        """Guard against a degenerate update body.
 
-        The model accepts sparse live GET responses, but POST /SharedWebServer
-        still follows the OpenAPI required-field contract.
+        The read model is intentionally tolerant of sparse live GET responses,
+        which omit whole sections AND fields within them (verified against the
+        live API: a cloud runtime returns only ``cloud_tennant_general``, a
+        local runtime only ``general_settings`` — and that section's nested
+        objects are themselves sparse). So the natural GET -> modify -> update
+        readback must keep working, and deep field validation here would reject
+        legitimate updates. We only reject a clearly-empty update — missing
+        ``atom_id`` or carrying neither settings section — and leave full field
+        validation to the server, which is authoritative.
         """
         if request_body is None:
             return
 
-        cls._require_fields(
-            request_body,
-            (
-                "atom_id",
-                "cloud_tennant_general",
-                "cors_configuration",
-                "general_settings",
-                "user_management",
-            ),
-            "request_body",
-        )
-        cls._require_fields(
-            request_body.cloud_tennant_general,
-            ("api_type", "auth_type", "base_url", "listener_ports"),
-            "request_body.cloud_tennant_general",
-        )
-        cls._require_fields(
-            request_body.general_settings,
-            (
-                "api_type",
-                "authentication",
-                "base_url",
-                "external_host",
-                "internal_host",
-                "listener_ports",
-                "protected_headers",
-                "ssl_certificate",
-            ),
-            "request_body.general_settings",
-        )
-        cls._require_fields(
-            request_body.general_settings.authentication,
-            (
-                "auth_type",
-                "client_certificate_header_name",
-                "login_module_class_name",
-                "login_module_options",
-            ),
-            "request_body.general_settings.authentication",
-        )
+        cls._require_fields(request_body, ("atom_id",), "request_body")
+
+        if not (
+            hasattr(request_body, "cloud_tennant_general")
+            or hasattr(request_body, "general_settings")
+        ):
+            raise ValueError(
+                "request_body must include cloud_tennant_general (cloud runtime) "
+                "or general_settings (local runtime)"
+            )
 
     @cast_models
     def get_shared_web_server(self, id_: str) -> Union[SharedWebServer, str]:
