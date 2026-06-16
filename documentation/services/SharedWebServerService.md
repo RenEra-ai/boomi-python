@@ -56,6 +56,9 @@ Updates a Shared Web Server object based on the supplied Runtime ID.
 | request_body | [SharedWebServer](../models/SharedWebServer.md) | ❌       | The request body. |
 | id\_         | str                                             | ✅       |                   |
 
+Sparse GET responses may omit some settings sections, but update payloads must
+include the OpenAPI-required `SharedWebServer` fields.
+
 **Return Type**
 
 `SharedWebServer`
@@ -238,4 +241,3 @@ result = sdk.shared_web_server.bulk_shared_web_server(request_body=request_body)
 
 print(result)
 ```
-

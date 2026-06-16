@@ -29,5 +29,5 @@ class RuntimeObservabilitySettingsServiceAsync(RuntimeObservabilitySettingsServi
 
     def async_token_runtime_observability_settings(
         self, token: str
-    ) -> Awaitable[Union[RuntimeObservabilitySettingsAsyncResponse, str]]:
+    ) -> Awaitable[Union[RuntimeObservabilitySettingsAsyncResponse, str, dict, None]]:
         return to_async(super().async_token_runtime_observability_settings)(token)

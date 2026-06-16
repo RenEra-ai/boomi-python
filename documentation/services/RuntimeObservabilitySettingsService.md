@@ -130,11 +130,12 @@ For a response, use the token from the initial GET response in a new request.
 
 **Return Type**
 
-`Union[RuntimeObservabilitySettingsAsyncResponse, str]`
+`Union[RuntimeObservabilitySettingsAsyncResponse, str, dict, None]`
 
 Returns the typed response when the body maps onto the model. A 204 / empty body
 (no observability settings configured) returns `None`, and a sparse 2xx body that
-cannot be mapped is returned as the raw response content.
+cannot be mapped is returned as the raw response content (`dict` for JSON,
+`str` for XML/text).
 
 **Example Usage Code Snippet**
 

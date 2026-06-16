@@ -15,6 +15,64 @@ from ..models import (
 
 
 class SharedWebServerService(BaseService):
+    @staticmethod
+    def _require_fields(obj, field_names, path):
+        missing = [field for field in field_names if not hasattr(obj, field)]
+        if missing:
+            raise ValueError(
+                f"{path} missing required field(s): {', '.join(missing)}"
+            )
+
+    @classmethod
+    def _validate_shared_web_server_update_body(cls, request_body: SharedWebServer):
+        """Validate write-time fields that the read model keeps optional.
+
+        The model accepts sparse live GET responses, but POST /SharedWebServer
+        still follows the OpenAPI required-field contract.
+        """
+        if request_body is None:
+            return
+
+        cls._require_fields(
+            request_body,
+            (
+                "atom_id",
+                "cloud_tennant_general",
+                "cors_configuration",
+                "general_settings",
+                "user_management",
+            ),
+            "request_body",
+        )
+        cls._require_fields(
+            request_body.cloud_tennant_general,
+            ("api_type", "auth_type", "base_url", "listener_ports"),
+            "request_body.cloud_tennant_general",
+        )
+        cls._require_fields(
+            request_body.general_settings,
+            (
+                "api_type",
+                "authentication",
+                "base_url",
+                "external_host",
+                "internal_host",
+                "listener_ports",
+                "protected_headers",
+                "ssl_certificate",
+            ),
+            "request_body.general_settings",
+        )
+        cls._require_fields(
+            request_body.general_settings.authentication,
+            (
+                "auth_type",
+                "client_certificate_header_name",
+                "login_module_class_name",
+                "login_module_options",
+            ),
+            "request_body.general_settings.authentication",
+        )
 
     @cast_models
     def get_shared_web_server(self, id_: str) -> Union[SharedWebServer, str]:
@@ -67,6 +125,7 @@ class SharedWebServerService(BaseService):
 
         Validator(SharedWebServer).is_optional().validate(request_body)
         Validator(str).validate(id_)
+        self._validate_shared_web_server_update_body(request_body)
 
         serialized_request = (
             Serializer(

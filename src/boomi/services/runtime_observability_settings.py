@@ -92,7 +92,7 @@ class RuntimeObservabilitySettingsService(BaseService):
     @cast_models
     def async_token_runtime_observability_settings(
         self, token: str
-    ) -> Union[RuntimeObservabilitySettingsAsyncResponse, str]:
+    ) -> Union[RuntimeObservabilitySettingsAsyncResponse, str, dict, None]:
         """For a response, use the token from the initial GET response in a new request.
 
         :param token: Takes in the token from a previous call to return a result.
@@ -101,7 +101,7 @@ class RuntimeObservabilitySettingsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeObservabilitySettingsAsyncResponse, str]
+        :rtype: Union[RuntimeObservabilitySettingsAsyncResponse, str, dict, None]
         """
 
         Validator(str).validate(token)
