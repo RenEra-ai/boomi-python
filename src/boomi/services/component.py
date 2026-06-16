@@ -230,7 +230,7 @@ class ComponentService(BaseService):
 
         response, status, content = self.send_request(serialized_request)
         if status >= 200 and status < 300:
-            return response  # Return raw XML string
+            return self._decode_raw(response)  # raw XML text
         raise ApiError(f"Failed to bulk get components: HTTP {status}", status, response)
 
     @cast_models  
@@ -281,10 +281,28 @@ class ComponentService(BaseService):
         except ET.ParseError as e:
             raise ApiError(f"Failed to parse XML response: {e}", 200, xml_response)
 
+    @staticmethod
+    def _decode_raw(response: Any) -> str:
+        """Decode a raw response body to text.
+
+        The transport returns XML bodies as ``bytes`` when the Content-Type
+        carries a charset (e.g. ``application/xml; charset=UTF-8``), because
+        ``Response._parse_response_body`` only returns text for an exact
+        ``application/xml``. The raw helpers advertise ``-> str``, so decode
+        ``bytes``/``bytearray`` defensively (mirrors ``_deserialize_component_response``).
+
+        :param response: The raw response body (str or bytes).
+        :return: The body as text.
+        :rtype: str
+        """
+        if isinstance(response, (bytes, bytearray)):
+            return response.decode("utf-8")
+        return response
+
     # ========== Phase 1: Raw XML Support ==========
     # These methods provide direct XML access without any dict conversion
     # This preserves XML structure exactly for complex components
-    
+
     def get_component_raw(self, component_id: str) -> str:
         """Get component as raw XML string without any parsing or conversion.
         
@@ -316,7 +334,7 @@ class ComponentService(BaseService):
         # Return raw response without any parsing
         response, status, content = self.send_request(serialized_request)
         if status >= 200 and status < 300:
-            return response  # Return raw XML string
+            return self._decode_raw(response)  # raw XML text
         raise ApiError(f"Failed to get component: HTTP {status}", status, response)
     
     def update_component_raw(self, component_id: str, xml: str) -> str:
@@ -349,7 +367,7 @@ class ComponentService(BaseService):
         
         response, status, content = self.send_request(serialized_request)
         if status >= 200 and status < 300:
-            return response  # Return raw XML response
+            return self._decode_raw(response)  # raw XML text
         raise ApiError(f"Failed to update component: HTTP {status}", status, response)
 
     def create_component_raw(self, xml: str) -> str:
@@ -382,7 +400,7 @@ class ComponentService(BaseService):
 
         response, status, content = self.send_request(serialized_request)
         if status >= 200 and status < 300:
-            return response  # Return raw XML response
+            return self._decode_raw(response)  # raw XML text
         raise ApiError(f"Failed to create component: HTTP {status}", status, response)
 
     def get_component_etree(self, component_id: str) -> ET.Element:
