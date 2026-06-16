@@ -51,6 +51,11 @@ class RoleQueryConfig(BaseModel):
         # never silently dropped and turned into an unfiltered list-all query.
         if query_filter is SENTINEL and "QueryFilter" in kwargs:
             query_filter = kwargs.pop("QueryFilter")
+        # Also handle a whole OpenAPI body passed directly as the filter, e.g.
+        # RoleQueryConfig({"QueryFilter": {...}}); unwrap it so the inner filter
+        # is not mistaken for an empty filter and silently dropped.
+        if isinstance(query_filter, dict) and "QueryFilter" in query_filter:
+            query_filter = query_filter["QueryFilter"]
         if query_filter is SENTINEL or query_filter is None or query_filter == {}:
             self.query_filter = {}
         else:

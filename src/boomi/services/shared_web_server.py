@@ -42,9 +42,13 @@ class SharedWebServerService(BaseService):
 
         cls._require_fields(request_body, ("atom_id",), "request_body")
 
-        if not (
-            hasattr(request_body, "cloud_tennant_general")
-            or hasattr(request_body, "general_settings")
+        # A section set to None serializes away (``_map`` drops None), so check
+        # for a non-None value, not mere attribute presence — otherwise
+        # SharedWebServer(atom_id="a", cloud_tennant_general=None) would pass the
+        # guard yet send an atom-id-only body.
+        if (
+            getattr(request_body, "cloud_tennant_general", None) is None
+            and getattr(request_body, "general_settings", None) is None
         ):
             raise ValueError(
                 "request_body must include cloud_tennant_general (cloud runtime) "
