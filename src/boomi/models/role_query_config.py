@@ -45,6 +45,12 @@ class RoleQueryConfig(BaseModel):
         :param query_filter: query_filter, defaults to None
         :type query_filter: RoleQueryConfigQueryFilter, optional
         """
+        # cast_models constructs RoleQueryConfig(**data) for dict input, so a
+        # caller-supplied OpenAPI-keyed filter ({"QueryFilter": {...}}) arrives
+        # in kwargs rather than query_filter. Pull it back so a real filter is
+        # never silently dropped and turned into an unfiltered list-all query.
+        if query_filter is SENTINEL and "QueryFilter" in kwargs:
+            query_filter = kwargs.pop("QueryFilter")
         if query_filter is SENTINEL or query_filter is None or query_filter == {}:
             self.query_filter = {}
         else:
