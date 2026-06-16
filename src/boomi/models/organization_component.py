@@ -20,8 +20,8 @@ from .organization_contact_info import OrganizationContactInfo
 class OrganizationComponent(BaseModel):
     """OrganizationComponent
 
-    :param organization_contact_info: organization_contact_info, defaults to None
-    :type organization_contact_info: OrganizationContactInfo, optional
+    :param organization_contact_info: organization_contact_info
+    :type organization_contact_info: OrganizationContactInfo
     :param component_id: A unique ID assigned by the system to the component., defaults to None
     :type component_id: str, optional
     :param component_name: A user-defined name for the component., defaults to None
@@ -42,7 +42,7 @@ class OrganizationComponent(BaseModel):
 
     def __init__(
         self,
-        organization_contact_info: OrganizationContactInfo = SENTINEL,
+        organization_contact_info: OrganizationContactInfo,
         component_id: str = SENTINEL,
         component_name: str = SENTINEL,
         deleted: bool = SENTINEL,
@@ -74,10 +74,9 @@ class OrganizationComponent(BaseModel):
         :param branch_name: branch_name, defaults to None
         :type branch_name: str, optional
         """
-        if organization_contact_info is not SENTINEL:
-            self.organization_contact_info = self._define_object(
-                organization_contact_info, OrganizationContactInfo
-            )
+        self.organization_contact_info = self._define_object(
+            organization_contact_info, OrganizationContactInfo
+        )
         if component_id is not SENTINEL:
             self.component_id = component_id
         if component_name is not SENTINEL:

@@ -48,10 +48,17 @@ class OrganizationComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return OrganizationComponent._unmap(response)
-        if content == "application/xml":
-            return OrganizationComponent._unmap(parse_xml_to_dict(response))
+        # Return the raw payload on a 2xx hydration miss rather than raising,
+        # so a sparse-but-valid response still reaches the caller (Union[..., str]).
+        try:
+            if content == "application/json":
+                return OrganizationComponent._unmap(response)
+            if content == "application/xml":
+                return OrganizationComponent._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -80,10 +87,17 @@ class OrganizationComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return OrganizationComponent._unmap(response)
-        if content == "application/xml":
-            return OrganizationComponent._unmap(parse_xml_to_dict(response))
+        # Return the raw payload on a 2xx hydration miss rather than raising,
+        # so a sparse-but-valid response still reaches the caller (Union[..., str]).
+        try:
+            if content == "application/json":
+                return OrganizationComponent._unmap(response)
+            if content == "application/xml":
+                return OrganizationComponent._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -118,10 +132,17 @@ class OrganizationComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return OrganizationComponent._unmap(response)
-        if content == "application/xml":
-            return OrganizationComponent._unmap(parse_xml_to_dict(response))
+        # Return the raw payload on a 2xx hydration miss rather than raising,
+        # so a sparse-but-valid response still reaches the caller (Union[..., str]).
+        try:
+            if content == "application/json":
+                return OrganizationComponent._unmap(response)
+            if content == "application/xml":
+                return OrganizationComponent._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -217,10 +238,21 @@ class OrganizationComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return OrganizationComponentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return OrganizationComponentQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires (e.g.
+        # organizationContactInfo); return the raw payload on a 2xx hydration
+        # miss rather than raising (honors Union[..., str]) so callers are not
+        # forced back to raw transport.
+        try:
+            if content == "application/json":
+                return OrganizationComponentQueryResponse._unmap(response)
+            if content == "application/xml":
+                return OrganizationComponentQueryResponse._unmap(
+                    parse_xml_to_dict(response)
+                )
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -251,8 +283,19 @@ class OrganizationComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return OrganizationComponentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return OrganizationComponentQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires (e.g.
+        # organizationContactInfo); return the raw payload on a 2xx hydration
+        # miss rather than raising (honors Union[..., str]) so callers are not
+        # forced back to raw transport.
+        try:
+            if content == "application/json":
+                return OrganizationComponentQueryResponse._unmap(response)
+            if content == "application/xml":
+                return OrganizationComponentQueryResponse._unmap(
+                    parse_xml_to_dict(response)
+                )
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
