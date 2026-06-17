@@ -48,19 +48,7 @@ class DeploymentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # Sparse query rows can omit fields the strict model requires; return
-        # the raw payload on a 2xx hydration miss rather than raising (honors
-        # Union[..., dict]) so callers are not forced back to raw transport.
-        try:
-            if content == "application/json":
-                return Deployment._unmap(response)
-            if content == "application/xml":
-                return Deployment._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Deployment, response, status, content)
 
     @cast_models
     def get_deployment(self, id_: str) -> Union[Deployment, str, dict]:
@@ -88,19 +76,7 @@ class DeploymentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # Sparse query rows can omit fields the strict model requires; return
-        # the raw payload on a 2xx hydration miss rather than raising (honors
-        # Union[..., dict]) so callers are not forced back to raw transport.
-        try:
-            if content == "application/json":
-                return Deployment._unmap(response)
-            if content == "application/xml":
-                return Deployment._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Deployment, response, status, content)
 
     @cast_models
     def bulk_deployment(
@@ -130,19 +106,7 @@ class DeploymentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # Sparse query rows can omit fields the strict model requires; return
-        # the raw payload on a 2xx hydration miss rather than raising (honors
-        # Union[..., dict]) so callers are not forced back to raw transport.
-        try:
-            if content == "application/json":
-                return DeploymentBulkResponse._unmap(response)
-            if content == "application/xml":
-                return DeploymentBulkResponse._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(DeploymentBulkResponse, response, status, content)
 
     @cast_models
     def query_deployment(
@@ -172,19 +136,7 @@ class DeploymentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # Sparse query rows can omit fields the strict model requires; return
-        # the raw payload on a 2xx hydration miss rather than raising (honors
-        # Union[..., dict]) so callers are not forced back to raw transport.
-        try:
-            if content == "application/json":
-                return DeploymentQueryResponse._unmap(response)
-            if content == "application/xml":
-                return DeploymentQueryResponse._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(DeploymentQueryResponse, response, status, content)
 
     @cast_models
     def query_more_deployment(
@@ -214,19 +166,7 @@ class DeploymentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # Sparse query rows can omit fields the strict model requires; return
-        # the raw payload on a 2xx hydration miss rather than raising (honors
-        # Union[..., dict]) so callers are not forced back to raw transport.
-        try:
-            if content == "application/json":
-                return DeploymentQueryResponse._unmap(response)
-            if content == "application/xml":
-                return DeploymentQueryResponse._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(DeploymentQueryResponse, response, status, content)
 
     @cast_models
     def query_process_environment_attachment(

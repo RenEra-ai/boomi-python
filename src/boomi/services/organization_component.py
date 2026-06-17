@@ -229,22 +229,7 @@ class OrganizationComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # Sparse query rows can omit fields the strict model requires (e.g.
-        # organizationContactInfo); return the raw payload on a 2xx hydration
-        # miss rather than raising (honors Union[..., str]) so callers are not
-        # forced back to raw transport.
-        try:
-            if content == "application/json":
-                return OrganizationComponentQueryResponse._unmap(response)
-            if content == "application/xml":
-                return OrganizationComponentQueryResponse._unmap(
-                    parse_xml_to_dict(response)
-                )
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(OrganizationComponentQueryResponse, response, status, content)
 
     @cast_models
     def query_more_organization_component(
@@ -274,19 +259,4 @@ class OrganizationComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # Sparse query rows can omit fields the strict model requires (e.g.
-        # organizationContactInfo); return the raw payload on a 2xx hydration
-        # miss rather than raising (honors Union[..., str]) so callers are not
-        # forced back to raw transport.
-        try:
-            if content == "application/json":
-                return OrganizationComponentQueryResponse._unmap(response)
-            if content == "application/xml":
-                return OrganizationComponentQueryResponse._unmap(
-                    parse_xml_to_dict(response)
-                )
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(OrganizationComponentQueryResponse, response, status, content)

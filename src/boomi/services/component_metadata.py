@@ -6,7 +6,6 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     ComponentMetadata,
     ComponentMetadataBulkRequest,
@@ -46,20 +45,7 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # ComponentMetadata.type is a closed enum, but the API documents the
-        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
-        # newer component type) return the raw payload rather than raising
-        # (honors Union[..., dict]) so the response is not lost.
-        try:
-            if content == "application/json":
-                return ComponentMetadata._unmap(response)
-            if content == "application/xml":
-                return ComponentMetadata._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ComponentMetadata, response, status, content)
 
     @cast_models
     def get_component_metadata(self, id_: str) -> Union[ComponentMetadata, str, dict]:
@@ -87,20 +73,7 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # ComponentMetadata.type is a closed enum, but the API documents the
-        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
-        # newer component type) return the raw payload rather than raising
-        # (honors Union[..., dict]) so the response is not lost.
-        try:
-            if content == "application/json":
-                return ComponentMetadata._unmap(response)
-            if content == "application/xml":
-                return ComponentMetadata._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ComponentMetadata, response, status, content)
 
     @cast_models
     def update_component_metadata(
@@ -134,20 +107,7 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # ComponentMetadata.type is a closed enum, but the API documents the
-        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
-        # newer component type) return the raw payload rather than raising
-        # (honors Union[..., dict]) so the response is not lost.
-        try:
-            if content == "application/json":
-                return ComponentMetadata._unmap(response)
-            if content == "application/xml":
-                return ComponentMetadata._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ComponentMetadata, response, status, content)
 
     @cast_models
     def delete_component_metadata(self, id_: str) -> None:
@@ -202,20 +162,7 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # ComponentMetadata.type is a closed enum, but the API documents the
-        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
-        # newer component type) return the raw payload rather than raising
-        # (honors Union[..., dict]) so the response is not lost.
-        try:
-            if content == "application/json":
-                return ComponentMetadataBulkResponse._unmap(response)
-            if content == "application/xml":
-                return ComponentMetadataBulkResponse._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ComponentMetadataBulkResponse, response, status, content)
 
     @cast_models
     def query_component_metadata(
@@ -249,20 +196,7 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # ComponentMetadata.type is a closed enum, but the API documents the
-        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
-        # newer component type) return the raw payload rather than raising
-        # (honors Union[..., dict]) so the response is not lost.
-        try:
-            if content == "application/json":
-                return ComponentMetadataQueryResponse._unmap(response)
-            if content == "application/xml":
-                return ComponentMetadataQueryResponse._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ComponentMetadataQueryResponse, response, status, content)
 
     @cast_models
     def query_more_component_metadata(
@@ -292,17 +226,4 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # ComponentMetadata.type is a closed enum, but the API documents the
-        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
-        # newer component type) return the raw payload rather than raising
-        # (honors Union[..., dict]) so the response is not lost.
-        try:
-            if content == "application/json":
-                return ComponentMetadataQueryResponse._unmap(response)
-            if content == "application/xml":
-                return ComponentMetadataQueryResponse._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ComponentMetadataQueryResponse, response, status, content)

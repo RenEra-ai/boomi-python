@@ -12,6 +12,7 @@ from ...net.headers.base_header import BaseHeader
 from ...net.transport.request import Request
 from ...net.transport.response import base_media_type
 from ...net.transport.api_error import ApiError
+from ...net.transport.utils import parse_xml_to_dict
 from ...net.request_chain.request_chain import RequestChain
 from ...net.request_chain.handlers.hook_handler import HookHandler
 from ...net.request_chain.handlers.http_handler import HttpHandler
@@ -145,6 +146,31 @@ class BaseService:
             response.status,
             base_media_type(response.headers.get("Content-Type", "").lower()),
         )
+
+    def _deserialize_or_raw(self, model, response, status, content):
+        """Deserialize a JSON/XML body onto ``model``; on a 2xx hydration
+        failure, return the raw payload instead of raising.
+
+        Boomi can return a sparse or partial 2xx body (omitted required
+        fields, an unknown enum value, an unexpected shape) that a strict
+        generated model cannot hydrate. Rather than discard a usable success
+        response and force callers back to raw transport, any hydration error
+        on a 2xx status returns the raw payload (dict/str); on a non-2xx the
+        error propagates. Services opting in declare a ``dict`` member in
+        their return type. The catch is intentionally broad because nested
+        model construction raises several exception types and the goal is to
+        never lose a successful response.
+        """
+        try:
+            if content == "application/json":
+                return model._unmap(response)
+            if content == "application/xml":
+                return model._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
+        raise ApiError("Error on deserializing the response.", status, response)
 
     def stream_request(self, request: Request) -> Generator[Dict, None, None]:
         """

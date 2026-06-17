@@ -6,7 +6,6 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     EdiCustomConnectorRecordQueryConfig,
     EdiCustomConnectorRecordQueryResponse,
@@ -49,19 +48,7 @@ class EdiCustomConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # Sparse query rows can omit fields the strict model requires; return
-        # the raw payload on a 2xx hydration miss rather than raising (honors
-        # Union[..., dict]) so callers are not forced back to raw transport.
-        try:
-            if content == "application/json":
-                return EdiCustomConnectorRecordQueryResponse._unmap(response)
-            if content == "application/xml":
-                return EdiCustomConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EdiCustomConnectorRecordQueryResponse, response, status, content)
 
     @cast_models
     def query_more_edi_custom_connector_record(
@@ -91,16 +78,4 @@ class EdiCustomConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        # Sparse query rows can omit fields the strict model requires; return
-        # the raw payload on a 2xx hydration miss rather than raising (honors
-        # Union[..., dict]) so callers are not forced back to raw transport.
-        try:
-            if content == "application/json":
-                return EdiCustomConnectorRecordQueryResponse._unmap(response)
-            if content == "application/xml":
-                return EdiCustomConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
-        except Exception:
-            if 200 <= status < 300:
-                return response
-            raise
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EdiCustomConnectorRecordQueryResponse, response, status, content)
