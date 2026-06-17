@@ -12,10 +12,10 @@ class AtomDiskSpaceServiceAsync(AtomDiskSpaceService):
 
     def async_get_atom_disk_space(
         self, id_: str
-    ) -> Awaitable[Union[AsyncOperationTokenResult, str]]:
+    ) -> Awaitable[Union[AsyncOperationTokenResult, str, dict]]:
         return to_async(super().async_get_atom_disk_space)(id_)
 
     def async_token_atom_disk_space(
         self, token: str
-    ) -> Awaitable[Union[AtomDiskSpaceAsyncResponse, str]]:
+    ) -> Awaitable[Union[AtomDiskSpaceAsyncResponse, str, dict]]:
         return to_async(super().async_token_atom_disk_space)(token)

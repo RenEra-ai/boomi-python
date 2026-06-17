@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import ThroughputAccountQueryConfig, ThroughputAccountQueryResponse
 
 
@@ -15,7 +13,7 @@ class ThroughputAccountService(BaseService):
     @cast_models
     def query_throughput_account(
         self, request_body: ThroughputAccountQueryConfig = None
-    ) -> Union[ThroughputAccountQueryResponse, str]:
+    ) -> Union[ThroughputAccountQueryResponse, str, dict]:
         """- You can only use the EQUALS operator with the `environmentId` filter parameter.
          - The authenticating user for a QUERY operation must have the Dashboard privilege.
 
@@ -27,7 +25,7 @@ class ThroughputAccountService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ThroughputAccountQueryResponse, str]
+        :rtype: Union[ThroughputAccountQueryResponse, str, dict]
         """
 
         Validator(ThroughputAccountQueryConfig).is_optional().validate(request_body)
@@ -44,16 +42,12 @@ class ThroughputAccountService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ThroughputAccountQueryResponse._unmap(response)
-        if content == "application/xml":
-            return ThroughputAccountQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ThroughputAccountQueryResponse, response, status, content)
 
     @cast_models
     def query_more_throughput_account(
         self, request_body: str
-    ) -> Union[ThroughputAccountQueryResponse, str]:
+    ) -> Union[ThroughputAccountQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -62,7 +56,7 @@ class ThroughputAccountService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ThroughputAccountQueryResponse, str]
+        :rtype: Union[ThroughputAccountQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -79,8 +73,4 @@ class ThroughputAccountService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ThroughputAccountQueryResponse._unmap(response)
-        if content == "application/xml":
-            return ThroughputAccountQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ThroughputAccountQueryResponse, response, status, content)

@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     EnvironmentExtensions,
     EnvironmentExtensionsBulkRequest,
@@ -19,7 +17,7 @@ from ..models import (
 class EnvironmentExtensionsService(BaseService):
 
     @cast_models
-    def get_environment_extensions(self, id_: str) -> Union[EnvironmentExtensions, str]:
+    def get_environment_extensions(self, id_: str) -> Union[EnvironmentExtensions, str, dict]:
         """Retrieves the extension values for the environment having the specified ID (except for encrypted values).
 
         :param id_: The ID of the object. This can be either of the following:
@@ -30,7 +28,7 @@ class EnvironmentExtensionsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentExtensions, str]
+        :rtype: Union[EnvironmentExtensions, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -46,16 +44,12 @@ class EnvironmentExtensionsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentExtensions._unmap(response)
-        if content == "application/xml":
-            return EnvironmentExtensions._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentExtensions, response, status, content)
 
     @cast_models
     def update_environment_extensions(
         self, id_: str, request_body: EnvironmentExtensions = None
-    ) -> Union[EnvironmentExtensions, str]:
+    ) -> Union[EnvironmentExtensions, str, dict]:
         """Updates the extension values for the environment having the specified ID. When updating extension values, you must perform either a partial update to update only those extension values requiring modification in the request, or a full update to update the full set of environment extensions in a single request. A partial update is typically recommended because it results in smaller payloads and more targeted updates.
 
          >**Warning:** The UPDATE operation does not support running muliple map extensions requests concurrently. Some map extensions might not get updated properly.
@@ -84,7 +78,7 @@ class EnvironmentExtensionsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentExtensions, str]
+        :rtype: Union[EnvironmentExtensions, str, dict]
         """
 
         Validator(EnvironmentExtensions).is_optional().validate(request_body)
@@ -102,16 +96,12 @@ class EnvironmentExtensionsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentExtensions._unmap(response)
-        if content == "application/xml":
-            return EnvironmentExtensions._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentExtensions, response, status, content)
 
     @cast_models
     def bulk_environment_extensions(
         self, request_body: EnvironmentExtensionsBulkRequest = None
-    ) -> Union[EnvironmentExtensionsBulkResponse, str]:
+    ) -> Union[EnvironmentExtensionsBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -120,7 +110,7 @@ class EnvironmentExtensionsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentExtensionsBulkResponse, str]
+        :rtype: Union[EnvironmentExtensionsBulkResponse, str, dict]
         """
 
         Validator(EnvironmentExtensionsBulkRequest).is_optional().validate(request_body)
@@ -136,16 +126,12 @@ class EnvironmentExtensionsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentExtensionsBulkResponse._unmap(response)
-        if content == "application/xml":
-            return EnvironmentExtensionsBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentExtensionsBulkResponse, response, status, content)
 
     @cast_models
     def query_environment_extensions(
         self, request_body: EnvironmentExtensionsQueryConfig = None
-    ) -> Union[EnvironmentExtensionsQueryResponse, str]:
+    ) -> Union[EnvironmentExtensionsQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -154,7 +140,7 @@ class EnvironmentExtensionsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentExtensionsQueryResponse, str]
+        :rtype: Union[EnvironmentExtensionsQueryResponse, str, dict]
         """
 
         Validator(EnvironmentExtensionsQueryConfig).is_optional().validate(request_body)
@@ -170,16 +156,12 @@ class EnvironmentExtensionsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentExtensionsQueryResponse._unmap(response)
-        if content == "application/xml":
-            return EnvironmentExtensionsQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentExtensionsQueryResponse, response, status, content)
 
     @cast_models
     def query_more_environment_extensions(
         self, request_body: str
-    ) -> Union[EnvironmentExtensionsQueryResponse, str]:
+    ) -> Union[EnvironmentExtensionsQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -188,7 +170,7 @@ class EnvironmentExtensionsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentExtensionsQueryResponse, str]
+        :rtype: Union[EnvironmentExtensionsQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -204,8 +186,4 @@ class EnvironmentExtensionsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentExtensionsQueryResponse._unmap(response)
-        if content == "application/xml":
-            return EnvironmentExtensionsQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentExtensionsQueryResponse, response, status, content)

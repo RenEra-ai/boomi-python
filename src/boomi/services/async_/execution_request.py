@@ -12,5 +12,5 @@ class ExecutionRequestServiceAsync(ExecutionRequestService):
 
     def create_execution_request(
         self, request_body: ExecutionRequest = None
-    ) -> Awaitable[Union[ExecutionRequest, str]]:
+    ) -> Awaitable[Union[ExecutionRequest, str, dict]]:
         return to_async(super().create_execution_request)(request_body)

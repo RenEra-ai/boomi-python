@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     DocumentCountAccountGroupQueryConfig,
     DocumentCountAccountGroupQueryResponse,
@@ -18,7 +16,7 @@ class DocumentCountAccountGroupService(BaseService):
     @cast_models
     def query_document_count_account_group(
         self, request_body: DocumentCountAccountGroupQueryConfig = None
-    ) -> Union[DocumentCountAccountGroupQueryResponse, str]:
+    ) -> Union[DocumentCountAccountGroupQueryResponse, str, dict]:
         """- You can use the EQUALS operator only with the `accountGroupId` filter parameter.
          - The authenticating user for a QUERY operation must have the Dashboard privilege.
 
@@ -30,7 +28,7 @@ class DocumentCountAccountGroupService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[DocumentCountAccountGroupQueryResponse, str]
+        :rtype: Union[DocumentCountAccountGroupQueryResponse, str, dict]
         """
 
         Validator(DocumentCountAccountGroupQueryConfig).is_optional().validate(
@@ -48,16 +46,12 @@ class DocumentCountAccountGroupService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return DocumentCountAccountGroupQueryResponse._unmap(response)
-        if content == "application/xml":
-            return DocumentCountAccountGroupQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(DocumentCountAccountGroupQueryResponse, response, status, content)
 
     @cast_models
     def query_more_document_count_account_group(
         self, request_body: str
-    ) -> Union[DocumentCountAccountGroupQueryResponse, str]:
+    ) -> Union[DocumentCountAccountGroupQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -66,7 +60,7 @@ class DocumentCountAccountGroupService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[DocumentCountAccountGroupQueryResponse, str]
+        :rtype: Union[DocumentCountAccountGroupQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -82,8 +76,4 @@ class DocumentCountAccountGroupService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return DocumentCountAccountGroupQueryResponse._unmap(response)
-        if content == "application/xml":
-            return DocumentCountAccountGroupQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(DocumentCountAccountGroupQueryResponse, response, status, content)

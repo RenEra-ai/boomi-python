@@ -12,5 +12,5 @@ class AtomPurgeServiceAsync(AtomPurgeService):
 
     def update_atom_purge(
         self, id_: str, request_body: AtomPurge = None
-    ) -> Awaitable[Union[AtomPurge, str]]:
+    ) -> Awaitable[Union[AtomPurge, str, dict]]:
         return to_async(super().update_atom_purge)(id_, request_body)

@@ -13,7 +13,7 @@ class AtomAs2ArtifactsServiceAsync(AtomAs2ArtifactsService):
 
     def create_atom_as2_artifacts(
         self, request_body: AtomAs2Artifacts = None
-    ) -> Awaitable[Union[LogDownload, str]]:
+    ) -> Awaitable[Union[LogDownload, str, dict]]:
         return to_async(super().create_atom_as2_artifacts)(request_body)
 
     async def download_atom_as2_artifacts(

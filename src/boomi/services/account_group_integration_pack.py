@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     AccountGroupIntegrationPack,
     AccountGroupIntegrationPackBulkRequest,
@@ -21,7 +19,7 @@ class AccountGroupIntegrationPackService(BaseService):
     @cast_models
     def create_account_group_integration_pack(
         self, request_body: AccountGroupIntegrationPack = None
-    ) -> Union[AccountGroupIntegrationPack, str]:
+    ) -> Union[AccountGroupIntegrationPack, str, dict]:
         """Adds an integration pack to the requesting account group.
 
         :param request_body: The request body., defaults to None
@@ -30,7 +28,7 @@ class AccountGroupIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountGroupIntegrationPack, str]
+        :rtype: Union[AccountGroupIntegrationPack, str, dict]
         """
 
         Validator(AccountGroupIntegrationPack).is_optional().validate(request_body)
@@ -46,16 +44,12 @@ class AccountGroupIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountGroupIntegrationPack._unmap(response)
-        if content == "application/xml":
-            return AccountGroupIntegrationPack._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountGroupIntegrationPack, response, status, content)
 
     @cast_models
     def get_account_group_integration_pack(
         self, id_: str
-    ) -> Union[AccountGroupIntegrationPack, str]:
+    ) -> Union[AccountGroupIntegrationPack, str, dict]:
         """The ordinary GET operation retrieves the properties of the AccountGroupIntegrationPack with the specified ID.
         The bulk GET operation retrieves the properties of the AccountGroupIntegrationPack with the specified IDs to a maximum of 100.
         You can obtain AccountGroupIntegrationPack IDs from the QUERY operation.
@@ -66,7 +60,7 @@ class AccountGroupIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountGroupIntegrationPack, str]
+        :rtype: Union[AccountGroupIntegrationPack, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -82,11 +76,7 @@ class AccountGroupIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountGroupIntegrationPack._unmap(response)
-        if content == "application/xml":
-            return AccountGroupIntegrationPack._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountGroupIntegrationPack, response, status, content)
 
     @cast_models
     def delete_account_group_integration_pack(self, id_: str) -> None:
@@ -117,7 +107,7 @@ class AccountGroupIntegrationPackService(BaseService):
     @cast_models
     def bulk_account_group_integration_pack(
         self, request_body: AccountGroupIntegrationPackBulkRequest = None
-    ) -> Union[AccountGroupIntegrationPackBulkResponse, str]:
+    ) -> Union[AccountGroupIntegrationPackBulkResponse, str, dict]:
         """The bulk GET operation returns multiple objects based on the supplied account IDs, to a maximum of 100. To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -126,7 +116,7 @@ class AccountGroupIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountGroupIntegrationPackBulkResponse, str]
+        :rtype: Union[AccountGroupIntegrationPackBulkResponse, str, dict]
         """
 
         Validator(AccountGroupIntegrationPackBulkRequest).is_optional().validate(
@@ -144,16 +134,12 @@ class AccountGroupIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountGroupIntegrationPackBulkResponse._unmap(response)
-        if content == "application/xml":
-            return AccountGroupIntegrationPackBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountGroupIntegrationPackBulkResponse, response, status, content)
 
     @cast_models
     def query_account_group_integration_pack(
         self, request_body: AccountGroupIntegrationPackQueryConfig = None
-    ) -> Union[AccountGroupIntegrationPackQueryResponse, str]:
+    ) -> Union[AccountGroupIntegrationPackQueryResponse, str, dict]:
         """Retrieves all integration packs available to the requesting account group ID.
 
          For general information about the structure of QUERY filters and how to handle paged results, see the Query filters and Query paging topics.
@@ -164,7 +150,7 @@ class AccountGroupIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountGroupIntegrationPackQueryResponse, str]
+        :rtype: Union[AccountGroupIntegrationPackQueryResponse, str, dict]
         """
 
         Validator(AccountGroupIntegrationPackQueryConfig).is_optional().validate(
@@ -182,16 +168,12 @@ class AccountGroupIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountGroupIntegrationPackQueryResponse._unmap(response)
-        if content == "application/xml":
-            return AccountGroupIntegrationPackQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountGroupIntegrationPackQueryResponse, response, status, content)
 
     @cast_models
     def query_more_account_group_integration_pack(
         self, request_body: str
-    ) -> Union[AccountGroupIntegrationPackQueryResponse, str]:
+    ) -> Union[AccountGroupIntegrationPackQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -200,7 +182,7 @@ class AccountGroupIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountGroupIntegrationPackQueryResponse, str]
+        :rtype: Union[AccountGroupIntegrationPackQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -216,8 +198,4 @@ class AccountGroupIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountGroupIntegrationPackQueryResponse._unmap(response)
-        if content == "application/xml":
-            return AccountGroupIntegrationPackQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountGroupIntegrationPackQueryResponse, response, status, content)

@@ -6,7 +6,6 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import AtomWorkerLog, LogDownload
 
 
@@ -15,7 +14,7 @@ class AtomWorkerLogService(BaseService):
     @cast_models
     def create_atom_worker_log(
         self, request_body: AtomWorkerLog = None
-    ) -> Union[LogDownload, str]:
+    ) -> Union[LogDownload, str, dict]:
         """Allows users to programmatically retrieve a link for downloading a given Runtime workers log.
 
         :param request_body: The request body., defaults to None
@@ -24,7 +23,7 @@ class AtomWorkerLogService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[LogDownload, str]
+        :rtype: Union[LogDownload, str, dict]
         """
 
         Validator(AtomWorkerLog).is_optional().validate(request_body)
@@ -40,11 +39,7 @@ class AtomWorkerLogService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return LogDownload._unmap(response)
-        if content == "application/xml":
-            return LogDownload._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(LogDownload, response, status, content)
 
     def download_atom_worker_log(
         self,

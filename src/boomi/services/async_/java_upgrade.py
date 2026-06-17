@@ -12,5 +12,5 @@ class JavaUpgradeServiceAsync(JavaUpgradeService):
 
     def create_java_upgrade(
         self, request_body: JavaUpgrade = None
-    ) -> Awaitable[Union[JavaUpgrade, str]]:
+    ) -> Awaitable[Union[JavaUpgrade, str, dict]]:
         return to_async(super().create_java_upgrade)(request_body)

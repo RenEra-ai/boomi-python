@@ -16,7 +16,7 @@ class IntegrationPackServiceAsync(IntegrationPackService):
     Async Wrapper for IntegrationPackServiceAsync
     """
 
-    def get_integration_pack(self, id_: str) -> Awaitable[Union[IntegrationPack, str]]:
+    def get_integration_pack(self, id_: str) -> Awaitable[Union[IntegrationPack, str, dict]]:
         return to_async(super().get_integration_pack)(id_)
 
     def bulk_integration_pack(

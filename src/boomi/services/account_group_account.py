@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     AccountGroupAccount,
     AccountGroupAccountQueryConfig,
@@ -19,7 +17,7 @@ class AccountGroupAccountService(BaseService):
     @cast_models
     def create_account_group_account(
         self, request_body: AccountGroupAccount = None
-    ) -> Union[AccountGroupAccount, str]:
+    ) -> Union[AccountGroupAccount, str, dict]:
         """Adds an account to an account group.
 
         :param request_body: The request body., defaults to None
@@ -28,7 +26,7 @@ class AccountGroupAccountService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountGroupAccount, str]
+        :rtype: Union[AccountGroupAccount, str, dict]
         """
 
         Validator(AccountGroupAccount).is_optional().validate(request_body)
@@ -44,16 +42,12 @@ class AccountGroupAccountService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountGroupAccount._unmap(response)
-        if content == "application/xml":
-            return AccountGroupAccount._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountGroupAccount, response, status, content)
 
     @cast_models
     def query_account_group_account(
         self, request_body: AccountGroupAccountQueryConfig = None
-    ) -> Union[AccountGroupAccountQueryResponse, str]:
+    ) -> Union[AccountGroupAccountQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -62,7 +56,7 @@ class AccountGroupAccountService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountGroupAccountQueryResponse, str]
+        :rtype: Union[AccountGroupAccountQueryResponse, str, dict]
         """
 
         Validator(AccountGroupAccountQueryConfig).is_optional().validate(request_body)
@@ -78,16 +72,12 @@ class AccountGroupAccountService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountGroupAccountQueryResponse._unmap(response)
-        if content == "application/xml":
-            return AccountGroupAccountQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountGroupAccountQueryResponse, response, status, content)
 
     @cast_models
     def query_more_account_group_account(
         self, request_body: str
-    ) -> Union[AccountGroupAccountQueryResponse, str]:
+    ) -> Union[AccountGroupAccountQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -96,7 +86,7 @@ class AccountGroupAccountService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountGroupAccountQueryResponse, str]
+        :rtype: Union[AccountGroupAccountQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -112,11 +102,7 @@ class AccountGroupAccountService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountGroupAccountQueryResponse._unmap(response)
-        if content == "application/xml":
-            return AccountGroupAccountQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountGroupAccountQueryResponse, response, status, content)
 
     @cast_models
     def delete_account_group_account(self, id_: str) -> None:

@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     SharedServerInformation,
     SharedServerInformationBulkRequest,
@@ -19,7 +17,7 @@ class SharedServerInformationService(BaseService):
     @cast_models
     def get_shared_server_information(
         self, id_: str
-    ) -> Union[SharedServerInformation, str]:
+    ) -> Union[SharedServerInformation, str, dict]:
         """Retrieve Shared Server Information records for a specific single Runtime ID.
 
          You can retrieve Shared Server Information records only by an ordinary GET operation specifying a single Runtime ID or a bulk GET operation with a maximum of 100 Runtime IDs. This option is because the object ID for the Shared Server Information is not available currently (except by requesting the information from services). Therefore, this operation does not return the Shared Server Information object auth field.
@@ -30,7 +28,7 @@ class SharedServerInformationService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[SharedServerInformation, str]
+        :rtype: Union[SharedServerInformation, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -46,16 +44,12 @@ class SharedServerInformationService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return SharedServerInformation._unmap(response)
-        if content == "application/xml":
-            return SharedServerInformation._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(SharedServerInformation, response, status, content)
 
     @cast_models
     def update_shared_server_information(
         self, id_: str, request_body: SharedServerInformation = None
-    ) -> Union[SharedServerInformation, str]:
+    ) -> Union[SharedServerInformation, str, dict]:
         """Updates a Shared Server Information object based on the supplied Runtime ID.
 
          - The UPDATE operation updates a Shared Server Information object based on the supplied Runtime ID. To clear a field, set the attribute corresponding to that field to an empty string.
@@ -76,7 +70,7 @@ class SharedServerInformationService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[SharedServerInformation, str]
+        :rtype: Union[SharedServerInformation, str, dict]
         """
 
         Validator(SharedServerInformation).is_optional().validate(request_body)
@@ -94,16 +88,12 @@ class SharedServerInformationService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return SharedServerInformation._unmap(response)
-        if content == "application/xml":
-            return SharedServerInformation._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(SharedServerInformation, response, status, content)
 
     @cast_models
     def bulk_shared_server_information(
         self, request_body: SharedServerInformationBulkRequest = None
-    ) -> Union[SharedServerInformationBulkResponse, str]:
+    ) -> Union[SharedServerInformationBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -112,7 +102,7 @@ class SharedServerInformationService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[SharedServerInformationBulkResponse, str]
+        :rtype: Union[SharedServerInformationBulkResponse, str, dict]
         """
 
         Validator(SharedServerInformationBulkRequest).is_optional().validate(
@@ -130,8 +120,4 @@ class SharedServerInformationService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return SharedServerInformationBulkResponse._unmap(response)
-        if content == "application/xml":
-            return SharedServerInformationBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(SharedServerInformationBulkResponse, response, status, content)

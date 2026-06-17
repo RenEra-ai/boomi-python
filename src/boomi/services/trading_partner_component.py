@@ -6,7 +6,7 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict, require_raw_xml
+from ..net.transport.utils import require_raw_xml
 from ..models import (
     TradingPartnerComponentBulkRequest,
     TradingPartnerComponentBulkResponse,
@@ -166,7 +166,7 @@ class TradingPartnerComponentService(BaseService):
     @cast_models
     def bulk_trading_partner_component(
         self, request_body: TradingPartnerComponentBulkRequest = None
-    ) -> Union[TradingPartnerComponentBulkResponse, str]:
+    ) -> Union[TradingPartnerComponentBulkResponse, str, dict]:
         """The bulk GET operation returns multiple Trading Partner Component objects based on the supplied IDs, to a maximum of 100.
 
         :param request_body: The request body., defaults to None
@@ -175,7 +175,7 @@ class TradingPartnerComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[TradingPartnerComponentBulkResponse, str]
+        :rtype: Union[TradingPartnerComponentBulkResponse, str, dict]
         """
 
         Validator(TradingPartnerComponentBulkRequest).is_optional().validate(
@@ -193,16 +193,12 @@ class TradingPartnerComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return TradingPartnerComponentBulkResponse._unmap(response)
-        if content == "application/xml":
-            return TradingPartnerComponentBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(TradingPartnerComponentBulkResponse, response, status, content)
 
     @cast_models
     def query_trading_partner_component(
         self, request_body: TradingPartnerComponentQueryConfig = None
-    ) -> Union[TradingPartnerComponentQueryResponse, str]:
+    ) -> Union[TradingPartnerComponentQueryResponse, str, dict]:
         """The QUERY operation returns each Trading Partner component that meets the specified filtering criteria.
 
          - The name field in a QUERY filter represents the object’s componentName field.
@@ -218,7 +214,7 @@ class TradingPartnerComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[TradingPartnerComponentQueryResponse, str]
+        :rtype: Union[TradingPartnerComponentQueryResponse, str, dict]
         """
 
         Validator(TradingPartnerComponentQueryConfig).is_optional().validate(
@@ -236,16 +232,12 @@ class TradingPartnerComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return TradingPartnerComponentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return TradingPartnerComponentQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(TradingPartnerComponentQueryResponse, response, status, content)
 
     @cast_models
     def query_more_trading_partner_component(
         self, request_body: str
-    ) -> Union[TradingPartnerComponentQueryResponse, str]:
+    ) -> Union[TradingPartnerComponentQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -254,7 +246,7 @@ class TradingPartnerComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[TradingPartnerComponentQueryResponse, str]
+        :rtype: Union[TradingPartnerComponentQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -270,8 +262,4 @@ class TradingPartnerComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return TradingPartnerComponentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return TradingPartnerComponentQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(TradingPartnerComponentQueryResponse, response, status, content)

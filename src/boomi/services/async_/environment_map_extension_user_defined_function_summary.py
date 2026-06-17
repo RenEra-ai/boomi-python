@@ -21,7 +21,7 @@ class EnvironmentMapExtensionUserDefinedFunctionSummaryServiceAsync(
         self,
         request_body: EnvironmentMapExtensionUserDefinedFunctionSummaryQueryConfig = None,
     ) -> Awaitable[
-        Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str]
+        Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str, dict]
     ]:
         return to_async(
             super().query_environment_map_extension_user_defined_function_summary
@@ -30,7 +30,7 @@ class EnvironmentMapExtensionUserDefinedFunctionSummaryServiceAsync(
     def query_more_environment_map_extension_user_defined_function_summary(
         self, request_body: str
     ) -> Awaitable[
-        Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str]
+        Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str, dict]
     ]:
         return to_async(
             super().query_more_environment_map_extension_user_defined_function_summary

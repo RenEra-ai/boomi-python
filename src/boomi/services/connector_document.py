@@ -6,7 +6,6 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import ConnectorDocument, ConnectorDocumentDownload
 
 
@@ -15,7 +14,7 @@ class ConnectorDocumentService(BaseService):
     @cast_models
     def create_connector_document(
         self, request_body: ConnectorDocument = None
-    ) -> Union[ConnectorDocumentDownload, str]:
+    ) -> Union[ConnectorDocumentDownload, str, dict]:
         """The Connector Document operation allows you to download the raw, document data for a specific Generic Connector Record. This action submits the download request and the call returns a URL used to download the actual document data.
 
         :param request_body: The request body., defaults to None
@@ -24,7 +23,7 @@ class ConnectorDocumentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ConnectorDocumentDownload, str]
+        :rtype: Union[ConnectorDocumentDownload, str, dict]
         """
 
         Validator(ConnectorDocument).is_optional().validate(request_body)
@@ -41,11 +40,7 @@ class ConnectorDocumentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ConnectorDocumentDownload._unmap(response)
-        if content == "application/xml":
-            return ConnectorDocumentDownload._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ConnectorDocumentDownload, response, status, content)
 
     def download_connector_document(
         self,

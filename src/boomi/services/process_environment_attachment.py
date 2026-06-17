@@ -3,8 +3,6 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
-from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import ProcessEnvironmentAttachment
@@ -15,7 +13,7 @@ class ProcessEnvironmentAttachmentService(BaseService):
     @cast_models
     def create_process_environment_attachment(
         self, request_body: ProcessEnvironmentAttachment = None
-    ) -> Union[ProcessEnvironmentAttachment, str]:
+    ) -> Union[ProcessEnvironmentAttachment, str, dict]:
         """Attaches a process having the specified ID to the environment having the specified ID.
 
         :param request_body: The request body., defaults to None
@@ -24,7 +22,7 @@ class ProcessEnvironmentAttachmentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ProcessEnvironmentAttachment, str]
+        :rtype: Union[ProcessEnvironmentAttachment, str, dict]
         """
 
         Validator(ProcessEnvironmentAttachment).is_optional().validate(request_body)
@@ -40,8 +38,4 @@ class ProcessEnvironmentAttachmentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ProcessEnvironmentAttachment._unmap(response)
-        if content == "application/xml":
-            return ProcessEnvironmentAttachment._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ProcessEnvironmentAttachment, response, status, content)

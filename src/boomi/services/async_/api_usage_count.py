@@ -12,10 +12,10 @@ class ApiUsageCountServiceAsync(ApiUsageCountService):
 
     def query_api_usage_count(
         self, request_body: ApiUsageCountQueryConfig = None
-    ) -> Awaitable[Union[ApiUsageCountQueryResponse, str]]:
+    ) -> Awaitable[Union[ApiUsageCountQueryResponse, str, dict]]:
         return to_async(super().query_api_usage_count)(request_body)
 
     def query_more_api_usage_count(
         self, request_body: str
-    ) -> Awaitable[Union[ApiUsageCountQueryResponse, str]]:
+    ) -> Awaitable[Union[ApiUsageCountQueryResponse, str, dict]]:
         return to_async(super().query_more_api_usage_count)(request_body)

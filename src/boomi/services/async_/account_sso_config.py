@@ -16,12 +16,12 @@ class AccountSsoConfigServiceAsync(AccountSsoConfigService):
 
     def get_account_sso_config(
         self, id_: str
-    ) -> Awaitable[Union[AccountSsoConfig, str]]:
+    ) -> Awaitable[Union[AccountSsoConfig, str, dict]]:
         return to_async(super().get_account_sso_config)(id_)
 
     def update_account_sso_config(
         self, id_: str, request_body: AccountSsoConfig = None
-    ) -> Awaitable[Union[AccountSsoConfig, str]]:
+    ) -> Awaitable[Union[AccountSsoConfig, str, dict]]:
         return to_async(super().update_account_sso_config)(id_, request_body)
 
     def delete_account_sso_config(self, id_: str) -> Awaitable[None]:
@@ -29,5 +29,5 @@ class AccountSsoConfigServiceAsync(AccountSsoConfigService):
 
     def bulk_account_sso_config(
         self, request_body: AccountSsoConfigBulkRequest = None
-    ) -> Awaitable[Union[AccountSsoConfigBulkResponse, str]]:
+    ) -> Awaitable[Union[AccountSsoConfigBulkResponse, str, dict]]:
         return to_async(super().bulk_account_sso_config)(request_body)

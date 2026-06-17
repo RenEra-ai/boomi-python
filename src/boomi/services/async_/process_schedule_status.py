@@ -18,25 +18,25 @@ class ProcessScheduleStatusServiceAsync(ProcessScheduleStatusService):
 
     def get_process_schedule_status(
         self, id_: str
-    ) -> Awaitable[Union[ProcessScheduleStatus, str]]:
+    ) -> Awaitable[Union[ProcessScheduleStatus, str, dict]]:
         return to_async(super().get_process_schedule_status)(id_)
 
     def update_process_schedule_status(
         self, id_: str, request_body: ProcessScheduleStatus = None
-    ) -> Awaitable[Union[ProcessScheduleStatus, str]]:
+    ) -> Awaitable[Union[ProcessScheduleStatus, str, dict]]:
         return to_async(super().update_process_schedule_status)(id_, request_body)
 
     def bulk_process_schedule_status(
         self, request_body: ProcessScheduleStatusBulkRequest = None
-    ) -> Awaitable[Union[ProcessScheduleStatusBulkResponse, str]]:
+    ) -> Awaitable[Union[ProcessScheduleStatusBulkResponse, str, dict]]:
         return to_async(super().bulk_process_schedule_status)(request_body)
 
     def query_process_schedule_status(
         self, request_body: ProcessScheduleStatusQueryConfig = None
-    ) -> Awaitable[Union[ProcessScheduleStatusQueryResponse, str]]:
+    ) -> Awaitable[Union[ProcessScheduleStatusQueryResponse, str, dict]]:
         return to_async(super().query_process_schedule_status)(request_body)
 
     def query_more_process_schedule_status(
         self, request_body: str
-    ) -> Awaitable[Union[ProcessScheduleStatusQueryResponse, str]]:
+    ) -> Awaitable[Union[ProcessScheduleStatusQueryResponse, str, dict]]:
         return to_async(super().query_more_process_schedule_status)(request_body)

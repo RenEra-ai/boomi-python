@@ -18,12 +18,12 @@ class AccountGroupIntegrationPackServiceAsync(AccountGroupIntegrationPackService
 
     def create_account_group_integration_pack(
         self, request_body: AccountGroupIntegrationPack = None
-    ) -> Awaitable[Union[AccountGroupIntegrationPack, str]]:
+    ) -> Awaitable[Union[AccountGroupIntegrationPack, str, dict]]:
         return to_async(super().create_account_group_integration_pack)(request_body)
 
     def get_account_group_integration_pack(
         self, id_: str
-    ) -> Awaitable[Union[AccountGroupIntegrationPack, str]]:
+    ) -> Awaitable[Union[AccountGroupIntegrationPack, str, dict]]:
         return to_async(super().get_account_group_integration_pack)(id_)
 
     def delete_account_group_integration_pack(self, id_: str) -> Awaitable[None]:
@@ -31,15 +31,15 @@ class AccountGroupIntegrationPackServiceAsync(AccountGroupIntegrationPackService
 
     def bulk_account_group_integration_pack(
         self, request_body: AccountGroupIntegrationPackBulkRequest = None
-    ) -> Awaitable[Union[AccountGroupIntegrationPackBulkResponse, str]]:
+    ) -> Awaitable[Union[AccountGroupIntegrationPackBulkResponse, str, dict]]:
         return to_async(super().bulk_account_group_integration_pack)(request_body)
 
     def query_account_group_integration_pack(
         self, request_body: AccountGroupIntegrationPackQueryConfig = None
-    ) -> Awaitable[Union[AccountGroupIntegrationPackQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountGroupIntegrationPackQueryResponse, str, dict]]:
         return to_async(super().query_account_group_integration_pack)(request_body)
 
     def query_more_account_group_integration_pack(
         self, request_body: str
-    ) -> Awaitable[Union[AccountGroupIntegrationPackQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountGroupIntegrationPackQueryResponse, str, dict]]:
         return to_async(super().query_more_account_group_integration_pack)(request_body)

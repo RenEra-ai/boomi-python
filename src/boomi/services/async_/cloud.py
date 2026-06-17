@@ -16,20 +16,20 @@ class CloudServiceAsync(CloudService):
     Async Wrapper for CloudServiceAsync
     """
 
-    def get_cloud(self, id_: str) -> Awaitable[Union[Cloud, str]]:
+    def get_cloud(self, id_: str) -> Awaitable[Union[Cloud, str, dict]]:
         return to_async(super().get_cloud)(id_)
 
     def bulk_cloud(
         self, request_body: CloudBulkRequest = None
-    ) -> Awaitable[Union[CloudBulkResponse, str]]:
+    ) -> Awaitable[Union[CloudBulkResponse, str, dict]]:
         return to_async(super().bulk_cloud)(request_body)
 
     def query_cloud(
         self, request_body: CloudQueryConfig = None
-    ) -> Awaitable[Union[CloudQueryResponse, str]]:
+    ) -> Awaitable[Union[CloudQueryResponse, str, dict]]:
         return to_async(super().query_cloud)(request_body)
 
     def query_more_cloud(
         self, request_body: str
-    ) -> Awaitable[Union[CloudQueryResponse, str]]:
+    ) -> Awaitable[Union[CloudQueryResponse, str, dict]]:
         return to_async(super().query_more_cloud)(request_body)

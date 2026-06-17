@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import ClearQueueRequest
 
 
@@ -15,7 +13,7 @@ class ClearQueueService(BaseService):
     @cast_models
     def execute_clear_queue(
         self, id_: str, request_body: ClearQueueRequest = None
-    ) -> Union[ClearQueueRequest, str]:
+    ) -> Union[ClearQueueRequest, str, dict]:
         """- When you run the Clear queue messages action, it deletes all messages in a queue name from the queue. Note that this clears all messages in the queue; you cannot select and remove individual messages using this action. In addition, the action overrides any purge settings you might configure in the user interface.
          - The immediate response indicates success in passing the request to the Runtime.
          - If the specified Runtime queue does not contain any messages to clear, the response only returns a success message stating that the message passed even though there is no action taken on the Runtime.
@@ -29,7 +27,7 @@ class ClearQueueService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ClearQueueRequest, str]
+        :rtype: Union[ClearQueueRequest, str, dict]
         """
 
         Validator(ClearQueueRequest).is_optional().validate(request_body)
@@ -47,8 +45,4 @@ class ClearQueueService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ClearQueueRequest._unmap(response)
-        if content == "application/xml":
-            return ClearQueueRequest._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ClearQueueRequest, response, status, content)

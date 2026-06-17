@@ -18,12 +18,12 @@ class PackagedComponentServiceAsync(PackagedComponentService):
 
     def create_packaged_component(
         self, request_body: PackagedComponent = None
-    ) -> Awaitable[Union[PackagedComponent, str]]:
+    ) -> Awaitable[Union[PackagedComponent, str, dict]]:
         return to_async(super().create_packaged_component)(request_body)
 
     def get_packaged_component(
         self, id_: str
-    ) -> Awaitable[Union[PackagedComponent, str]]:
+    ) -> Awaitable[Union[PackagedComponent, str, dict]]:
         return to_async(super().get_packaged_component)(id_)
 
     def delete_packaged_component(self, id_: str) -> Awaitable[None]:

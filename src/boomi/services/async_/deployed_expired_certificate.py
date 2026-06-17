@@ -15,10 +15,10 @@ class DeployedExpiredCertificateServiceAsync(DeployedExpiredCertificateService):
 
     def query_deployed_expired_certificate(
         self, request_body: DeployedExpiredCertificateQueryConfig = None
-    ) -> Awaitable[Union[DeployedExpiredCertificateQueryResponse, str]]:
+    ) -> Awaitable[Union[DeployedExpiredCertificateQueryResponse, str, dict]]:
         return to_async(super().query_deployed_expired_certificate)(request_body)
 
     def query_more_deployed_expired_certificate(
         self, request_body: str
-    ) -> Awaitable[Union[DeployedExpiredCertificateQueryResponse, str]]:
+    ) -> Awaitable[Union[DeployedExpiredCertificateQueryResponse, str, dict]]:
         return to_async(super().query_more_deployed_expired_certificate)(request_body)

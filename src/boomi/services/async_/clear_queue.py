@@ -12,5 +12,5 @@ class ClearQueueServiceAsync(ClearQueueService):
 
     def execute_clear_queue(
         self, id_: str, request_body: ClearQueueRequest = None
-    ) -> Awaitable[Union[ClearQueueRequest, str]]:
+    ) -> Awaitable[Union[ClearQueueRequest, str, dict]]:
         return to_async(super().execute_clear_queue)(id_, request_body)

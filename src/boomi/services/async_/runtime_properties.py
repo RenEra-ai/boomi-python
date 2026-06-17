@@ -16,15 +16,15 @@ class RuntimePropertiesServiceAsync(RuntimePropertiesService):
 
     def update_runtime_properties(
         self, id_: str, request_body: RuntimeProperties = None
-    ) -> Awaitable[Union[RuntimeProperties, str]]:
+    ) -> Awaitable[Union[RuntimeProperties, str, dict]]:
         return to_async(super().update_runtime_properties)(id_, request_body)
 
     def async_get_runtime_properties(
         self, id_: str
-    ) -> Awaitable[Union[AsyncOperationTokenResult, str]]:
+    ) -> Awaitable[Union[AsyncOperationTokenResult, str, dict]]:
         return to_async(super().async_get_runtime_properties)(id_)
 
     def async_token_runtime_properties(
         self, token: str
-    ) -> Awaitable[Union[RuntimePropertiesAsyncResponse, str]]:
+    ) -> Awaitable[Union[RuntimePropertiesAsyncResponse, str, dict]]:
         return to_async(super().async_token_runtime_properties)(token)

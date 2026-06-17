@@ -16,17 +16,17 @@ class ProcessAtomAttachmentServiceAsync(ProcessAtomAttachmentService):
 
     def create_process_atom_attachment(
         self, request_body: ProcessAtomAttachment = None
-    ) -> Awaitable[Union[ProcessAtomAttachment, str]]:
+    ) -> Awaitable[Union[ProcessAtomAttachment, str, dict]]:
         return to_async(super().create_process_atom_attachment)(request_body)
 
     def query_process_atom_attachment(
         self, request_body: ProcessAtomAttachmentQueryConfig = None
-    ) -> Awaitable[Union[ProcessAtomAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[ProcessAtomAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_process_atom_attachment)(request_body)
 
     def query_more_process_atom_attachment(
         self, request_body: str
-    ) -> Awaitable[Union[ProcessAtomAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[ProcessAtomAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_more_process_atom_attachment)(request_body)
 
     def delete_process_atom_attachment(self, id_: str) -> Awaitable[None]:

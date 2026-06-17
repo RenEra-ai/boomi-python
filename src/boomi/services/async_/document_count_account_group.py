@@ -15,10 +15,10 @@ class DocumentCountAccountGroupServiceAsync(DocumentCountAccountGroupService):
 
     def query_document_count_account_group(
         self, request_body: DocumentCountAccountGroupQueryConfig = None
-    ) -> Awaitable[Union[DocumentCountAccountGroupQueryResponse, str]]:
+    ) -> Awaitable[Union[DocumentCountAccountGroupQueryResponse, str, dict]]:
         return to_async(super().query_document_count_account_group)(request_body)
 
     def query_more_document_count_account_group(
         self, request_body: str
-    ) -> Awaitable[Union[DocumentCountAccountGroupQueryResponse, str]]:
+    ) -> Awaitable[Union[DocumentCountAccountGroupQueryResponse, str, dict]]:
         return to_async(super().query_more_document_count_account_group)(request_body)

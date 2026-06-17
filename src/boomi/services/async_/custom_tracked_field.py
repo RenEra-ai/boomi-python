@@ -12,10 +12,10 @@ class CustomTrackedFieldServiceAsync(CustomTrackedFieldService):
 
     def query_custom_tracked_field(
         self, request_body: CustomTrackedFieldQueryConfig = None
-    ) -> Awaitable[Union[CustomTrackedFieldQueryResponse, str]]:
+    ) -> Awaitable[Union[CustomTrackedFieldQueryResponse, str, dict]]:
         return to_async(super().query_custom_tracked_field)(request_body)
 
     def query_more_custom_tracked_field(
         self, request_body: str
-    ) -> Awaitable[Union[CustomTrackedFieldQueryResponse, str]]:
+    ) -> Awaitable[Union[CustomTrackedFieldQueryResponse, str, dict]]:
         return to_async(super().query_more_custom_tracked_field)(request_body)

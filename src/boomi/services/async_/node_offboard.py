@@ -12,5 +12,5 @@ class NodeOffboardServiceAsync(NodeOffboardService):
 
     def create_node_offboard(
         self, request_body: NodeOffboard = None
-    ) -> Awaitable[Union[NodeOffboard, str]]:
+    ) -> Awaitable[Union[NodeOffboard, str, dict]]:
         return to_async(super().create_node_offboard)(request_body)

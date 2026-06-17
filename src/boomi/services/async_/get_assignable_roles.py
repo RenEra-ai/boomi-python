@@ -10,8 +10,8 @@ class GetAssignableRolesServiceAsync(GetAssignableRolesService):
     Async Wrapper for GetAssignableRolesServiceAsync
     """
 
-    def get_get_assignable_roles(self) -> Awaitable[Union[Roles, str]]:
+    def get_get_assignable_roles(self) -> Awaitable[Union[Roles, str, dict]]:
         return to_async(super().get_get_assignable_roles)()
 
-    def list_assignable_roles(self) -> Awaitable[Union[Roles, str]]:
+    def list_assignable_roles(self) -> Awaitable[Union[Roles, str, dict]]:
         return to_async(super().get_get_assignable_roles)()

@@ -13,7 +13,7 @@ class AtomWorkerLogServiceAsync(AtomWorkerLogService):
 
     def create_atom_worker_log(
         self, request_body: AtomWorkerLog = None
-    ) -> Awaitable[Union[LogDownload, str]]:
+    ) -> Awaitable[Union[LogDownload, str, dict]]:
         return to_async(super().create_atom_worker_log)(request_body)
 
     async def download_atom_worker_log(

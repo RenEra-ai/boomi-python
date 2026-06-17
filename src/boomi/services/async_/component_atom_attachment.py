@@ -16,17 +16,17 @@ class ComponentAtomAttachmentServiceAsync(ComponentAtomAttachmentService):
 
     def create_component_atom_attachment(
         self, request_body: ComponentAtomAttachment = None
-    ) -> Awaitable[Union[ComponentAtomAttachment, str]]:
+    ) -> Awaitable[Union[ComponentAtomAttachment, str, dict]]:
         return to_async(super().create_component_atom_attachment)(request_body)
 
     def query_component_atom_attachment(
         self, request_body: ComponentAtomAttachmentQueryConfig = None
-    ) -> Awaitable[Union[ComponentAtomAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[ComponentAtomAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_component_atom_attachment)(request_body)
 
     def query_more_component_atom_attachment(
         self, request_body: str
-    ) -> Awaitable[Union[ComponentAtomAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[ComponentAtomAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_more_component_atom_attachment)(request_body)
 
     def delete_component_atom_attachment(self, id_: str) -> Awaitable[None]:

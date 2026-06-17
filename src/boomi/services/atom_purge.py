@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import AtomPurge
 
 
@@ -15,7 +13,7 @@ class AtomPurgeService(BaseService):
     @cast_models
     def update_atom_purge(
         self, id_: str, request_body: AtomPurge = None
-    ) -> Union[AtomPurge, str]:
+    ) -> Union[AtomPurge, str, dict]:
         """You can use the Purge Runtime cloud attachment operation to programmatically start the purge process for test and browse components, logs, processed documents, and temporary data for a Runtime Cloud attachment.
 
         :param request_body: The request body., defaults to None
@@ -26,7 +24,7 @@ class AtomPurgeService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AtomPurge, str]
+        :rtype: Union[AtomPurge, str, dict]
         """
 
         Validator(AtomPurge).is_optional().validate(request_body)
@@ -44,8 +42,4 @@ class AtomPurgeService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AtomPurge._unmap(response)
-        if content == "application/xml":
-            return AtomPurge._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AtomPurge, response, status, content)

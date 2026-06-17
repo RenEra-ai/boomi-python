@@ -18,17 +18,17 @@ class PublisherIntegrationPackServiceAsync(PublisherIntegrationPackService):
 
     def create_publisher_integration_pack(
         self, request_body: PublisherIntegrationPack = None
-    ) -> Awaitable[Union[PublisherIntegrationPack, str]]:
+    ) -> Awaitable[Union[PublisherIntegrationPack, str, dict]]:
         return to_async(super().create_publisher_integration_pack)(request_body)
 
     def get_publisher_integration_pack(
         self, id_: str
-    ) -> Awaitable[Union[PublisherIntegrationPack, str]]:
+    ) -> Awaitable[Union[PublisherIntegrationPack, str, dict]]:
         return to_async(super().get_publisher_integration_pack)(id_)
 
     def update_publisher_integration_pack(
         self, id_: str, request_body: PublisherIntegrationPack = None
-    ) -> Awaitable[Union[PublisherIntegrationPack, str]]:
+    ) -> Awaitable[Union[PublisherIntegrationPack, str, dict]]:
         return to_async(super().update_publisher_integration_pack)(id_, request_body)
 
     def delete_publisher_integration_pack(self, id_: str) -> Awaitable[None]:

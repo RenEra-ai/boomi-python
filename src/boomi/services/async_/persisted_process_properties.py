@@ -16,15 +16,15 @@ class PersistedProcessPropertiesServiceAsync(PersistedProcessPropertiesService):
 
     def update_persisted_process_properties(
         self, id_: str, request_body: PersistedProcessProperties = None
-    ) -> Awaitable[Union[PersistedProcessProperties, str]]:
+    ) -> Awaitable[Union[PersistedProcessProperties, str, dict]]:
         return to_async(super().update_persisted_process_properties)(id_, request_body)
 
     def async_get_persisted_process_properties(
         self, id_: str
-    ) -> Awaitable[Union[AsyncOperationTokenResult, str]]:
+    ) -> Awaitable[Union[AsyncOperationTokenResult, str, dict]]:
         return to_async(super().async_get_persisted_process_properties)(id_)
 
     def async_token_persisted_process_properties(
         self, token: str
-    ) -> Awaitable[Union[PersistedProcessPropertiesAsyncResponse, str]]:
+    ) -> Awaitable[Union[PersistedProcessPropertiesAsyncResponse, str, dict]]:
         return to_async(super().async_token_persisted_process_properties)(token)

@@ -16,10 +16,10 @@ class ReleaseIntegrationPackStatusServiceAsync(ReleaseIntegrationPackStatusServi
 
     def get_release_integration_pack_status(
         self, id_: str
-    ) -> Awaitable[Union[ReleaseIntegrationPackStatus, str]]:
+    ) -> Awaitable[Union[ReleaseIntegrationPackStatus, str, dict]]:
         return to_async(super().get_release_integration_pack_status)(id_)
 
     def bulk_release_integration_pack_status(
         self, request_body: ReleaseIntegrationPackStatusBulkRequest = None
-    ) -> Awaitable[Union[str, ReleaseIntegrationPackStatusBulkResponse]]:
+    ) -> Awaitable[Union[str, ReleaseIntegrationPackStatusBulkResponse, dict]]:
         return to_async(super().bulk_release_integration_pack_status)(request_body)

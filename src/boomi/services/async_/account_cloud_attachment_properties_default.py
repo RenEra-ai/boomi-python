@@ -20,21 +20,21 @@ class AccountCloudAttachmentPropertiesDefaultServiceAsync(
 
     def update_account_cloud_attachment_properties_default(
         self, id_: str, request_body: AccountCloudAttachmentPropertiesDefault = None
-    ) -> Awaitable[Union[AccountCloudAttachmentPropertiesDefault, str]]:
+    ) -> Awaitable[Union[AccountCloudAttachmentPropertiesDefault, str, dict]]:
         return to_async(super().update_account_cloud_attachment_properties_default)(
             id_, request_body
         )
 
     def async_get_account_cloud_attachment_properties_default(
         self, id_: str
-    ) -> Awaitable[Union[AsyncOperationTokenResult, str]]:
+    ) -> Awaitable[Union[AsyncOperationTokenResult, str, dict]]:
         return to_async(super().async_get_account_cloud_attachment_properties_default)(
             id_
         )
 
     def async_token_account_cloud_attachment_properties_default(
         self, token: str
-    ) -> Awaitable[Union[AccountCloudAttachmentPropertiesDefaultAsyncResponse, str]]:
+    ) -> Awaitable[Union[AccountCloudAttachmentPropertiesDefaultAsyncResponse, str, dict]]:
         return to_async(
             super().async_token_account_cloud_attachment_properties_default
         )(token)

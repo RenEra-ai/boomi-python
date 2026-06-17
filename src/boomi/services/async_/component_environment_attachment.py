@@ -16,17 +16,17 @@ class ComponentEnvironmentAttachmentServiceAsync(ComponentEnvironmentAttachmentS
 
     def create_component_environment_attachment(
         self, request_body: ComponentEnvironmentAttachment = None
-    ) -> Awaitable[Union[ComponentEnvironmentAttachment, str]]:
+    ) -> Awaitable[Union[ComponentEnvironmentAttachment, str, dict]]:
         return to_async(super().create_component_environment_attachment)(request_body)
 
     def query_component_environment_attachment(
         self, request_body: ComponentEnvironmentAttachmentQueryConfig = None
-    ) -> Awaitable[Union[ComponentEnvironmentAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[ComponentEnvironmentAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_component_environment_attachment)(request_body)
 
     def query_more_component_environment_attachment(
         self, request_body: str
-    ) -> Awaitable[Union[ComponentEnvironmentAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[ComponentEnvironmentAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_more_component_environment_attachment)(
             request_body
         )

@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     EnvironmentAtomAttachment,
     EnvironmentAtomAttachmentQueryConfig,
@@ -19,7 +17,7 @@ class EnvironmentAtomAttachmentService(BaseService):
     @cast_models
     def create_environment_atom_attachment(
         self, request_body: EnvironmentAtomAttachment = None
-    ) -> Union[EnvironmentAtomAttachment, str]:
+    ) -> Union[EnvironmentAtomAttachment, str, dict]:
         """Attaches a Runtime having the specified ID to the environment having the specified ID. Attaching an already attached Runtime moves the Runtime to the environment specified in the request.
 
          >**Note:** For accounts with Basic environment support, you can attach a single Runtime to each environment. For accounts with Unlimited environment support, you can attach have an unlimited number of Runtimes attached in each environment.
@@ -30,7 +28,7 @@ class EnvironmentAtomAttachmentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentAtomAttachment, str]
+        :rtype: Union[EnvironmentAtomAttachment, str, dict]
         """
 
         Validator(EnvironmentAtomAttachment).is_optional().validate(request_body)
@@ -46,16 +44,12 @@ class EnvironmentAtomAttachmentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentAtomAttachment._unmap(response)
-        if content == "application/xml":
-            return EnvironmentAtomAttachment._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentAtomAttachment, response, status, content)
 
     @cast_models
     def query_environment_atom_attachment(
         self, request_body: EnvironmentAtomAttachmentQueryConfig = None
-    ) -> Union[EnvironmentAtomAttachmentQueryResponse, str]:
+    ) -> Union[EnvironmentAtomAttachmentQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -64,7 +58,7 @@ class EnvironmentAtomAttachmentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentAtomAttachmentQueryResponse, str]
+        :rtype: Union[EnvironmentAtomAttachmentQueryResponse, str, dict]
         """
 
         Validator(EnvironmentAtomAttachmentQueryConfig).is_optional().validate(
@@ -82,16 +76,12 @@ class EnvironmentAtomAttachmentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentAtomAttachmentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return EnvironmentAtomAttachmentQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentAtomAttachmentQueryResponse, response, status, content)
 
     @cast_models
     def query_more_environment_atom_attachment(
         self, request_body: str
-    ) -> Union[EnvironmentAtomAttachmentQueryResponse, str]:
+    ) -> Union[EnvironmentAtomAttachmentQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -100,7 +90,7 @@ class EnvironmentAtomAttachmentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentAtomAttachmentQueryResponse, str]
+        :rtype: Union[EnvironmentAtomAttachmentQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -116,11 +106,7 @@ class EnvironmentAtomAttachmentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentAtomAttachmentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return EnvironmentAtomAttachmentQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentAtomAttachmentQueryResponse, response, status, content)
 
     @cast_models
     def delete_environment_atom_attachment(self, id_: str) -> None:

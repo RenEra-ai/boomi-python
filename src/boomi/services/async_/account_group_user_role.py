@@ -16,17 +16,17 @@ class AccountGroupUserRoleServiceAsync(AccountGroupUserRoleService):
 
     def create_account_group_user_role(
         self, request_body: AccountGroupUserRole = None
-    ) -> Awaitable[Union[AccountGroupUserRole, str]]:
+    ) -> Awaitable[Union[AccountGroupUserRole, str, dict]]:
         return to_async(super().create_account_group_user_role)(request_body)
 
     def query_account_group_user_role(
         self, request_body: AccountGroupUserRoleQueryConfig = None
-    ) -> Awaitable[Union[AccountGroupUserRoleQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountGroupUserRoleQueryResponse, str, dict]]:
         return to_async(super().query_account_group_user_role)(request_body)
 
     def query_more_account_group_user_role(
         self, request_body: str
-    ) -> Awaitable[Union[AccountGroupUserRoleQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountGroupUserRoleQueryResponse, str, dict]]:
         return to_async(super().query_more_account_group_user_role)(request_body)
 
     def delete_account_group_user_role(self, id_: str) -> Awaitable[None]:

@@ -13,7 +13,7 @@ class ProcessLogServiceAsync(ProcessLogService):
 
     def create_process_log(
         self, request_body: ProcessLog = None
-    ) -> Awaitable[Union[LogDownload, str]]:
+    ) -> Awaitable[Union[LogDownload, str, dict]]:
         return to_async(super().create_process_log)(request_body)
 
     async def download_process_log(

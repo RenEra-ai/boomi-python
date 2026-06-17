@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     IntegrationPackEnvironmentAttachment,
     IntegrationPackEnvironmentAttachmentQueryConfig,
@@ -19,7 +17,7 @@ class IntegrationPackEnvironmentAttachmentService(BaseService):
     @cast_models
     def create_integration_pack_environment_attachment(
         self, request_body: IntegrationPackEnvironmentAttachment = None
-    ) -> Union[IntegrationPackEnvironmentAttachment, str]:
+    ) -> Union[IntegrationPackEnvironmentAttachment, str, dict]:
         """Attaches an integration pack instance having the specified ID to the environment having the specified ID.
 
         :param request_body: The request body., defaults to None
@@ -28,7 +26,7 @@ class IntegrationPackEnvironmentAttachmentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[IntegrationPackEnvironmentAttachment, str]
+        :rtype: Union[IntegrationPackEnvironmentAttachment, str, dict]
         """
 
         Validator(IntegrationPackEnvironmentAttachment).is_optional().validate(
@@ -46,16 +44,12 @@ class IntegrationPackEnvironmentAttachmentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return IntegrationPackEnvironmentAttachment._unmap(response)
-        if content == "application/xml":
-            return IntegrationPackEnvironmentAttachment._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(IntegrationPackEnvironmentAttachment, response, status, content)
 
     @cast_models
     def query_integration_pack_environment_attachment(
         self, request_body: IntegrationPackEnvironmentAttachmentQueryConfig = None
-    ) -> Union[IntegrationPackEnvironmentAttachmentQueryResponse, str]:
+    ) -> Union[IntegrationPackEnvironmentAttachmentQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -64,7 +58,7 @@ class IntegrationPackEnvironmentAttachmentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[IntegrationPackEnvironmentAttachmentQueryResponse, str]
+        :rtype: Union[IntegrationPackEnvironmentAttachmentQueryResponse, str, dict]
         """
 
         Validator(
@@ -82,16 +76,12 @@ class IntegrationPackEnvironmentAttachmentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return IntegrationPackEnvironmentAttachmentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return IntegrationPackEnvironmentAttachmentQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(IntegrationPackEnvironmentAttachmentQueryResponse, response, status, content)
 
     @cast_models
     def query_more_integration_pack_environment_attachment(
         self, request_body: str
-    ) -> Union[IntegrationPackEnvironmentAttachmentQueryResponse, str]:
+    ) -> Union[IntegrationPackEnvironmentAttachmentQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -100,7 +90,7 @@ class IntegrationPackEnvironmentAttachmentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[IntegrationPackEnvironmentAttachmentQueryResponse, str]
+        :rtype: Union[IntegrationPackEnvironmentAttachmentQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -116,11 +106,7 @@ class IntegrationPackEnvironmentAttachmentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return IntegrationPackEnvironmentAttachmentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return IntegrationPackEnvironmentAttachmentQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(IntegrationPackEnvironmentAttachmentQueryResponse, response, status, content)
 
     @cast_models
     def delete_integration_pack_environment_attachment(self, id_: str) -> None:

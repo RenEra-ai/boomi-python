@@ -15,10 +15,10 @@ class ThroughputAccountGroupServiceAsync(ThroughputAccountGroupService):
 
     def query_throughput_account_group(
         self, request_body: ThroughputAccountGroupQueryConfig = None
-    ) -> Awaitable[Union[ThroughputAccountGroupQueryResponse, str]]:
+    ) -> Awaitable[Union[ThroughputAccountGroupQueryResponse, str, dict]]:
         return to_async(super().query_throughput_account_group)(request_body)
 
     def query_more_throughput_account_group(
         self, request_body: str
-    ) -> Awaitable[Union[ThroughputAccountGroupQueryResponse, str]]:
+    ) -> Awaitable[Union[ThroughputAccountGroupQueryResponse, str, dict]]:
         return to_async(super().query_more_throughput_account_group)(request_body)

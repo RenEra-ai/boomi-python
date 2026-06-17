@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     Role,
     RoleBulkRequest,
@@ -19,7 +17,7 @@ from ..models import (
 class RoleService(BaseService):
 
     @cast_models
-    def create_role(self, request_body: Role = None) -> Union[Role, str]:
+    def create_role(self, request_body: Role = None) -> Union[Role, str, dict]:
         """Creates a Role object based on the supplied values.
 
         :param request_body: The request body., defaults to None
@@ -28,7 +26,7 @@ class RoleService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Role, str]
+        :rtype: Union[Role, str, dict]
         """
 
         Validator(Role).is_optional().validate(request_body)
@@ -44,14 +42,10 @@ class RoleService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Role._unmap(response)
-        if content == "application/xml":
-            return Role._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Role, response, status, content)
 
     @cast_models
-    def get_role(self, id_: str) -> Union[Role, str]:
+    def get_role(self, id_: str) -> Union[Role, str, dict]:
         """Returns a single Role object based on the supplied role ID.
 
         :param id_: id_
@@ -60,7 +54,7 @@ class RoleService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Role, str]
+        :rtype: Union[Role, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -76,14 +70,10 @@ class RoleService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Role._unmap(response)
-        if content == "application/xml":
-            return Role._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Role, response, status, content)
 
     @cast_models
-    def update_role(self, id_: str, request_body: Role = None) -> Union[Role, str]:
+    def update_role(self, id_: str, request_body: Role = None) -> Union[Role, str, dict]:
         """Updates a role as identified by its role ID.
 
         :param request_body: The request body., defaults to None
@@ -94,7 +84,7 @@ class RoleService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Role, str]
+        :rtype: Union[Role, str, dict]
         """
 
         Validator(Role).is_optional().validate(request_body)
@@ -112,11 +102,7 @@ class RoleService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Role._unmap(response)
-        if content == "application/xml":
-            return Role._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Role, response, status, content)
 
     @cast_models
     def delete_role(self, id_: str) -> None:
@@ -146,7 +132,7 @@ class RoleService(BaseService):
     @cast_models
     def bulk_role(
         self, request_body: RoleBulkRequest = None
-    ) -> Union[RoleBulkResponse, str]:
+    ) -> Union[RoleBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -155,7 +141,7 @@ class RoleService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RoleBulkResponse, str]
+        :rtype: Union[RoleBulkResponse, str, dict]
         """
 
         Validator(RoleBulkRequest).is_optional().validate(request_body)
@@ -171,16 +157,12 @@ class RoleService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RoleBulkResponse._unmap(response)
-        if content == "application/xml":
-            return RoleBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RoleBulkResponse, response, status, content)
 
     @cast_models
     def query_role(
         self, request_body: RoleQueryConfig = None
-    ) -> Union[RoleQueryResponse, str]:
+    ) -> Union[RoleQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -189,7 +171,7 @@ class RoleService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RoleQueryResponse, str]
+        :rtype: Union[RoleQueryResponse, str, dict]
         """
 
         Validator(RoleQueryConfig).is_optional().validate(request_body)
@@ -205,14 +187,10 @@ class RoleService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RoleQueryResponse._unmap(response)
-        if content == "application/xml":
-            return RoleQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RoleQueryResponse, response, status, content)
 
     @cast_models
-    def query_more_role(self, request_body: str) -> Union[RoleQueryResponse, str]:
+    def query_more_role(self, request_body: str) -> Union[RoleQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -221,7 +199,7 @@ class RoleService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RoleQueryResponse, str]
+        :rtype: Union[RoleQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -237,8 +215,4 @@ class RoleService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RoleQueryResponse._unmap(response)
-        if content == "application/xml":
-            return RoleQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RoleQueryResponse, response, status, content)

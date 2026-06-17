@@ -16,15 +16,15 @@ class EnvironmentMapExtensionServiceAsync(EnvironmentMapExtensionService):
 
     def get_environment_map_extension(
         self, id_: str
-    ) -> Awaitable[Union[EnvironmentMapExtension, str]]:
+    ) -> Awaitable[Union[EnvironmentMapExtension, str, dict]]:
         return to_async(super().get_environment_map_extension)(id_)
 
     def bulk_environment_map_extension(
         self, request_body: EnvironmentMapExtensionBulkRequest = None
-    ) -> Awaitable[Union[EnvironmentMapExtensionBulkResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentMapExtensionBulkResponse, str, dict]]:
         return to_async(super().bulk_environment_map_extension)(request_body)
 
     def execute_environment_map_extension(
         self, id_: str, request_body: EnvironmentMapExtension = None
-    ) -> Awaitable[Union[EnvironmentMapExtension, str]]:
+    ) -> Awaitable[Union[EnvironmentMapExtension, str, dict]]:
         return to_async(super().execute_environment_map_extension)(id_, request_body)

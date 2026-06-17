@@ -18,10 +18,10 @@ class EnvironmentRoleServiceAsync(EnvironmentRoleService):
 
     def create_environment_role(
         self, request_body: EnvironmentRole = None
-    ) -> Awaitable[Union[EnvironmentRole, str]]:
+    ) -> Awaitable[Union[EnvironmentRole, str, dict]]:
         return to_async(super().create_environment_role)(request_body)
 
-    def get_environment_role(self, id_: str) -> Awaitable[Union[EnvironmentRole, str]]:
+    def get_environment_role(self, id_: str) -> Awaitable[Union[EnvironmentRole, str, dict]]:
         return to_async(super().get_environment_role)(id_)
 
     def delete_environment_role(self, id_: str) -> Awaitable[None]:
@@ -29,15 +29,15 @@ class EnvironmentRoleServiceAsync(EnvironmentRoleService):
 
     def bulk_environment_role(
         self, request_body: EnvironmentRoleBulkRequest = None
-    ) -> Awaitable[Union[EnvironmentRoleBulkResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentRoleBulkResponse, str, dict]]:
         return to_async(super().bulk_environment_role)(request_body)
 
     def query_environment_role(
         self, request_body: EnvironmentRoleQueryConfig = None
-    ) -> Awaitable[Union[EnvironmentRoleQueryResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentRoleQueryResponse, str, dict]]:
         return to_async(super().query_environment_role)(request_body)
 
     def query_more_environment_role(
         self, request_body: str
-    ) -> Awaitable[Union[EnvironmentRoleQueryResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentRoleQueryResponse, str, dict]]:
         return to_async(super().query_more_environment_role)(request_body)

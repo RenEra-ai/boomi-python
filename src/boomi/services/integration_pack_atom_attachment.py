@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     IntegrationPackAtomAttachment,
     IntegrationPackAtomAttachmentQueryConfig,
@@ -19,7 +17,7 @@ class IntegrationPackAtomAttachmentService(BaseService):
     @cast_models
     def create_integration_pack_atom_attachment(
         self, request_body: IntegrationPackAtomAttachment = None
-    ) -> Union[IntegrationPackAtomAttachment, str]:
+    ) -> Union[IntegrationPackAtomAttachment, str, dict]:
         """Attaches an integration pack instance having the specified ID to the Runtime having the specified ID.
 
         :param request_body: The request body., defaults to None
@@ -28,7 +26,7 @@ class IntegrationPackAtomAttachmentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[IntegrationPackAtomAttachment, str]
+        :rtype: Union[IntegrationPackAtomAttachment, str, dict]
         """
 
         Validator(IntegrationPackAtomAttachment).is_optional().validate(request_body)
@@ -44,16 +42,12 @@ class IntegrationPackAtomAttachmentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return IntegrationPackAtomAttachment._unmap(response)
-        if content == "application/xml":
-            return IntegrationPackAtomAttachment._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(IntegrationPackAtomAttachment, response, status, content)
 
     @cast_models
     def query_integration_pack_atom_attachment(
         self, request_body: IntegrationPackAtomAttachmentQueryConfig = None
-    ) -> Union[IntegrationPackAtomAttachmentQueryResponse, str]:
+    ) -> Union[IntegrationPackAtomAttachmentQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -62,7 +56,7 @@ class IntegrationPackAtomAttachmentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[IntegrationPackAtomAttachmentQueryResponse, str]
+        :rtype: Union[IntegrationPackAtomAttachmentQueryResponse, str, dict]
         """
 
         Validator(IntegrationPackAtomAttachmentQueryConfig).is_optional().validate(
@@ -80,16 +74,12 @@ class IntegrationPackAtomAttachmentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return IntegrationPackAtomAttachmentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return IntegrationPackAtomAttachmentQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(IntegrationPackAtomAttachmentQueryResponse, response, status, content)
 
     @cast_models
     def query_more_integration_pack_atom_attachment(
         self, request_body: str
-    ) -> Union[IntegrationPackAtomAttachmentQueryResponse, str]:
+    ) -> Union[IntegrationPackAtomAttachmentQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -98,7 +88,7 @@ class IntegrationPackAtomAttachmentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[IntegrationPackAtomAttachmentQueryResponse, str]
+        :rtype: Union[IntegrationPackAtomAttachmentQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -114,11 +104,7 @@ class IntegrationPackAtomAttachmentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return IntegrationPackAtomAttachmentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return IntegrationPackAtomAttachmentQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(IntegrationPackAtomAttachmentQueryResponse, response, status, content)
 
     @cast_models
     def delete_integration_pack_atom_attachment(self, id_: str) -> None:

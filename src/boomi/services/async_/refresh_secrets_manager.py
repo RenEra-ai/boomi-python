@@ -12,5 +12,5 @@ class RefreshSecretsManagerServiceAsync(RefreshSecretsManagerService):
 
     def refresh_secrets_manager(
         self, request_body: SecretsManagerRefreshRequest = None
-    ) -> Awaitable[Union[SecretsManagerRefreshResponse, str]]:
+    ) -> Awaitable[Union[SecretsManagerRefreshResponse, str, dict]]:
         return to_async(super().refresh_secrets_manager)(request_body)

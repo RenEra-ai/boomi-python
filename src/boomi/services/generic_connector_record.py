@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     GenericConnectorRecord,
     GenericConnectorRecordBulkRequest,
@@ -21,7 +19,7 @@ class GenericConnectorRecordService(BaseService):
     @cast_models
     def get_generic_connector_record(
         self, id_: str
-    ) -> Union[GenericConnectorRecord, str]:
+    ) -> Union[GenericConnectorRecord, str, dict]:
         """Allows you to view document metadata for exactly one document based on the provided id.
 
         :param id_: The ID of the GenericConnectorRecord. You obtain this ID from querying the GenericConnectorRecord object.
@@ -30,7 +28,7 @@ class GenericConnectorRecordService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[GenericConnectorRecord, str]
+        :rtype: Union[GenericConnectorRecord, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -46,16 +44,12 @@ class GenericConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return GenericConnectorRecord._unmap(response)
-        if content == "application/xml":
-            return GenericConnectorRecord._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(GenericConnectorRecord, response, status, content)
 
     @cast_models
     def bulk_generic_connector_record(
         self, request_body: GenericConnectorRecordBulkRequest = None
-    ) -> Union[GenericConnectorRecordBulkResponse, str]:
+    ) -> Union[GenericConnectorRecordBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -64,7 +58,7 @@ class GenericConnectorRecordService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[GenericConnectorRecordBulkResponse, str]
+        :rtype: Union[GenericConnectorRecordBulkResponse, str, dict]
         """
 
         Validator(GenericConnectorRecordBulkRequest).is_optional().validate(
@@ -82,16 +76,12 @@ class GenericConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return GenericConnectorRecordBulkResponse._unmap(response)
-        if content == "application/xml":
-            return GenericConnectorRecordBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(GenericConnectorRecordBulkResponse, response, status, content)
 
     @cast_models
     def query_generic_connector_record(
         self, request_body: GenericConnectorRecordQueryConfig = None
-    ) -> Union[GenericConnectorRecordQueryResponse, str]:
+    ) -> Union[GenericConnectorRecordQueryResponse, str, dict]:
         """- The QUERY operation allows you to view document metadata for all documents in the run. You must query by exactly one `executionId`.
          - You cannot query `connectorFields`.
 
@@ -103,7 +93,7 @@ class GenericConnectorRecordService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[GenericConnectorRecordQueryResponse, str]
+        :rtype: Union[GenericConnectorRecordQueryResponse, str, dict]
         """
 
         Validator(GenericConnectorRecordQueryConfig).is_optional().validate(
@@ -121,16 +111,12 @@ class GenericConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return GenericConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return GenericConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(GenericConnectorRecordQueryResponse, response, status, content)
 
     @cast_models
     def query_more_generic_connector_record(
         self, request_body: str
-    ) -> Union[GenericConnectorRecordQueryResponse, str]:
+    ) -> Union[GenericConnectorRecordQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -139,7 +125,7 @@ class GenericConnectorRecordService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[GenericConnectorRecordQueryResponse, str]
+        :rtype: Union[GenericConnectorRecordQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -155,8 +141,4 @@ class GenericConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return GenericConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return GenericConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(GenericConnectorRecordQueryResponse, response, status, content)

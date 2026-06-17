@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     Folder,
     FolderBulkRequest,
@@ -19,7 +17,7 @@ from ..models import (
 class FolderService(BaseService):
 
     @cast_models
-    def create_folder(self, request_body: Folder = None) -> Union[Folder, str]:
+    def create_folder(self, request_body: Folder = None) -> Union[Folder, str, dict]:
         """- When using the CREATE operation, you can create a new folder within the parent folder.
 
         - When creating a new folder, a name is required but PermittedRoles are optional. Unless it includes a list of UserRoles, in which case the GUID is required for the UserRole.
@@ -34,7 +32,7 @@ class FolderService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Folder, str]
+        :rtype: Union[Folder, str, dict]
         """
 
         Validator(Folder).is_optional().validate(request_body)
@@ -50,14 +48,10 @@ class FolderService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Folder._unmap(response)
-        if content == "application/xml":
-            return Folder._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Folder, response, status, content)
 
     @cast_models
-    def get_folder(self, id_: str) -> Union[Folder, str]:
+    def get_folder(self, id_: str) -> Union[Folder, str, dict]:
         """Retrieves the folder with the particular ID.
 
         :param id_: Required. Read only. The Boomi-generated, unique identifier of the folder.
@@ -66,7 +60,7 @@ class FolderService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Folder, str]
+        :rtype: Union[Folder, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -82,16 +76,12 @@ class FolderService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Folder._unmap(response)
-        if content == "application/xml":
-            return Folder._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Folder, response, status, content)
 
     @cast_models
     def update_folder(
         self, id_: str, request_body: Folder = None
-    ) -> Union[Folder, str]:
+    ) -> Union[Folder, str, dict]:
         """You can update by changing the name of the folder and following the same considerations for the CREATE parameters.
 
         :param request_body: The request body., defaults to None
@@ -102,7 +92,7 @@ class FolderService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Folder, str]
+        :rtype: Union[Folder, str, dict]
         """
 
         Validator(Folder).is_optional().validate(request_body)
@@ -120,11 +110,7 @@ class FolderService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Folder._unmap(response)
-        if content == "application/xml":
-            return Folder._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Folder, response, status, content)
 
     @cast_models
     def delete_folder(self, id_: str) -> None:
@@ -157,7 +143,7 @@ class FolderService(BaseService):
     @cast_models
     def bulk_folder(
         self, request_body: FolderBulkRequest = None
-    ) -> Union[FolderBulkResponse, str]:
+    ) -> Union[FolderBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -166,7 +152,7 @@ class FolderService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[FolderBulkResponse, str]
+        :rtype: Union[FolderBulkResponse, str, dict]
         """
 
         Validator(FolderBulkRequest).is_optional().validate(request_body)
@@ -182,16 +168,12 @@ class FolderService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return FolderBulkResponse._unmap(response)
-        if content == "application/xml":
-            return FolderBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(FolderBulkResponse, response, status, content)
 
     @cast_models
     def query_folder(
         self, request_body: FolderQueryConfig = None
-    ) -> Union[FolderQueryResponse, str]:
+    ) -> Union[FolderQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         - You can perform the QUERY operation for the Folder object by id, name, fullPath and deleted.
@@ -208,7 +190,7 @@ class FolderService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[FolderQueryResponse, str]
+        :rtype: Union[FolderQueryResponse, str, dict]
         """
 
         Validator(FolderQueryConfig).is_optional().validate(request_body)
@@ -224,14 +206,10 @@ class FolderService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return FolderQueryResponse._unmap(response)
-        if content == "application/xml":
-            return FolderQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(FolderQueryResponse, response, status, content)
 
     @cast_models
-    def query_more_folder(self, request_body: str) -> Union[FolderQueryResponse, str]:
+    def query_more_folder(self, request_body: str) -> Union[FolderQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -240,7 +218,7 @@ class FolderService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[FolderQueryResponse, str]
+        :rtype: Union[FolderQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -256,8 +234,4 @@ class FolderService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return FolderQueryResponse._unmap(response)
-        if content == "application/xml":
-            return FolderQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(FolderQueryResponse, response, status, content)

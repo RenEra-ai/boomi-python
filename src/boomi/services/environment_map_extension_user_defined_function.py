@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     EnvironmentMapExtensionUserDefinedFunction,
     EnvironmentMapExtensionUserDefinedFunctionBulkRequest,
@@ -19,7 +17,7 @@ class EnvironmentMapExtensionUserDefinedFunctionService(BaseService):
     @cast_models
     def create_environment_map_extension_user_defined_function(
         self, request_body: EnvironmentMapExtensionUserDefinedFunction = None
-    ) -> Union[EnvironmentMapExtensionUserDefinedFunction, str]:
+    ) -> Union[EnvironmentMapExtensionUserDefinedFunction, str, dict]:
         """The CREATE operation creates a new extensible user-defined function. User-defined functions created using the Environment Map Extension User Defined Function object exists only at the environment extension level and are tied to a single map extension only.
 
          When creating a new user-defined function, you define individual function steps that make up the greater user-defined function. Then, in the `<Mappings>` section of the request, you determine how to map or link each step to and from the function's input and output.
@@ -32,7 +30,7 @@ class EnvironmentMapExtensionUserDefinedFunctionService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentMapExtensionUserDefinedFunction, str]
+        :rtype: Union[EnvironmentMapExtensionUserDefinedFunction, str, dict]
         """
 
         Validator(EnvironmentMapExtensionUserDefinedFunction).is_optional().validate(
@@ -50,16 +48,12 @@ class EnvironmentMapExtensionUserDefinedFunctionService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentMapExtensionUserDefinedFunction._unmap(response)
-        if content == "application/xml":
-            return EnvironmentMapExtensionUserDefinedFunction._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentMapExtensionUserDefinedFunction, response, status, content)
 
     @cast_models
     def get_environment_map_extension_user_defined_function(
         self, id_: str
-    ) -> Union[EnvironmentMapExtensionUserDefinedFunction, str]:
+    ) -> Union[EnvironmentMapExtensionUserDefinedFunction, str, dict]:
         """Retrieves an extensible user-defined function associated with a given environment map extension function ID.
 
         :param id_: Represents the unique, system-generated ID of the extended user-defined function.
@@ -68,7 +62,7 @@ class EnvironmentMapExtensionUserDefinedFunctionService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentMapExtensionUserDefinedFunction, str]
+        :rtype: Union[EnvironmentMapExtensionUserDefinedFunction, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -84,16 +78,12 @@ class EnvironmentMapExtensionUserDefinedFunctionService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentMapExtensionUserDefinedFunction._unmap(response)
-        if content == "application/xml":
-            return EnvironmentMapExtensionUserDefinedFunction._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentMapExtensionUserDefinedFunction, response, status, content)
 
     @cast_models
     def update_environment_map_extension_user_defined_function(
         self, id_: str, request_body: EnvironmentMapExtensionUserDefinedFunction = None
-    ) -> Union[EnvironmentMapExtensionUserDefinedFunction, str]:
+    ) -> Union[EnvironmentMapExtensionUserDefinedFunction, str, dict]:
         """Updates the extended configuration for a single user-defined function.
 
          >**Caution:** Updating functions require all existing input and output values in the request regardless if they are mapped or populated with a default value. Otherwise, it overrides and removes those variables from the function.
@@ -106,7 +96,7 @@ class EnvironmentMapExtensionUserDefinedFunctionService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentMapExtensionUserDefinedFunction, str]
+        :rtype: Union[EnvironmentMapExtensionUserDefinedFunction, str, dict]
         """
 
         Validator(EnvironmentMapExtensionUserDefinedFunction).is_optional().validate(
@@ -126,11 +116,7 @@ class EnvironmentMapExtensionUserDefinedFunctionService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentMapExtensionUserDefinedFunction._unmap(response)
-        if content == "application/xml":
-            return EnvironmentMapExtensionUserDefinedFunction._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentMapExtensionUserDefinedFunction, response, status, content)
 
     @cast_models
     def delete_environment_map_extension_user_defined_function(self, id_: str) -> None:
@@ -164,7 +150,7 @@ class EnvironmentMapExtensionUserDefinedFunctionService(BaseService):
     @cast_models
     def bulk_environment_map_extension_user_defined_function(
         self, request_body: EnvironmentMapExtensionUserDefinedFunctionBulkRequest = None
-    ) -> Union[EnvironmentMapExtensionUserDefinedFunctionBulkResponse, str]:
+    ) -> Union[EnvironmentMapExtensionUserDefinedFunctionBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -173,7 +159,7 @@ class EnvironmentMapExtensionUserDefinedFunctionService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentMapExtensionUserDefinedFunctionBulkResponse, str]
+        :rtype: Union[EnvironmentMapExtensionUserDefinedFunctionBulkResponse, str, dict]
         """
 
         Validator(
@@ -191,12 +177,9 @@ class EnvironmentMapExtensionUserDefinedFunctionService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentMapExtensionUserDefinedFunctionBulkResponse._unmap(
-                response
-            )
-        if content == "application/xml":
-            return EnvironmentMapExtensionUserDefinedFunctionBulkResponse._unmap(
-                response
-            )
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            EnvironmentMapExtensionUserDefinedFunctionBulkResponse,
+            response,
+            status,
+            content,
+        )

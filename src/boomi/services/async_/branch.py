@@ -18,15 +18,15 @@ class BranchServiceAsync(BranchService):
 
     def create_branch(
         self, request_body: Branch = None
-    ) -> Awaitable[Union[Branch, str]]:
+    ) -> Awaitable[Union[Branch, str, dict]]:
         return to_async(super().create_branch)(request_body)
 
-    def get_branch(self, id_: str) -> Awaitable[Union[Branch, str]]:
+    def get_branch(self, id_: str) -> Awaitable[Union[Branch, str, dict]]:
         return to_async(super().get_branch)(id_)
 
     def update_branch(
         self, id_: str, request_body: Branch = None
-    ) -> Awaitable[Union[Branch, str]]:
+    ) -> Awaitable[Union[Branch, str, dict]]:
         return to_async(super().update_branch)(id_, request_body)
 
     def delete_branch(self, id_: str) -> Awaitable[None]:
@@ -34,15 +34,15 @@ class BranchServiceAsync(BranchService):
 
     def bulk_branch(
         self, request_body: BranchBulkRequest = None
-    ) -> Awaitable[Union[BranchBulkResponse, str]]:
+    ) -> Awaitable[Union[BranchBulkResponse, str, dict]]:
         return to_async(super().bulk_branch)(request_body)
 
     def query_branch(
         self, request_body: BranchQueryConfig = None
-    ) -> Awaitable[Union[BranchQueryResponse, str]]:
+    ) -> Awaitable[Union[BranchQueryResponse, str, dict]]:
         return to_async(super().query_branch)(request_body)
 
     def query_more_branch(
         self, request_body: str
-    ) -> Awaitable[Union[BranchQueryResponse, str]]:
+    ) -> Awaitable[Union[BranchQueryResponse, str, dict]]:
         return to_async(super().query_more_branch)(request_body)

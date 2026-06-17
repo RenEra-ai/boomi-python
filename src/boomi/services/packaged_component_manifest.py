@@ -3,8 +3,6 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
-from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
@@ -19,7 +17,7 @@ class PackagedComponentManifestService(BaseService):
     @cast_models
     def get_packaged_component_manifest(
         self, package_id: str
-    ) -> Union[PackagedComponentManifest, str]:
+    ) -> Union[PackagedComponentManifest, str, dict]:
         """Retrieve a list of the included components and their summary metadata for a single version of a packaged component.
 
         :param package_id: The ID of the packaged component.
@@ -28,7 +26,7 @@ class PackagedComponentManifestService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PackagedComponentManifest, str]
+        :rtype: Union[PackagedComponentManifest, str, dict]
         """
 
         Validator(str).validate(package_id)
@@ -44,16 +42,12 @@ class PackagedComponentManifestService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PackagedComponentManifest._unmap(response)
-        if content == "application/xml":
-            return PackagedComponentManifest._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(PackagedComponentManifest, response, status, content)
 
     @cast_models
     def bulk_packaged_component_manifest(
         self, request_body: PackagedComponentManifestBulkRequest = None
-    ) -> Union[PackagedComponentManifestBulkResponse, str]:
+    ) -> Union[PackagedComponentManifestBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -62,7 +56,7 @@ class PackagedComponentManifestService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PackagedComponentManifestBulkResponse, str]
+        :rtype: Union[PackagedComponentManifestBulkResponse, str, dict]
         """
 
         Validator(PackagedComponentManifestBulkRequest).is_optional().validate(
@@ -80,8 +74,4 @@ class PackagedComponentManifestService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PackagedComponentManifestBulkResponse._unmap(response)
-        if content == "application/xml":
-            return PackagedComponentManifestBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(PackagedComponentManifestBulkResponse, response, status, content)

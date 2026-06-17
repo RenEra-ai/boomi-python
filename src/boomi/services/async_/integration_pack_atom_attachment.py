@@ -16,17 +16,17 @@ class IntegrationPackAtomAttachmentServiceAsync(IntegrationPackAtomAttachmentSer
 
     def create_integration_pack_atom_attachment(
         self, request_body: IntegrationPackAtomAttachment = None
-    ) -> Awaitable[Union[IntegrationPackAtomAttachment, str]]:
+    ) -> Awaitable[Union[IntegrationPackAtomAttachment, str, dict]]:
         return to_async(super().create_integration_pack_atom_attachment)(request_body)
 
     def query_integration_pack_atom_attachment(
         self, request_body: IntegrationPackAtomAttachmentQueryConfig = None
-    ) -> Awaitable[Union[IntegrationPackAtomAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[IntegrationPackAtomAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_integration_pack_atom_attachment)(request_body)
 
     def query_more_integration_pack_atom_attachment(
         self, request_body: str
-    ) -> Awaitable[Union[IntegrationPackAtomAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[IntegrationPackAtomAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_more_integration_pack_atom_attachment)(
             request_body
         )

@@ -16,17 +16,17 @@ class RuntimeReleaseScheduleServiceAsync(RuntimeReleaseScheduleService):
 
     def create_runtime_release_schedule(
         self, request_body: RuntimeReleaseSchedule = None
-    ) -> Awaitable[Union[RuntimeReleaseSchedule, str]]:
+    ) -> Awaitable[Union[RuntimeReleaseSchedule, str, dict]]:
         return to_async(super().create_runtime_release_schedule)(request_body)
 
     def get_runtime_release_schedule(
         self, id_: str
-    ) -> Awaitable[Union[RuntimeReleaseSchedule, str]]:
+    ) -> Awaitable[Union[RuntimeReleaseSchedule, str, dict]]:
         return to_async(super().get_runtime_release_schedule)(id_)
 
     def update_runtime_release_schedule(
         self, id_: str, request_body: RuntimeReleaseSchedule = None
-    ) -> Awaitable[Union[RuntimeReleaseSchedule, str]]:
+    ) -> Awaitable[Union[RuntimeReleaseSchedule, str, dict]]:
         return to_async(super().update_runtime_release_schedule)(id_, request_body)
 
     def delete_runtime_release_schedule(self, id_: str) -> Awaitable[None]:
@@ -34,5 +34,5 @@ class RuntimeReleaseScheduleServiceAsync(RuntimeReleaseScheduleService):
 
     def bulk_runtime_release_schedule(
         self, request_body: RuntimeReleaseScheduleBulkRequest = None
-    ) -> Awaitable[Union[RuntimeReleaseScheduleBulkResponse, str]]:
+    ) -> Awaitable[Union[RuntimeReleaseScheduleBulkResponse, str, dict]]:
         return to_async(super().bulk_runtime_release_schedule)(request_body)

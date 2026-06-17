@@ -6,7 +6,6 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import AtomAs2Artifacts, LogDownload
 
 
@@ -15,7 +14,7 @@ class AtomAs2ArtifactsService(BaseService):
     @cast_models
     def create_atom_as2_artifacts(
         self, request_body: AtomAs2Artifacts = None
-    ) -> Union[LogDownload, str]:
+    ) -> Union[LogDownload, str, dict]:
         """You can use the Download AS2 Artifacts Log operation to request and download AS2 artifacts logs.
 
         :param request_body: The request body., defaults to None
@@ -24,7 +23,7 @@ class AtomAs2ArtifactsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[LogDownload, str]
+        :rtype: Union[LogDownload, str, dict]
         """
 
         Validator(AtomAs2Artifacts).is_optional().validate(request_body)
@@ -40,11 +39,7 @@ class AtomAs2ArtifactsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return LogDownload._unmap(response)
-        if content == "application/xml":
-            return LogDownload._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(LogDownload, response, status, content)
 
     def download_atom_as2_artifacts(
         self,

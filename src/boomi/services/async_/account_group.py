@@ -18,28 +18,28 @@ class AccountGroupServiceAsync(AccountGroupService):
 
     def create_account_group(
         self, request_body: AccountGroup = None
-    ) -> Awaitable[Union[AccountGroup, str]]:
+    ) -> Awaitable[Union[AccountGroup, str, dict]]:
         return to_async(super().create_account_group)(request_body)
 
-    def get_account_group(self, id_: str) -> Awaitable[Union[AccountGroup, str]]:
+    def get_account_group(self, id_: str) -> Awaitable[Union[AccountGroup, str, dict]]:
         return to_async(super().get_account_group)(id_)
 
     def update_account_group(
         self, id_: str, request_body: AccountGroup = None
-    ) -> Awaitable[Union[AccountGroup, str]]:
+    ) -> Awaitable[Union[AccountGroup, str, dict]]:
         return to_async(super().update_account_group)(id_, request_body)
 
     def bulk_account_group(
         self, request_body: AccountGroupBulkRequest = None
-    ) -> Awaitable[Union[AccountGroupBulkResponse, str]]:
+    ) -> Awaitable[Union[AccountGroupBulkResponse, str, dict]]:
         return to_async(super().bulk_account_group)(request_body)
 
     def query_account_group(
         self, request_body: AccountGroupQueryConfig = None
-    ) -> Awaitable[Union[AccountGroupQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountGroupQueryResponse, str, dict]]:
         return to_async(super().query_account_group)(request_body)
 
     def query_more_account_group(
         self, request_body: str
-    ) -> Awaitable[Union[AccountGroupQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountGroupQueryResponse, str, dict]]:
         return to_async(super().query_more_account_group)(request_body)

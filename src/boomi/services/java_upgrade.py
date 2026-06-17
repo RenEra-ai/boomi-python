@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import JavaUpgrade
 
 
@@ -15,7 +13,7 @@ class JavaUpgradeService(BaseService):
     @cast_models
     def create_java_upgrade(
         self, request_body: JavaUpgrade = None
-    ) -> Union[JavaUpgrade, str]:
+    ) -> Union[JavaUpgrade, str, dict]:
         """Download and run the Java upgrader script for a specified Runtime, Runtime cluster, Runtime cloud, Authentication Broker, or API Gateway.  Upgrades your selected container to Boomis latest supported version of Java.
 
          - After providing the endpoint and a request body that includes the containerID, the CREATE operation immediately upgrades the given container to Boomi's latest supported version of Java. After performing a CREATE operation, you can determine a successful upgrade when the **Update to use Java 11.<minor_version>** link no longer appears on the following pages:
@@ -34,7 +32,7 @@ class JavaUpgradeService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[JavaUpgrade, str]
+        :rtype: Union[JavaUpgrade, str, dict]
         """
 
         Validator(JavaUpgrade).is_optional().validate(request_body)
@@ -50,8 +48,4 @@ class JavaUpgradeService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return JavaUpgrade._unmap(response)
-        if content == "application/xml":
-            return JavaUpgrade._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(JavaUpgrade, response, status, content)

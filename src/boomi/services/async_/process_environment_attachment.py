@@ -12,5 +12,5 @@ class ProcessEnvironmentAttachmentServiceAsync(ProcessEnvironmentAttachmentServi
 
     def create_process_environment_attachment(
         self, request_body: ProcessEnvironmentAttachment = None
-    ) -> Awaitable[Union[ProcessEnvironmentAttachment, str]]:
+    ) -> Awaitable[Union[ProcessEnvironmentAttachment, str, dict]]:
         return to_async(super().create_process_environment_attachment)(request_body)

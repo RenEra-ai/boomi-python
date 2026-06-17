@@ -16,17 +16,17 @@ class AccountGroupAccountServiceAsync(AccountGroupAccountService):
 
     def create_account_group_account(
         self, request_body: AccountGroupAccount = None
-    ) -> Awaitable[Union[AccountGroupAccount, str]]:
+    ) -> Awaitable[Union[AccountGroupAccount, str, dict]]:
         return to_async(super().create_account_group_account)(request_body)
 
     def query_account_group_account(
         self, request_body: AccountGroupAccountQueryConfig = None
-    ) -> Awaitable[Union[AccountGroupAccountQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountGroupAccountQueryResponse, str, dict]]:
         return to_async(super().query_account_group_account)(request_body)
 
     def query_more_account_group_account(
         self, request_body: str
-    ) -> Awaitable[Union[AccountGroupAccountQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountGroupAccountQueryResponse, str, dict]]:
         return to_async(super().query_more_account_group_account)(request_body)
 
     def delete_account_group_account(self, id_: str) -> Awaitable[None]:

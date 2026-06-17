@@ -16,17 +16,17 @@ class AccountCloudAttachmentQuotaServiceAsync(AccountCloudAttachmentQuotaService
 
     def create_account_cloud_attachment_quota(
         self, request_body: AccountCloudAttachmentQuota = None
-    ) -> Awaitable[Union[AccountCloudAttachmentQuota, str]]:
+    ) -> Awaitable[Union[AccountCloudAttachmentQuota, str, dict]]:
         return to_async(super().create_account_cloud_attachment_quota)(request_body)
 
     def get_account_cloud_attachment_quota(
         self, id_: str
-    ) -> Awaitable[Union[AccountCloudAttachmentQuota, str]]:
+    ) -> Awaitable[Union[AccountCloudAttachmentQuota, str, dict]]:
         return to_async(super().get_account_cloud_attachment_quota)(id_)
 
     def update_account_cloud_attachment_quota(
         self, id_: str, request_body: AccountCloudAttachmentQuota = None
-    ) -> Awaitable[Union[AccountCloudAttachmentQuota, str]]:
+    ) -> Awaitable[Union[AccountCloudAttachmentQuota, str, dict]]:
         return to_async(super().update_account_cloud_attachment_quota)(
             id_, request_body
         )
@@ -36,5 +36,5 @@ class AccountCloudAttachmentQuotaServiceAsync(AccountCloudAttachmentQuotaService
 
     def bulk_account_cloud_attachment_quota(
         self, request_body: AccountCloudAttachmentQuotaBulkRequest = None
-    ) -> Awaitable[Union[AccountCloudAttachmentQuotaBulkResponse, str]]:
+    ) -> Awaitable[Union[AccountCloudAttachmentQuotaBulkResponse, str, dict]]:
         return to_async(super().bulk_account_cloud_attachment_quota)(request_body)

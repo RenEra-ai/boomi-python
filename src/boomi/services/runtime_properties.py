@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     RuntimeProperties,
     RuntimePropertiesAsyncResponse,
@@ -19,7 +17,7 @@ class RuntimePropertiesService(BaseService):
     @cast_models
     def update_runtime_properties(
         self, id_: str, request_body: RuntimeProperties = None
-    ) -> Union[RuntimeProperties, str]:
+    ) -> Union[RuntimeProperties, str, dict]:
         """Updates the RuntimeProperties object having the specified ID.
 
         :param request_body: The request body., defaults to None
@@ -30,7 +28,7 @@ class RuntimePropertiesService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeProperties, str]
+        :rtype: Union[RuntimeProperties, str, dict]
         """
 
         Validator(RuntimeProperties).is_optional().validate(request_body)
@@ -48,16 +46,12 @@ class RuntimePropertiesService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeProperties._unmap(response)
-        if content == "application/xml":
-            return RuntimeProperties._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RuntimeProperties, response, status, content)
 
     @cast_models
     def async_get_runtime_properties(
         self, id_: str
-    ) -> Union[AsyncOperationTokenResult, str]:
+    ) -> Union[AsyncOperationTokenResult, str, dict]:
         """Returns a token for the specified RuntimeProperties.
 
         :param id_: id_
@@ -66,7 +60,7 @@ class RuntimePropertiesService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AsyncOperationTokenResult, str]
+        :rtype: Union[AsyncOperationTokenResult, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -82,16 +76,12 @@ class RuntimePropertiesService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AsyncOperationTokenResult._unmap(response)
-        if content == "application/xml":
-            return AsyncOperationTokenResult._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AsyncOperationTokenResult, response, status, content)
 
     @cast_models
     def async_token_runtime_properties(
         self, token: str
-    ) -> Union[RuntimePropertiesAsyncResponse, str]:
+    ) -> Union[RuntimePropertiesAsyncResponse, str, dict]:
         """For a response, use the token from the initial GET response in a new request.
 
         :param token: Takes in the token from a previous call to return a result.
@@ -100,7 +90,7 @@ class RuntimePropertiesService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimePropertiesAsyncResponse, str]
+        :rtype: Union[RuntimePropertiesAsyncResponse, str, dict]
         """
 
         Validator(str).validate(token)
@@ -116,8 +106,4 @@ class RuntimePropertiesService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimePropertiesAsyncResponse._unmap(response)
-        if content == "application/xml":
-            return RuntimePropertiesAsyncResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RuntimePropertiesAsyncResponse, response, status, content)

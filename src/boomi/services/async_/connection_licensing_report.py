@@ -12,5 +12,5 @@ class ConnectionLicensingReportServiceAsync(ConnectionLicensingReportService):
 
     def create_connection_licensing_report(
         self, request_body: ConnectionLicensingReport = None
-    ) -> Awaitable[Union[ConnectionLicensingDownload, str]]:
+    ) -> Awaitable[Union[ConnectionLicensingDownload, str, dict]]:
         return to_async(super().create_connection_licensing_report)(request_body)

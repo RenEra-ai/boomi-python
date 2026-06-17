@@ -12,5 +12,5 @@ class RerunDocumentServiceAsync(RerunDocumentService):
 
     def create_rerun_document(
         self, request_body: RerunDocument = None
-    ) -> Awaitable[Union[RerunDocument, str]]:
+    ) -> Awaitable[Union[RerunDocument, str, dict]]:
         return to_async(super().create_rerun_document)(request_body)

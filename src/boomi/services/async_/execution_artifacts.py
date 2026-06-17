@@ -13,7 +13,7 @@ class ExecutionArtifactsServiceAsync(ExecutionArtifactsService):
 
     def create_execution_artifacts(
         self, request_body: ExecutionArtifacts = None
-    ) -> Awaitable[Union[LogDownload, str]]:
+    ) -> Awaitable[Union[LogDownload, str, dict]]:
         return to_async(super().create_execution_artifacts)(request_body)
 
     async def download_execution_artifacts(

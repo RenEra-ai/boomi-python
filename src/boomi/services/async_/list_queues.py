@@ -12,10 +12,10 @@ class ListQueuesServiceAsync(ListQueuesService):
 
     def async_token_list_queues(
         self, token: str
-    ) -> Awaitable[Union[ListQueuesAsyncResponse, str]]:
+    ) -> Awaitable[Union[ListQueuesAsyncResponse, str, dict]]:
         return to_async(super().async_token_list_queues)(token)
 
     def async_get_list_queues(
         self, id_: str
-    ) -> Awaitable[Union[AsyncOperationTokenResult, str]]:
+    ) -> Awaitable[Union[AsyncOperationTokenResult, str, dict]]:
         return to_async(super().async_get_list_queues)(id_)

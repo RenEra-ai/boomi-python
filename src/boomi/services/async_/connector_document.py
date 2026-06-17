@@ -13,7 +13,7 @@ class ConnectorDocumentServiceAsync(ConnectorDocumentService):
 
     def create_connector_document(
         self, request_body: ConnectorDocument = None
-    ) -> Awaitable[Union[ConnectorDocumentDownload, str]]:
+    ) -> Awaitable[Union[ConnectorDocumentDownload, str, dict]]:
         return to_async(super().create_connector_document)(request_body)
 
     async def download_connector_document(

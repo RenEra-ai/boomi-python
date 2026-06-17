@@ -16,20 +16,20 @@ class AccountServiceAsync(AccountService):
     Async Wrapper for AccountServiceAsync
     """
 
-    def get_account(self, id_: str) -> Awaitable[Union[Account, str]]:
+    def get_account(self, id_: str) -> Awaitable[Union[Account, str, dict]]:
         return to_async(super().get_account)(id_)
 
     def bulk_account(
         self, request_body: AccountBulkRequest = None
-    ) -> Awaitable[Union[AccountBulkResponse, str]]:
+    ) -> Awaitable[Union[AccountBulkResponse, str, dict]]:
         return to_async(super().bulk_account)(request_body)
 
     def query_account(
         self, request_body: AccountQueryConfig = None
-    ) -> Awaitable[Union[AccountQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountQueryResponse, str, dict]]:
         return to_async(super().query_account)(request_body)
 
     def query_more_account(
         self, request_body: str
-    ) -> Awaitable[Union[AccountQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountQueryResponse, str, dict]]:
         return to_async(super().query_more_account)(request_body)

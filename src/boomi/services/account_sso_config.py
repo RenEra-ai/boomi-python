@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     AccountSsoConfig,
     AccountSsoConfigBulkRequest,
@@ -17,7 +15,7 @@ from ..models import (
 class AccountSsoConfigService(BaseService):
 
     @cast_models
-    def get_account_sso_config(self, id_: str) -> Union[AccountSsoConfig, str]:
+    def get_account_sso_config(self, id_: str) -> Union[AccountSsoConfig, str, dict]:
         """Returns the Account Single Sign-on Configuration for the supplied account ID.
 
         :param id_: id_
@@ -26,7 +24,7 @@ class AccountSsoConfigService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountSsoConfig, str]
+        :rtype: Union[AccountSsoConfig, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -42,16 +40,12 @@ class AccountSsoConfigService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountSsoConfig._unmap(response)
-        if content == "application/xml":
-            return AccountSsoConfig._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountSsoConfig, response, status, content)
 
     @cast_models
     def update_account_sso_config(
         self, id_: str, request_body: AccountSsoConfig = None
-    ) -> Union[AccountSsoConfig, str]:
+    ) -> Union[AccountSsoConfig, str, dict]:
         """Updates the Account Single Sign-on Configuration for the supplied account ID.
 
         :param request_body: The request body., defaults to None
@@ -62,7 +56,7 @@ class AccountSsoConfigService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountSsoConfig, str]
+        :rtype: Union[AccountSsoConfig, str, dict]
         """
 
         Validator(AccountSsoConfig).is_optional().validate(request_body)
@@ -80,11 +74,7 @@ class AccountSsoConfigService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountSsoConfig._unmap(response)
-        if content == "application/xml":
-            return AccountSsoConfig._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountSsoConfig, response, status, content)
 
     @cast_models
     def delete_account_sso_config(self, id_: str) -> None:
@@ -114,7 +104,7 @@ class AccountSsoConfigService(BaseService):
     @cast_models
     def bulk_account_sso_config(
         self, request_body: AccountSsoConfigBulkRequest = None
-    ) -> Union[AccountSsoConfigBulkResponse, str]:
+    ) -> Union[AccountSsoConfigBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -123,7 +113,7 @@ class AccountSsoConfigService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountSsoConfigBulkResponse, str]
+        :rtype: Union[AccountSsoConfigBulkResponse, str, dict]
         """
 
         Validator(AccountSsoConfigBulkRequest).is_optional().validate(request_body)
@@ -139,8 +129,4 @@ class AccountSsoConfigService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountSsoConfigBulkResponse._unmap(response)
-        if content == "application/xml":
-            return AccountSsoConfigBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountSsoConfigBulkResponse, response, status, content)

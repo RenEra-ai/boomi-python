@@ -3,8 +3,6 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
-from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
@@ -19,7 +17,7 @@ class ReleaseIntegrationPackStatusService(BaseService):
     @cast_models
     def get_release_integration_pack_status(
         self, id_: str
-    ) -> Union[ReleaseIntegrationPackStatus, str]:
+    ) -> Union[ReleaseIntegrationPackStatus, str, dict]:
         """To retrieve the release status of the publisher integration pack, follow these steps:
 
         1. Send a POST request to the ReleaseIntegrationPackStatus object. The response will return a requestId.
@@ -32,7 +30,7 @@ class ReleaseIntegrationPackStatusService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ReleaseIntegrationPackStatus, str]
+        :rtype: Union[ReleaseIntegrationPackStatus, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -48,16 +46,12 @@ class ReleaseIntegrationPackStatusService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ReleaseIntegrationPackStatus._unmap(response)
-        if content == "application/xml":
-            return ReleaseIntegrationPackStatus._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ReleaseIntegrationPackStatus, response, status, content)
 
     @cast_models
     def bulk_release_integration_pack_status(
         self, request_body: ReleaseIntegrationPackStatusBulkRequest = None
-    ) -> Union[str, ReleaseIntegrationPackStatusBulkResponse]:
+    ) -> Union[str, ReleaseIntegrationPackStatusBulkResponse, dict]:
         """The bulk GET operation returns multiple objects based on the supplied account IDs, to a maximum of 100. To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -66,7 +60,7 @@ class ReleaseIntegrationPackStatusService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[str, ReleaseIntegrationPackStatusBulkResponse]
+        :rtype: Union[str, ReleaseIntegrationPackStatusBulkResponse, dict]
         """
 
         Validator(ReleaseIntegrationPackStatusBulkRequest).is_optional().validate(
@@ -84,8 +78,6 @@ class ReleaseIntegrationPackStatusService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/xml":
-            return ReleaseIntegrationPackStatusBulkResponse._unmap(parse_xml_to_dict(response))
-        if content == "application/json":
-            return ReleaseIntegrationPackStatusBulkResponse._unmap(response)
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            ReleaseIntegrationPackStatusBulkResponse, response, status, content
+        )

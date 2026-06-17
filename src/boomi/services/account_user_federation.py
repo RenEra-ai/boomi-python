@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     AccountUserFederation,
     AccountUserFederationQueryConfig,
@@ -19,7 +17,7 @@ class AccountUserFederationService(BaseService):
     @cast_models
     def create_account_user_federation(
         self, request_body: AccountUserFederation = None
-    ) -> Union[AccountUserFederation, str]:
+    ) -> Union[AccountUserFederation, str, dict]:
         """Enables single sign-on for a specific user under a specific account using a specific federation ID. The user is not visible in the Setup page unless you assign one or more roles to that user.
 
         :param request_body: The request body., defaults to None
@@ -28,7 +26,7 @@ class AccountUserFederationService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountUserFederation, str]
+        :rtype: Union[AccountUserFederation, str, dict]
         """
 
         Validator(AccountUserFederation).is_optional().validate(request_body)
@@ -44,16 +42,12 @@ class AccountUserFederationService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountUserFederation._unmap(response)
-        if content == "application/xml":
-            return AccountUserFederation._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountUserFederation, response, status, content)
 
     @cast_models
     def query_account_user_federation(
         self, request_body: AccountUserFederationQueryConfig = None
-    ) -> Union[AccountUserFederationQueryResponse, str]:
+    ) -> Union[AccountUserFederationQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -62,7 +56,7 @@ class AccountUserFederationService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountUserFederationQueryResponse, str]
+        :rtype: Union[AccountUserFederationQueryResponse, str, dict]
         """
 
         Validator(AccountUserFederationQueryConfig).is_optional().validate(request_body)
@@ -78,16 +72,12 @@ class AccountUserFederationService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountUserFederationQueryResponse._unmap(response)
-        if content == "application/xml":
-            return AccountUserFederationQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountUserFederationQueryResponse, response, status, content)
 
     @cast_models
     def query_more_account_user_federation(
         self, request_body: str
-    ) -> Union[AccountUserFederationQueryResponse, str]:
+    ) -> Union[AccountUserFederationQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -96,7 +86,7 @@ class AccountUserFederationService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountUserFederationQueryResponse, str]
+        :rtype: Union[AccountUserFederationQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -112,16 +102,12 @@ class AccountUserFederationService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountUserFederationQueryResponse._unmap(response)
-        if content == "application/xml":
-            return AccountUserFederationQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountUserFederationQueryResponse, response, status, content)
 
     @cast_models
     def update_account_user_federation(
         self, id_: str, request_body: AccountUserFederation = None
-    ) -> Union[AccountUserFederation, str]:
+    ) -> Union[AccountUserFederation, str, dict]:
         """Updates the federation ID of a specific user in a specific account.
 
         :param request_body: The request body., defaults to None
@@ -132,7 +118,7 @@ class AccountUserFederationService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AccountUserFederation, str]
+        :rtype: Union[AccountUserFederation, str, dict]
         """
 
         Validator(AccountUserFederation).is_optional().validate(request_body)
@@ -150,11 +136,7 @@ class AccountUserFederationService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AccountUserFederation._unmap(response)
-        if content == "application/xml":
-            return AccountUserFederation._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AccountUserFederation, response, status, content)
 
     @cast_models
     def delete_account_user_federation(self, id_: str) -> None:

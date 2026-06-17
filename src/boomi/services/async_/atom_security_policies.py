@@ -16,15 +16,15 @@ class AtomSecurityPoliciesServiceAsync(AtomSecurityPoliciesService):
 
     def update_atom_security_policies(
         self, id_: str, request_body: AtomSecurityPolicies = None
-    ) -> Awaitable[Union[AtomSecurityPolicies, str]]:
+    ) -> Awaitable[Union[AtomSecurityPolicies, str, dict]]:
         return to_async(super().update_atom_security_policies)(id_, request_body)
 
     def async_get_atom_security_policies(
         self, id_: str
-    ) -> Awaitable[Union[AsyncOperationTokenResult, str]]:
+    ) -> Awaitable[Union[AsyncOperationTokenResult, str, dict]]:
         return to_async(super().async_get_atom_security_policies)(id_)
 
     def async_token_atom_security_policies(
         self, token: str
-    ) -> Awaitable[Union[AtomSecurityPoliciesAsyncResponse, str]]:
+    ) -> Awaitable[Union[AtomSecurityPoliciesAsyncResponse, str, dict]]:
         return to_async(super().async_token_atom_security_policies)(token)

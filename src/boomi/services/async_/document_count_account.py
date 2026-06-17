@@ -12,10 +12,10 @@ class DocumentCountAccountServiceAsync(DocumentCountAccountService):
 
     def query_document_count_account(
         self, request_body: DocumentCountAccountQueryConfig = None
-    ) -> Awaitable[Union[DocumentCountAccountQueryResponse, str]]:
+    ) -> Awaitable[Union[DocumentCountAccountQueryResponse, str, dict]]:
         return to_async(super().query_document_count_account)(request_body)
 
     def query_more_document_count_account(
         self, request_body: str
-    ) -> Awaitable[Union[DocumentCountAccountQueryResponse, str]]:
+    ) -> Awaitable[Union[DocumentCountAccountQueryResponse, str, dict]]:
         return to_async(super().query_more_document_count_account)(request_body)

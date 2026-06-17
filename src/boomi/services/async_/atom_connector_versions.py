@@ -16,10 +16,10 @@ class AtomConnectorVersionsServiceAsync(AtomConnectorVersionsService):
 
     def get_atom_connector_versions(
         self, id_: str
-    ) -> Awaitable[Union[AtomConnectorVersions, str]]:
+    ) -> Awaitable[Union[AtomConnectorVersions, str, dict]]:
         return to_async(super().get_atom_connector_versions)(id_)
 
     def bulk_atom_connector_versions(
         self, request_body: AtomConnectorVersionsBulkRequest = None
-    ) -> Awaitable[Union[AtomConnectorVersionsBulkResponse, str]]:
+    ) -> Awaitable[Union[AtomConnectorVersionsBulkResponse, str, dict]]:
         return to_async(super().bulk_atom_connector_versions)(request_body)

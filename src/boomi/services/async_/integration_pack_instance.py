@@ -18,12 +18,12 @@ class IntegrationPackInstanceServiceAsync(IntegrationPackInstanceService):
 
     def create_integration_pack_instance(
         self, request_body: IntegrationPackInstance = None
-    ) -> Awaitable[Union[IntegrationPackInstance, str]]:
+    ) -> Awaitable[Union[IntegrationPackInstance, str, dict]]:
         return to_async(super().create_integration_pack_instance)(request_body)
 
     def get_integration_pack_instance(
         self, id_: str
-    ) -> Awaitable[Union[IntegrationPackInstance, str]]:
+    ) -> Awaitable[Union[IntegrationPackInstance, str, dict]]:
         return to_async(super().get_integration_pack_instance)(id_)
 
     def delete_integration_pack_instance(self, id_: str) -> Awaitable[None]:
@@ -31,15 +31,15 @@ class IntegrationPackInstanceServiceAsync(IntegrationPackInstanceService):
 
     def bulk_integration_pack_instance(
         self, request_body: IntegrationPackInstanceBulkRequest = None
-    ) -> Awaitable[Union[IntegrationPackInstanceBulkResponse, str]]:
+    ) -> Awaitable[Union[IntegrationPackInstanceBulkResponse, str, dict]]:
         return to_async(super().bulk_integration_pack_instance)(request_body)
 
     def query_integration_pack_instance(
         self, request_body: IntegrationPackInstanceQueryConfig = None
-    ) -> Awaitable[Union[IntegrationPackInstanceQueryResponse, str]]:
+    ) -> Awaitable[Union[IntegrationPackInstanceQueryResponse, str, dict]]:
         return to_async(super().query_integration_pack_instance)(request_body)
 
     def query_more_integration_pack_instance(
         self, request_body: str
-    ) -> Awaitable[Union[IntegrationPackInstanceQueryResponse, str]]:
+    ) -> Awaitable[Union[IntegrationPackInstanceQueryResponse, str, dict]]:
         return to_async(super().query_more_integration_pack_instance)(request_body)

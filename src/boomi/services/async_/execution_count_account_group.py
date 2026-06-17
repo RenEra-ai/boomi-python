@@ -15,10 +15,10 @@ class ExecutionCountAccountGroupServiceAsync(ExecutionCountAccountGroupService):
 
     def query_execution_count_account_group(
         self, request_body: ExecutionCountAccountGroupQueryConfig = None
-    ) -> Awaitable[Union[ExecutionCountAccountGroupQueryResponse, str]]:
+    ) -> Awaitable[Union[ExecutionCountAccountGroupQueryResponse, str, dict]]:
         return to_async(super().query_execution_count_account_group)(request_body)
 
     def query_more_execution_count_account_group(
         self, request_body: str
-    ) -> Awaitable[Union[ExecutionCountAccountGroupQueryResponse, str]]:
+    ) -> Awaitable[Union[ExecutionCountAccountGroupQueryResponse, str, dict]]:
         return to_async(super().query_more_execution_count_account_group)(request_body)

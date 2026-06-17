@@ -3,8 +3,6 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
-from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import ReleaseIntegrationPack
@@ -15,7 +13,7 @@ class ReleaseIntegrationPackService(BaseService):
     @cast_models
     def create_release_integration_pack(
         self, request_body: ReleaseIntegrationPack = None
-    ) -> Union[ReleaseIntegrationPack, str]:
+    ) -> Union[ReleaseIntegrationPack, str, dict]:
         """Creates an immediate or scheduled release for a publisher integration pack.
 
         To schedule the publisher integration pack for release, you must specify the release schedule (immediate or scheduled).
@@ -27,7 +25,7 @@ class ReleaseIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ReleaseIntegrationPack, str]
+        :rtype: Union[ReleaseIntegrationPack, str, dict]
         """
 
         Validator(ReleaseIntegrationPack).is_optional().validate(request_body)
@@ -43,16 +41,12 @@ class ReleaseIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ReleaseIntegrationPack._unmap(response)
-        if content == "application/xml":
-            return ReleaseIntegrationPack._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ReleaseIntegrationPack, response, status, content)
 
     @cast_models
     def update_release_integration_pack(
         self, id_: str, request_body: ReleaseIntegrationPack = None
-    ) -> Union[ReleaseIntegrationPack, str]:
+    ) -> Union[ReleaseIntegrationPack, str, dict]:
         """Modifies the scheduled release of a publisher integration pack.
 
          > **Note:** The Update operation is only performed when there is an existing scheduled release request for the integration pack.
@@ -65,7 +59,7 @@ class ReleaseIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ReleaseIntegrationPack, str]
+        :rtype: Union[ReleaseIntegrationPack, str, dict]
         """
 
         Validator(ReleaseIntegrationPack).is_optional().validate(request_body)
@@ -83,8 +77,4 @@ class ReleaseIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ReleaseIntegrationPack._unmap(response)
-        if content == "application/xml":
-            return ReleaseIntegrationPack._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ReleaseIntegrationPack, response, status, content)

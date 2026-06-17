@@ -15,10 +15,10 @@ class ExecutionSummaryRecordServiceAsync(ExecutionSummaryRecordService):
 
     def query_execution_summary_record(
         self, request_body: ExecutionSummaryRecordQueryConfig = None
-    ) -> Awaitable[Union[ExecutionSummaryRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[ExecutionSummaryRecordQueryResponse, str, dict]]:
         return to_async(super().query_execution_summary_record)(request_body)
 
     def query_more_execution_summary_record(
         self, request_body: str
-    ) -> Awaitable[Union[ExecutionSummaryRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[ExecutionSummaryRecordQueryResponse, str, dict]]:
         return to_async(super().query_more_execution_summary_record)(request_body)

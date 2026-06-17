@@ -6,7 +6,6 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import ExecutionArtifacts, LogDownload
 
 
@@ -15,7 +14,7 @@ class ExecutionArtifactsService(BaseService):
     @cast_models
     def create_execution_artifacts(
         self, request_body: ExecutionArtifacts = None
-    ) -> Union[LogDownload, str]:
+    ) -> Union[LogDownload, str, dict]:
         """Allows you to retrieve a link for downloading detailed information about a given process run.
          - You must have the Runtime Management privilege to perform the CREATE operation. If you have the Runtime Management Read Access privilege, you cannot download execution artifacts.
          - Additionally, as the Cloud owner, you must select the **Enable Download of Execution Artifacts and Worker Logs** property for your account. This property permits you to download process execution data, and you can access it from the Cloud Attachment Quota tab of Manage > Cloud Management.
@@ -31,7 +30,7 @@ class ExecutionArtifactsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[LogDownload, str]
+        :rtype: Union[LogDownload, str, dict]
         """
 
         Validator(ExecutionArtifacts).is_optional().validate(request_body)
@@ -47,11 +46,7 @@ class ExecutionArtifactsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return LogDownload._unmap(response)
-        if content == "application/xml":
-            return LogDownload._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(LogDownload, response, status, content)
 
     def download_execution_artifacts(
         self,

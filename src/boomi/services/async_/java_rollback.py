@@ -12,5 +12,5 @@ class JavaRollbackServiceAsync(JavaRollbackService):
 
     def execute_java_rollback(
         self, id_: str, request_body: JavaRollback = None
-    ) -> Awaitable[Union[JavaRollback, str]]:
+    ) -> Awaitable[Union[JavaRollback, str, dict]]:
         return to_async(super().execute_java_rollback)(id_, request_body)

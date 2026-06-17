@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     RuntimeObservabilitySettings,
     RuntimeObservabilitySettingsRequest,
@@ -56,7 +54,7 @@ class RuntimeObservabilitySettingsService(BaseService):
     @cast_models
     def async_get_runtime_observability_settings(
         self, id_: str
-    ) -> Union[AsyncOperationTokenResult, str]:
+    ) -> Union[AsyncOperationTokenResult, str, dict]:
         """Returns a token for the specified RuntimeObservabilitySettings.
 
         :param id_: id_
@@ -65,7 +63,7 @@ class RuntimeObservabilitySettingsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AsyncOperationTokenResult, str]
+        :rtype: Union[AsyncOperationTokenResult, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -81,11 +79,7 @@ class RuntimeObservabilitySettingsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AsyncOperationTokenResult._unmap(response)
-        if content == "application/xml":
-            return AsyncOperationTokenResult._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AsyncOperationTokenResult, response, status, content)
 
     @cast_models
     def async_token_runtime_observability_settings(

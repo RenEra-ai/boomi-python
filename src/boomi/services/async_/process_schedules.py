@@ -18,25 +18,25 @@ class ProcessSchedulesServiceAsync(ProcessSchedulesService):
 
     def get_process_schedules(
         self, id_: str
-    ) -> Awaitable[Union[ProcessSchedules, str]]:
+    ) -> Awaitable[Union[ProcessSchedules, str, dict]]:
         return to_async(super().get_process_schedules)(id_)
 
     def update_process_schedules(
         self, id_: str, request_body: ProcessSchedules = None
-    ) -> Awaitable[Union[ProcessSchedules, str]]:
+    ) -> Awaitable[Union[ProcessSchedules, str, dict]]:
         return to_async(super().update_process_schedules)(id_, request_body)
 
     def bulk_process_schedules(
         self, request_body: ProcessSchedulesBulkRequest = None
-    ) -> Awaitable[Union[ProcessSchedulesBulkResponse, str]]:
+    ) -> Awaitable[Union[ProcessSchedulesBulkResponse, str, dict]]:
         return to_async(super().bulk_process_schedules)(request_body)
 
     def query_process_schedules(
         self, request_body: ProcessSchedulesQueryConfig = None
-    ) -> Awaitable[Union[ProcessSchedulesQueryResponse, str]]:
+    ) -> Awaitable[Union[ProcessSchedulesQueryResponse, str, dict]]:
         return to_async(super().query_process_schedules)(request_body)
 
     def query_more_process_schedules(
         self, request_body: str
-    ) -> Awaitable[Union[ProcessSchedulesQueryResponse, str]]:
+    ) -> Awaitable[Union[ProcessSchedulesQueryResponse, str, dict]]:
         return to_async(super().query_more_process_schedules)(request_body)

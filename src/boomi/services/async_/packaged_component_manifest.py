@@ -16,10 +16,10 @@ class PackagedComponentManifestServiceAsync(PackagedComponentManifestService):
 
     def get_packaged_component_manifest(
         self, package_id: str
-    ) -> Awaitable[Union[PackagedComponentManifest, str]]:
+    ) -> Awaitable[Union[PackagedComponentManifest, str, dict]]:
         return to_async(super().get_packaged_component_manifest)(package_id)
 
     def bulk_packaged_component_manifest(
         self, request_body: PackagedComponentManifestBulkRequest = None
-    ) -> Awaitable[Union[PackagedComponentManifestBulkResponse, str]]:
+    ) -> Awaitable[Union[PackagedComponentManifestBulkResponse, str, dict]]:
         return to_async(super().bulk_packaged_component_manifest)(request_body)

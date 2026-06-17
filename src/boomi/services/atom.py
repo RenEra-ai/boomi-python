@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     AsyncOperationTokenResult,
     Atom,
@@ -22,7 +20,7 @@ from ..models import (
 class AtomService(BaseService):
 
     @cast_models
-    def create_atom(self, request_body: Atom = None) -> Union[Atom, str]:
+    def create_atom(self, request_body: Atom = None) -> Union[Atom, str, dict]:
         """Creates and attaches a Runtime with the specified name to a specified Runtime cloud owned by the requesting account. This operation cannot be used to create a local Runtime. You must have the Runtime Management privilege to perform the POST operation.
 
          >**Note:** The `createdBy` is a system-generated or read-only field. It cannot be passed in a CREATE request.
@@ -33,7 +31,7 @@ class AtomService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Atom, str]
+        :rtype: Union[Atom, str, dict]
         """
 
         Validator(Atom).is_optional().validate(request_body)
@@ -49,14 +47,10 @@ class AtomService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Atom._unmap(response)
-        if content == "application/xml":
-            return Atom._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Atom, response, status, content)
 
     @cast_models
-    def get_atom(self, id_: str) -> Union[Atom, str]:
+    def get_atom(self, id_: str) -> Union[Atom, str, dict]:
         """Retrieves the properties of the Runtime, Runtime cluster, or Runtime cloud having the specified ID.
 
          For Runtime clusters and Runtime clouds that are part of a multi-node runtime, the GET operation returns values for the following additional variables:
@@ -74,7 +68,7 @@ class AtomService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Atom, str]
+        :rtype: Union[Atom, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -90,14 +84,10 @@ class AtomService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Atom._unmap(response)
-        if content == "application/xml":
-            return Atom._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Atom, response, status, content)
 
     @cast_models
-    def update_atom(self, id_: str, request_body: Atom = None) -> Union[Atom, str]:
+    def update_atom(self, id_: str, request_body: Atom = None) -> Union[Atom, str, dict]:
         """Updates the Runtime object having the specified ID. You can only update the name, purgeHistoryDays, purgeImmediate, forceRestartTime. You must have the Runtime Management privilege to perform the UPDATE operation. If you have the Runtime Management Read Access privilege, you cannot update an Runtime.
 
          >**Note:** There might be a delay before you see the changes in the Runtime Information panel.
@@ -110,7 +100,7 @@ class AtomService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Atom, str]
+        :rtype: Union[Atom, str, dict]
         """
 
         Validator(Atom).is_optional().validate(request_body)
@@ -128,11 +118,7 @@ class AtomService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Atom._unmap(response)
-        if content == "application/xml":
-            return Atom._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Atom, response, status, content)
 
     @cast_models
     def delete_atom(self, id_: str) -> None:
@@ -162,7 +148,7 @@ class AtomService(BaseService):
     @cast_models
     def bulk_atom(
         self, request_body: AtomBulkRequest = None
-    ) -> Union[AtomBulkResponse, str]:
+    ) -> Union[AtomBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -171,7 +157,7 @@ class AtomService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AtomBulkResponse, str]
+        :rtype: Union[AtomBulkResponse, str, dict]
         """
 
         Validator(AtomBulkRequest).is_optional().validate(request_body)
@@ -187,16 +173,12 @@ class AtomService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AtomBulkResponse._unmap(response)
-        if content == "application/xml":
-            return AtomBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AtomBulkResponse, response, status, content)
 
     @cast_models
     def query_atom(
         self, request_body: AtomQueryConfig = None
-    ) -> Union[AtomQueryResponse, str]:
+    ) -> Union[AtomQueryResponse, str, dict]:
         """Use either `BROKER` or `GATEWAY` with either the CONTAINS or NOT_CONTAINS operator to filter by API Gateways and Authentication Brokers that you own.
 
          For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
@@ -207,7 +189,7 @@ class AtomService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AtomQueryResponse, str]
+        :rtype: Union[AtomQueryResponse, str, dict]
         """
 
         Validator(AtomQueryConfig).is_optional().validate(request_body)
@@ -223,14 +205,10 @@ class AtomService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AtomQueryResponse._unmap(response)
-        if content == "application/xml":
-            return AtomQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AtomQueryResponse, response, status, content)
 
     @cast_models
-    def query_more_atom(self, request_body: str) -> Union[AtomQueryResponse, str]:
+    def query_more_atom(self, request_body: str) -> Union[AtomQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -239,7 +217,7 @@ class AtomService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AtomQueryResponse, str]
+        :rtype: Union[AtomQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -255,16 +233,12 @@ class AtomService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AtomQueryResponse._unmap(response)
-        if content == "application/xml":
-            return AtomQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AtomQueryResponse, response, status, content)
 
     @cast_models
     def async_token_atom_counters(
         self, token: str
-    ) -> Union[AtomCountersAsyncResponse, str]:
+    ) -> Union[AtomCountersAsyncResponse, str, dict]:
         """For a response, use the token from the initial GET response in a new request.
 
         :param token: Takes in the token from a previous call to return a result.
@@ -273,7 +247,7 @@ class AtomService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AtomCountersAsyncResponse, str]
+        :rtype: Union[AtomCountersAsyncResponse, str, dict]
         """
 
         Validator(str).validate(token)
@@ -289,16 +263,12 @@ class AtomService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AtomCountersAsyncResponse._unmap(response)
-        if content == "application/xml":
-            return AtomCountersAsyncResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AtomCountersAsyncResponse, response, status, content)
 
     @cast_models
     def async_get_atom_counters(
         self, id_: str
-    ) -> Union[AsyncOperationTokenResult, str]:
+    ) -> Union[AsyncOperationTokenResult, str, dict]:
         """The GET operation returns the current state of the counter names and values for the specified Runtime. The initial GET operation returns a token for the specified Runtime.
          `accountId` is the Platform account that you are authenticating with and `id` is the Runtime ID for the counters you are attempting to GET.
 
@@ -308,7 +278,7 @@ class AtomService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AsyncOperationTokenResult, str]
+        :rtype: Union[AsyncOperationTokenResult, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -324,16 +294,12 @@ class AtomService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AsyncOperationTokenResult._unmap(response)
-        if content == "application/xml":
-            return AsyncOperationTokenResult._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AsyncOperationTokenResult, response, status, content)
 
     @cast_models
     def async_token_persisted_process_properties(
         self, token: str
-    ) -> Union[PersistedProcessPropertiesAsyncResponse, str]:
+    ) -> Union[PersistedProcessPropertiesAsyncResponse, str, dict]:
         """For a response, use the token from the response in a new request.
 
         :param token: Takes in the token from a previous call to return a result.
@@ -342,7 +308,7 @@ class AtomService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PersistedProcessPropertiesAsyncResponse, str]
+        :rtype: Union[PersistedProcessPropertiesAsyncResponse, str, dict]
         """
 
         Validator(str).validate(token)
@@ -358,16 +324,12 @@ class AtomService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PersistedProcessPropertiesAsyncResponse._unmap(response)
-        if content == "application/xml":
-            return PersistedProcessPropertiesAsyncResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(PersistedProcessPropertiesAsyncResponse, response, status, content)
 
     @cast_models
     def async_get_persisted_process_properties(
         self, id_: str
-    ) -> Union[AsyncOperationTokenResult, str]:
+    ) -> Union[AsyncOperationTokenResult, str, dict]:
         """The GET operation returns the current state of the Persisted Process properties names and values for the specified Runtime.
          The initial GET operation returns a token for the specified Runtime.
 
@@ -377,7 +339,7 @@ class AtomService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AsyncOperationTokenResult, str]
+        :rtype: Union[AsyncOperationTokenResult, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -393,8 +355,4 @@ class AtomService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AsyncOperationTokenResult._unmap(response)
-        if content == "application/xml":
-            return AsyncOperationTokenResult._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AsyncOperationTokenResult, response, status, content)

@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import JavaRollback
 
 
@@ -15,7 +13,7 @@ class JavaRollbackService(BaseService):
     @cast_models
     def execute_java_rollback(
         self, id_: str, request_body: JavaRollback = None
-    ) -> Union[JavaRollback, str]:
+    ) -> Union[JavaRollback, str, dict]:
         """Returns a Runtime, Runtime cluster, Runtime cloud, Authentication Broker, or Gateway to use the previous version of Java with an EXECUTE operation.
 
          - After performing the EXECUTE operation, you can determine the success of returning to an earlier version when the **Update to use <new Java version>.<minor_version>** link displays on the following pages, indicating that a more recent version is available for upgrade:
@@ -47,7 +45,7 @@ class JavaRollbackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[JavaRollback, str]
+        :rtype: Union[JavaRollback, str, dict]
         """
 
         Validator(JavaRollback).is_optional().validate(request_body)
@@ -65,8 +63,4 @@ class JavaRollbackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return JavaRollback._unmap(response)
-        if content == "application/xml":
-            return JavaRollback._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(JavaRollback, response, status, content)

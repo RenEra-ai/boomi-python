@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     ProcessSchedules,
     ProcessSchedulesBulkRequest,
@@ -19,7 +17,7 @@ from ..models import (
 class ProcessSchedulesService(BaseService):
 
     @cast_models
-    def get_process_schedules(self, id_: str) -> Union[ProcessSchedules, str]:
+    def get_process_schedules(self, id_: str) -> Union[ProcessSchedules, str, dict]:
         """Retrieves the Process Schedules object with a specific conceptual ID.
 
          The ordinary GET operation retrieves the Process Schedules object with a specific conceptual ID. The bulk GET operation retrieves the Process Schedules objects with specific conceptual IDs to a maximum of 100. In addition, you can obtain conceptual IDs from the QUERY operation.
@@ -30,7 +28,7 @@ class ProcessSchedulesService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ProcessSchedules, str]
+        :rtype: Union[ProcessSchedules, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -52,16 +50,12 @@ class ProcessSchedulesService(BaseService):
         serialized_request.url = serialized_request.url.replace("{id}", id_)
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ProcessSchedules._unmap(response)
-        if content == "application/xml":
-            return ProcessSchedules._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ProcessSchedules, response, status, content)
 
     @cast_models
     def update_process_schedules(
         self, id_: str, request_body: ProcessSchedules = None
-    ) -> Union[ProcessSchedules, str]:
+    ) -> Union[ProcessSchedules, str, dict]:
         """Clears and updates the process run schedules specified in the Process Schedules object with a specific ID. The body of the request must specify not only the conceptual object ID but also the Runtime and process IDs. You can obtain the object ID from a QUERY operation.
 
         A Process Schedules object exists for every deployed process. If you do not update the schedule, the object is empty and a run schedule is not in effect.
@@ -82,7 +76,7 @@ class ProcessSchedulesService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ProcessSchedules, str]
+        :rtype: Union[ProcessSchedules, str, dict]
         """
 
         Validator(ProcessSchedules).is_optional().validate(request_body)
@@ -104,16 +98,12 @@ class ProcessSchedulesService(BaseService):
         serialized_request.url = serialized_request.url.replace("{id}", id_)
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ProcessSchedules._unmap(response)
-        if content == "application/xml":
-            return ProcessSchedules._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ProcessSchedules, response, status, content)
 
     @cast_models
     def bulk_process_schedules(
         self, request_body: ProcessSchedulesBulkRequest = None
-    ) -> Union[ProcessSchedulesBulkResponse, str]:
+    ) -> Union[ProcessSchedulesBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -122,7 +112,7 @@ class ProcessSchedulesService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ProcessSchedulesBulkResponse, str]
+        :rtype: Union[ProcessSchedulesBulkResponse, str, dict]
         """
 
         Validator(ProcessSchedulesBulkRequest).is_optional().validate(request_body)
@@ -138,16 +128,12 @@ class ProcessSchedulesService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ProcessSchedulesBulkResponse._unmap(response)
-        if content == "application/xml":
-            return ProcessSchedulesBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ProcessSchedulesBulkResponse, response, status, content)
 
     @cast_models
     def query_process_schedules(
         self, request_body: ProcessSchedulesQueryConfig = None
-    ) -> Union[ProcessSchedulesQueryResponse, str]:
+    ) -> Union[ProcessSchedulesQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -156,7 +142,7 @@ class ProcessSchedulesService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ProcessSchedulesQueryResponse, str]
+        :rtype: Union[ProcessSchedulesQueryResponse, str, dict]
         """
 
         Validator(ProcessSchedulesQueryConfig).is_optional().validate(request_body)
@@ -172,16 +158,12 @@ class ProcessSchedulesService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ProcessSchedulesQueryResponse._unmap(response)
-        if content == "application/xml":
-            return ProcessSchedulesQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ProcessSchedulesQueryResponse, response, status, content)
 
     @cast_models
     def query_more_process_schedules(
         self, request_body: str
-    ) -> Union[ProcessSchedulesQueryResponse, str]:
+    ) -> Union[ProcessSchedulesQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -190,7 +172,7 @@ class ProcessSchedulesService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ProcessSchedulesQueryResponse, str]
+        :rtype: Union[ProcessSchedulesQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -206,8 +188,4 @@ class ProcessSchedulesService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ProcessSchedulesQueryResponse._unmap(response)
-        if content == "application/xml":
-            return ProcessSchedulesQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ProcessSchedulesQueryResponse, response, status, content)

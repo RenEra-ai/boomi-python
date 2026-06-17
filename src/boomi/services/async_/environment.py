@@ -19,15 +19,15 @@ class EnvironmentServiceAsync(EnvironmentService):
 
     def create_environment(
         self, request_body: Environment = None
-    ) -> Awaitable[Union[Environment, str]]:
+    ) -> Awaitable[Union[Environment, str, dict]]:
         return to_async(super().create_environment)(request_body)
 
-    def get_environment(self, id_: str) -> Awaitable[Union[Environment, str]]:
+    def get_environment(self, id_: str) -> Awaitable[Union[Environment, str, dict]]:
         return to_async(super().get_environment)(id_)
 
     def update_environment(
         self, id_: str, request_body: Environment = None
-    ) -> Awaitable[Union[Environment, str]]:
+    ) -> Awaitable[Union[Environment, str, dict]]:
         return to_async(super().update_environment)(id_, request_body)
 
     def delete_environment(self, id_: str) -> Awaitable[None]:
@@ -35,20 +35,20 @@ class EnvironmentServiceAsync(EnvironmentService):
 
     def bulk_environment(
         self, request_body: EnvironmentBulkRequest = None
-    ) -> Awaitable[Union[EnvironmentBulkResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentBulkResponse, str, dict]]:
         return to_async(super().bulk_environment)(request_body)
 
     def query_environment(
         self, request_body: EnvironmentQueryConfig = None
-    ) -> Awaitable[Union[EnvironmentQueryResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentQueryResponse, str, dict]]:
         return to_async(super().query_environment)(request_body)
 
     def query_more_environment(
         self, request_body: str
-    ) -> Awaitable[Union[EnvironmentQueryResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentQueryResponse, str, dict]]:
         return to_async(super().query_more_environment)(request_body)
 
     def update_environment_map_extension(
         self, id_: str, request_body: EnvironmentMapExtension = None
-    ) -> Awaitable[Union[EnvironmentMapExtension, str]]:
+    ) -> Awaitable[Union[EnvironmentMapExtension, str, dict]]:
         return to_async(super().update_environment_map_extension)(id_, request_body)

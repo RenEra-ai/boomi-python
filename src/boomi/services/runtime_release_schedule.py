@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     RuntimeReleaseSchedule,
     RuntimeReleaseScheduleBulkRequest,
@@ -19,7 +17,7 @@ class RuntimeReleaseScheduleService(BaseService):
     @cast_models
     def create_runtime_release_schedule(
         self, request_body: RuntimeReleaseSchedule = None
-    ) -> Union[RuntimeReleaseSchedule, str]:
+    ) -> Union[RuntimeReleaseSchedule, str, dict]:
         """The CREATE operation sets a schedule for receiving updates with the scheduleType, dayOfWeek, hourOfDay, and timeZone fields.
 
         :param request_body: The request body., defaults to None
@@ -28,7 +26,7 @@ class RuntimeReleaseScheduleService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeReleaseSchedule, str]
+        :rtype: Union[RuntimeReleaseSchedule, str, dict]
         """
 
         Validator(RuntimeReleaseSchedule).is_optional().validate(request_body)
@@ -44,16 +42,12 @@ class RuntimeReleaseScheduleService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeReleaseSchedule._unmap(response)
-        if content == "application/xml":
-            return RuntimeReleaseSchedule._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RuntimeReleaseSchedule, response, status, content)
 
     @cast_models
     def get_runtime_release_schedule(
         self, id_: str
-    ) -> Union[RuntimeReleaseSchedule, str]:
+    ) -> Union[RuntimeReleaseSchedule, str, dict]:
         """The GET operation returns the current schedule for receiving updates on a specified Runtime, Runtime cluster, or Runtime cloud.
 
         :param id_: The ID of the container for which you want to set a schedule.
@@ -62,7 +56,7 @@ class RuntimeReleaseScheduleService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeReleaseSchedule, str]
+        :rtype: Union[RuntimeReleaseSchedule, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -78,16 +72,12 @@ class RuntimeReleaseScheduleService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeReleaseSchedule._unmap(response)
-        if content == "application/xml":
-            return RuntimeReleaseSchedule._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RuntimeReleaseSchedule, response, status, content)
 
     @cast_models
     def update_runtime_release_schedule(
         self, id_: str, request_body: RuntimeReleaseSchedule = None
-    ) -> Union[RuntimeReleaseSchedule, str]:
+    ) -> Union[RuntimeReleaseSchedule, str, dict]:
         """The UPDATE operation modifies a set schedule for receiving updates.
 
         :param request_body: The request body., defaults to None
@@ -98,7 +88,7 @@ class RuntimeReleaseScheduleService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeReleaseSchedule, str]
+        :rtype: Union[RuntimeReleaseSchedule, str, dict]
         """
 
         Validator(RuntimeReleaseSchedule).is_optional().validate(request_body)
@@ -116,11 +106,7 @@ class RuntimeReleaseScheduleService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeReleaseSchedule._unmap(response)
-        if content == "application/xml":
-            return RuntimeReleaseSchedule._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RuntimeReleaseSchedule, response, status, content)
 
     @cast_models
     def delete_runtime_release_schedule(self, id_: str) -> None:
@@ -150,7 +136,7 @@ class RuntimeReleaseScheduleService(BaseService):
     @cast_models
     def bulk_runtime_release_schedule(
         self, request_body: RuntimeReleaseScheduleBulkRequest = None
-    ) -> Union[RuntimeReleaseScheduleBulkResponse, str]:
+    ) -> Union[RuntimeReleaseScheduleBulkResponse, str, dict]:
         """bulk_runtime_release_schedule
 
         :param request_body: The request body., defaults to None
@@ -159,7 +145,7 @@ class RuntimeReleaseScheduleService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeReleaseScheduleBulkResponse, str]
+        :rtype: Union[RuntimeReleaseScheduleBulkResponse, str, dict]
         """
 
         Validator(RuntimeReleaseScheduleBulkRequest).is_optional().validate(
@@ -177,8 +163,4 @@ class RuntimeReleaseScheduleService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeReleaseScheduleBulkResponse._unmap(response)
-        if content == "application/xml":
-            return RuntimeReleaseScheduleBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RuntimeReleaseScheduleBulkResponse, response, status, content)

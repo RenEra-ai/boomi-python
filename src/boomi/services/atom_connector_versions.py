@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     AtomConnectorVersions,
     AtomConnectorVersionsBulkRequest,
@@ -19,7 +17,7 @@ class AtomConnectorVersionsService(BaseService):
     @cast_models
     def get_atom_connector_versions(
         self, id_: str
-    ) -> Union[AtomConnectorVersions, str]:
+    ) -> Union[AtomConnectorVersions, str, dict]:
         """Retrieves the properties of connectors used by the Runtime, Runtime cluster, or Runtime cloud with specified ID.
 
         :param id_: The ID of the Runtime, Runtime cluster, or Runtime cloud.
@@ -28,7 +26,7 @@ class AtomConnectorVersionsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AtomConnectorVersions, str]
+        :rtype: Union[AtomConnectorVersions, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -44,16 +42,12 @@ class AtomConnectorVersionsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AtomConnectorVersions._unmap(response)
-        if content == "application/xml":
-            return AtomConnectorVersions._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AtomConnectorVersions, response, status, content)
 
     @cast_models
     def bulk_atom_connector_versions(
         self, request_body: AtomConnectorVersionsBulkRequest = None
-    ) -> Union[AtomConnectorVersionsBulkResponse, str]:
+    ) -> Union[AtomConnectorVersionsBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -62,7 +56,7 @@ class AtomConnectorVersionsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AtomConnectorVersionsBulkResponse, str]
+        :rtype: Union[AtomConnectorVersionsBulkResponse, str, dict]
         """
 
         Validator(AtomConnectorVersionsBulkRequest).is_optional().validate(request_body)
@@ -78,8 +72,4 @@ class AtomConnectorVersionsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AtomConnectorVersionsBulkResponse._unmap(response)
-        if content == "application/xml":
-            return AtomConnectorVersionsBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AtomConnectorVersionsBulkResponse, response, status, content)

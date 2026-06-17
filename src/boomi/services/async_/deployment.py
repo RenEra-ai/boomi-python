@@ -43,12 +43,12 @@ class DeploymentServiceAsync(DeploymentService):
 
     def query_process_environment_attachment(
         self, request_body: ProcessEnvironmentAttachmentQueryConfig = None
-    ) -> Awaitable[Union[ProcessEnvironmentAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[ProcessEnvironmentAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_process_environment_attachment)(request_body)
 
     def query_more_process_environment_attachment(
         self, request_body: str
-    ) -> Awaitable[Union[ProcessEnvironmentAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[ProcessEnvironmentAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_more_process_environment_attachment)(request_body)
 
     def delete_process_environment_attachment(self, id_: str) -> Awaitable[None]:

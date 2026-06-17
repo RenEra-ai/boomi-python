@@ -14,15 +14,15 @@ class SharedWebServerServiceAsync(SharedWebServerService):
     Async Wrapper for SharedWebServerServiceAsync
     """
 
-    def get_shared_web_server(self, id_: str) -> Awaitable[Union[SharedWebServer, str]]:
+    def get_shared_web_server(self, id_: str) -> Awaitable[Union[SharedWebServer, str, dict]]:
         return to_async(super().get_shared_web_server)(id_)
 
     def update_shared_web_server(
         self, id_: str, request_body: SharedWebServer = None
-    ) -> Awaitable[Union[SharedWebServer, str]]:
+    ) -> Awaitable[Union[SharedWebServer, str, dict]]:
         return to_async(super().update_shared_web_server)(id_, request_body)
 
     def bulk_shared_web_server(
         self, request_body: SharedWebServerBulkRequest = None
-    ) -> Awaitable[Union[SharedWebServerBulkResponse, str]]:
+    ) -> Awaitable[Union[SharedWebServerBulkResponse, str, dict]]:
         return to_async(super().bulk_shared_web_server)(request_body)

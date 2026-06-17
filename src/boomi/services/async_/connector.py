@@ -16,20 +16,20 @@ class ConnectorServiceAsync(ConnectorService):
     Async Wrapper for ConnectorServiceAsync
     """
 
-    def get_connector(self, connector_type: str) -> Awaitable[Union[Connector, str]]:
+    def get_connector(self, connector_type: str) -> Awaitable[Union[Connector, str, dict]]:
         return to_async(super().get_connector)(connector_type)
 
     def bulk_connector(
         self, request_body: ConnectorBulkRequest = None
-    ) -> Awaitable[Union[ConnectorBulkResponse, str]]:
+    ) -> Awaitable[Union[ConnectorBulkResponse, str, dict]]:
         return to_async(super().bulk_connector)(request_body)
 
     def query_connector(
         self, request_body: ConnectorQueryConfig = None
-    ) -> Awaitable[Union[ConnectorQueryResponse, str]]:
+    ) -> Awaitable[Union[ConnectorQueryResponse, str, dict]]:
         return to_async(super().query_connector)(request_body)
 
     def query_more_connector(
         self, request_body: str
-    ) -> Awaitable[Union[ConnectorQueryResponse, str]]:
+    ) -> Awaitable[Union[ConnectorQueryResponse, str, dict]]:
         return to_async(super().query_more_connector)(request_body)

@@ -3,8 +3,6 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
-from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
@@ -19,7 +17,7 @@ class EnvironmentMapExtensionUserDefinedFunctionSummaryService(BaseService):
     def query_environment_map_extension_user_defined_function_summary(
         self,
         request_body: EnvironmentMapExtensionUserDefinedFunctionSummaryQueryConfig = None,
-    ) -> Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str]:
+    ) -> Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -28,7 +26,7 @@ class EnvironmentMapExtensionUserDefinedFunctionSummaryService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str]
+        :rtype: Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str, dict]
         """
 
         Validator(
@@ -46,24 +44,17 @@ class EnvironmentMapExtensionUserDefinedFunctionSummaryService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return (
-                EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse._unmap(
-                    response
-                )
-            )
-        if content == "application/xml":
-            return (
-                EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse._unmap(
-                    parse_xml_to_dict(response)
-                )
-            )
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse,
+            response,
+            status,
+            content,
+        )
 
     @cast_models
     def query_more_environment_map_extension_user_defined_function_summary(
         self, request_body: str
-    ) -> Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str]:
+    ) -> Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -72,7 +63,7 @@ class EnvironmentMapExtensionUserDefinedFunctionSummaryService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str]
+        :rtype: Union[EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -88,16 +79,9 @@ class EnvironmentMapExtensionUserDefinedFunctionSummaryService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return (
-                EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse._unmap(
-                    response
-                )
-            )
-        if content == "application/xml":
-            return (
-                EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse._unmap(
-                    parse_xml_to_dict(response)
-                )
-            )
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            EnvironmentMapExtensionUserDefinedFunctionSummaryQueryResponse,
+            response,
+            status,
+            content,
+        )

@@ -12,5 +12,5 @@ class RuntimeRestartRequestServiceAsync(RuntimeRestartRequestService):
 
     def create_runtime_restart_request(
         self, request_body: RuntimeRestartRequest = None
-    ) -> Awaitable[Union[RuntimeRestartRequest, str]]:
+    ) -> Awaitable[Union[RuntimeRestartRequest, str, dict]]:
         return to_async(super().create_runtime_restart_request)(request_body)

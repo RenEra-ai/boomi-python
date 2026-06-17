@@ -20,21 +20,21 @@ class EnvironmentMapExtensionUserDefinedFunctionServiceAsync(
 
     def create_environment_map_extension_user_defined_function(
         self, request_body: EnvironmentMapExtensionUserDefinedFunction = None
-    ) -> Awaitable[Union[EnvironmentMapExtensionUserDefinedFunction, str]]:
+    ) -> Awaitable[Union[EnvironmentMapExtensionUserDefinedFunction, str, dict]]:
         return to_async(super().create_environment_map_extension_user_defined_function)(
             request_body
         )
 
     def get_environment_map_extension_user_defined_function(
         self, id_: str
-    ) -> Awaitable[Union[EnvironmentMapExtensionUserDefinedFunction, str]]:
+    ) -> Awaitable[Union[EnvironmentMapExtensionUserDefinedFunction, str, dict]]:
         return to_async(super().get_environment_map_extension_user_defined_function)(
             id_
         )
 
     def update_environment_map_extension_user_defined_function(
         self, id_: str, request_body: EnvironmentMapExtensionUserDefinedFunction = None
-    ) -> Awaitable[Union[EnvironmentMapExtensionUserDefinedFunction, str]]:
+    ) -> Awaitable[Union[EnvironmentMapExtensionUserDefinedFunction, str, dict]]:
         return to_async(super().update_environment_map_extension_user_defined_function)(
             id_, request_body
         )
@@ -48,7 +48,7 @@ class EnvironmentMapExtensionUserDefinedFunctionServiceAsync(
 
     def bulk_environment_map_extension_user_defined_function(
         self, request_body: EnvironmentMapExtensionUserDefinedFunctionBulkRequest = None
-    ) -> Awaitable[Union[EnvironmentMapExtensionUserDefinedFunctionBulkResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentMapExtensionUserDefinedFunctionBulkResponse, str, dict]]:
         return to_async(super().bulk_environment_map_extension_user_defined_function)(
             request_body
         )

@@ -16,15 +16,15 @@ class SharedServerInformationServiceAsync(SharedServerInformationService):
 
     def get_shared_server_information(
         self, id_: str
-    ) -> Awaitable[Union[SharedServerInformation, str]]:
+    ) -> Awaitable[Union[SharedServerInformation, str, dict]]:
         return to_async(super().get_shared_server_information)(id_)
 
     def update_shared_server_information(
         self, id_: str, request_body: SharedServerInformation = None
-    ) -> Awaitable[Union[SharedServerInformation, str]]:
+    ) -> Awaitable[Union[SharedServerInformation, str, dict]]:
         return to_async(super().update_shared_server_information)(id_, request_body)
 
     def bulk_shared_server_information(
         self, request_body: SharedServerInformationBulkRequest = None
-    ) -> Awaitable[Union[SharedServerInformationBulkResponse, str]]:
+    ) -> Awaitable[Union[SharedServerInformationBulkResponse, str, dict]]:
         return to_async(super().bulk_shared_server_information)(request_body)

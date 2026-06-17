@@ -3,8 +3,6 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
-from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
@@ -21,7 +19,7 @@ class PublisherIntegrationPackService(BaseService):
     @cast_models
     def create_publisher_integration_pack(
         self, request_body: PublisherIntegrationPack = None
-    ) -> Union[PublisherIntegrationPack, str]:
+    ) -> Union[PublisherIntegrationPack, str, dict]:
         """Creates a single attachment or multiple attachment integration pack.
 
         :param request_body: The request body., defaults to None
@@ -30,7 +28,7 @@ class PublisherIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PublisherIntegrationPack, str]
+        :rtype: Union[PublisherIntegrationPack, str, dict]
         """
 
         Validator(PublisherIntegrationPack).is_optional().validate(request_body)
@@ -46,16 +44,12 @@ class PublisherIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PublisherIntegrationPack._unmap(response)
-        if content == "application/xml":
-            return PublisherIntegrationPack._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(PublisherIntegrationPack, response, status, content)
 
     @cast_models
     def get_publisher_integration_pack(
         self, id_: str
-    ) -> Union[PublisherIntegrationPack, str]:
+    ) -> Union[PublisherIntegrationPack, str, dict]:
         """Retrieves the details of the integration pack and packaged components.
         The standard GET operation retrieves the properties of the integration pack with a specified ID.
         The bulk GET operation retrieves the properties of the integration packs with the specified IDs to a maximum of 100.
@@ -66,7 +60,7 @@ class PublisherIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PublisherIntegrationPack, str]
+        :rtype: Union[PublisherIntegrationPack, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -82,16 +76,12 @@ class PublisherIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PublisherIntegrationPack._unmap(response)
-        if content == "application/xml":
-            return PublisherIntegrationPack._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(PublisherIntegrationPack, response, status, content)
 
     @cast_models
     def update_publisher_integration_pack(
         self, id_: str, request_body: PublisherIntegrationPack = None
-    ) -> Union[PublisherIntegrationPack, str]:
+    ) -> Union[PublisherIntegrationPack, str, dict]:
         """The Update operation adds or removes the packaged components from the publisher integration pack.
          It also updates the description field of single and multiple attachment integration packs and the name field only for a single attachment integration pack.
 
@@ -107,7 +97,7 @@ class PublisherIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PublisherIntegrationPack, str]
+        :rtype: Union[PublisherIntegrationPack, str, dict]
         """
 
         Validator(PublisherIntegrationPack).is_optional().validate(request_body)
@@ -125,11 +115,7 @@ class PublisherIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PublisherIntegrationPack._unmap(response)
-        if content == "application/xml":
-            return PublisherIntegrationPack._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(PublisherIntegrationPack, response, status, content)
 
     @cast_models
     def delete_publisher_integration_pack(self, id_: str) -> None:

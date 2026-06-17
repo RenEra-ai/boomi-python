@@ -21,7 +21,7 @@ class CloudAttachmentSecretsConfigurationServiceAsync(
         self,
         container_id: str,
         request_body: CloudAttachmentSecretsConfigurationRequest = None,
-    ) -> Awaitable[Union[CloudAttachmentSecretsConfigurationResponse, str]]:
+    ) -> Awaitable[Union[CloudAttachmentSecretsConfigurationResponse, str, dict]]:
         return to_async(super().create_cloud_attachment_secrets_configuration)(
             container_id, request_body
         )
@@ -30,7 +30,7 @@ class CloudAttachmentSecretsConfigurationServiceAsync(
         self,
         container_id: str,
         request_body: CloudAttachmentSecretsConfigurationRequest = None,
-    ) -> Awaitable[Union[CloudAttachmentSecretsConfigurationResponse, str]]:
+    ) -> Awaitable[Union[CloudAttachmentSecretsConfigurationResponse, str, dict]]:
         return to_async(super().create_cloud_attachment_secrets_configuration)(
             container_id, request_body=request_body
         )

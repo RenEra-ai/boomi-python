@@ -18,20 +18,20 @@ class ComponentReferenceServiceAsync(ComponentReferenceService):
 
     def get_component_reference(
         self, component_id: str
-    ) -> Awaitable[Union[ComponentReference, str]]:
+    ) -> Awaitable[Union[ComponentReference, str, dict]]:
         return to_async(super().get_component_reference)(component_id)
 
     def bulk_component_reference(
         self, request_body: ComponentReferenceBulkRequest = None
-    ) -> Awaitable[Union[ComponentReferenceBulkResponse, str]]:
+    ) -> Awaitable[Union[ComponentReferenceBulkResponse, str, dict]]:
         return to_async(super().bulk_component_reference)(request_body)
 
     def query_component_reference(
         self, request_body: ComponentReferenceQueryConfig = None
-    ) -> Awaitable[Union[ComponentReferenceQueryResponse, str]]:
+    ) -> Awaitable[Union[ComponentReferenceQueryResponse, str, dict]]:
         return to_async(super().query_component_reference)(request_body)
 
     def query_more_component_reference(
         self, request_body: str
-    ) -> Awaitable[Union[ComponentReferenceQueryResponse, str]]:
+    ) -> Awaitable[Union[ComponentReferenceQueryResponse, str, dict]]:
         return to_async(super().query_more_component_reference)(request_body)

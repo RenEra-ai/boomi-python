@@ -12,5 +12,5 @@ class AtomCountersServiceAsync(AtomCountersService):
 
     def update_atom_counters(
         self, id_: str, request_body: AtomCounters = None
-    ) -> Awaitable[Union[AtomCounters, str]]:
+    ) -> Awaitable[Union[AtomCounters, str, dict]]:
         return to_async(super().update_atom_counters)(id_, request_body)

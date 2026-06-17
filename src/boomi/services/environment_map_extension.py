@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     EnvironmentMapExtension,
     EnvironmentMapExtensionBulkRequest,
@@ -19,7 +17,7 @@ class EnvironmentMapExtensionService(BaseService):
     @cast_models
     def get_environment_map_extension(
         self, id_: str
-    ) -> Union[EnvironmentMapExtension, str]:
+    ) -> Union[EnvironmentMapExtension, str, dict]:
         """Retrieves an extensible map by its Environment Map Extension object ID.
 
          >**Note:** Extending a source or destination profile by means of browsing an external account may require including credentials in the request. The GET operation uses the credentials from the original process for the browse connection. However, because credential reuse can be problematic when sharing processes in Integration Packs, use the EXECUTE operation instead.
@@ -30,7 +28,7 @@ class EnvironmentMapExtensionService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentMapExtension, str]
+        :rtype: Union[EnvironmentMapExtension, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -46,16 +44,12 @@ class EnvironmentMapExtensionService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentMapExtension._unmap(response)
-        if content == "application/xml":
-            return EnvironmentMapExtension._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentMapExtension, response, status, content)
 
     @cast_models
     def bulk_environment_map_extension(
         self, request_body: EnvironmentMapExtensionBulkRequest = None
-    ) -> Union[EnvironmentMapExtensionBulkResponse, str]:
+    ) -> Union[EnvironmentMapExtensionBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -64,7 +58,7 @@ class EnvironmentMapExtensionService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentMapExtensionBulkResponse, str]
+        :rtype: Union[EnvironmentMapExtensionBulkResponse, str, dict]
         """
 
         Validator(EnvironmentMapExtensionBulkRequest).is_optional().validate(
@@ -82,16 +76,12 @@ class EnvironmentMapExtensionService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentMapExtensionBulkResponse._unmap(response)
-        if content == "application/xml":
-            return EnvironmentMapExtensionBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentMapExtensionBulkResponse, response, status, content)
 
     @cast_models
     def execute_environment_map_extension(
         self, id_: str, request_body: EnvironmentMapExtension = None
-    ) -> Union[EnvironmentMapExtension, str]:
+    ) -> Union[EnvironmentMapExtension, str, dict]:
         """Use the EXECUTE operation when you want to customize XML profiles by reimporting them from endpoint applications. The EXECUTE operation returns the current Environment Map Extension configuration similar to the GET operation.
 
          It also accepts connection credentials and automatically connects to the external application to retrieve additional custom fields for that profile. You must have the Runtime Management privilege to perform the EXECUTE operation. If you have the Runtime Management Read Access privilege, you cannot post connection credentials.
@@ -108,7 +98,7 @@ class EnvironmentMapExtensionService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[EnvironmentMapExtension, str]
+        :rtype: Union[EnvironmentMapExtension, str, dict]
         """
 
         Validator(EnvironmentMapExtension).is_optional().validate(request_body)
@@ -126,8 +116,4 @@ class EnvironmentMapExtensionService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EnvironmentMapExtension._unmap(response)
-        if content == "application/xml":
-            return EnvironmentMapExtension._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(EnvironmentMapExtension, response, status, content)

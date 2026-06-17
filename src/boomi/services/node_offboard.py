@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import NodeOffboard
 
 
@@ -15,7 +13,7 @@ class NodeOffboardService(BaseService):
     @cast_models
     def create_node_offboard(
         self, request_body: NodeOffboard = None
-    ) -> Union[NodeOffboard, str]:
+    ) -> Union[NodeOffboard, str, dict]:
         """Employs a POST method to delete a node. After you successfully perform the POST operation, the nodes status immediately changes to `Deleting` on the Cluster Status panel of the interface.
 
         :param request_body: The request body., defaults to None
@@ -24,7 +22,7 @@ class NodeOffboardService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[NodeOffboard, str]
+        :rtype: Union[NodeOffboard, str, dict]
         """
 
         Validator(NodeOffboard).is_optional().validate(request_body)
@@ -40,8 +38,4 @@ class NodeOffboardService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return NodeOffboard._unmap(response)
-        if content == "application/xml":
-            return NodeOffboard._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(NodeOffboard, response, status, content)

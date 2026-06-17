@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import AsyncOperationTokenResult, AtomDiskSpaceAsyncResponse
 
 
@@ -15,7 +13,7 @@ class AtomDiskSpaceService(BaseService):
     @cast_models
     def async_get_atom_disk_space(
         self, id_: str
-    ) -> Union[AsyncOperationTokenResult, str]:
+    ) -> Union[AsyncOperationTokenResult, str, dict]:
         """The GET operation returns the current disk usage state of the given Runtime cloud attachment.
          The initial GET operation returns a token for the specified Runtime cloud attachment. Subsequent GET operations return status code 202 (while the request is in progress) based on the returned token.
          This first request is required to retrieve the authenticating token, which is used in a subsequent GET request.
@@ -27,7 +25,7 @@ class AtomDiskSpaceService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AsyncOperationTokenResult, str]
+        :rtype: Union[AsyncOperationTokenResult, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -43,16 +41,12 @@ class AtomDiskSpaceService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AsyncOperationTokenResult._unmap(response)
-        if content == "application/xml":
-            return AsyncOperationTokenResult._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AsyncOperationTokenResult, response, status, content)
 
     @cast_models
     def async_token_atom_disk_space(
         self, token: str
-    ) -> Union[AtomDiskSpaceAsyncResponse, str]:
+    ) -> Union[AtomDiskSpaceAsyncResponse, str, dict]:
         """Send a second HTTP GET request where accountId is the ID of the authenticating account for the request, and token is the token returned in the initial response. This second request authenticates the retrieval of the Runtime cloud attachments' disk space usage.
          >**Note:** `accountId` must always refer to the account ID of the parent Runtime cloud and not that of the attachment.
 
@@ -62,7 +56,7 @@ class AtomDiskSpaceService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[AtomDiskSpaceAsyncResponse, str]
+        :rtype: Union[AtomDiskSpaceAsyncResponse, str, dict]
         """
 
         Validator(str).validate(token)
@@ -78,8 +72,4 @@ class AtomDiskSpaceService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return AtomDiskSpaceAsyncResponse._unmap(response)
-        if content == "application/xml":
-            return AtomDiskSpaceAsyncResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(AtomDiskSpaceAsyncResponse, response, status, content)

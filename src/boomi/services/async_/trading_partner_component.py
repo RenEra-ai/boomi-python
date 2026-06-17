@@ -33,15 +33,15 @@ class TradingPartnerComponentServiceAsync(TradingPartnerComponentService):
 
     def bulk_trading_partner_component(
         self, request_body: TradingPartnerComponentBulkRequest = None
-    ) -> Awaitable[Union[TradingPartnerComponentBulkResponse, str]]:
+    ) -> Awaitable[Union[TradingPartnerComponentBulkResponse, str, dict]]:
         return to_async(super().bulk_trading_partner_component)(request_body)
 
     def query_trading_partner_component(
         self, request_body: TradingPartnerComponentQueryConfig = None
-    ) -> Awaitable[Union[TradingPartnerComponentQueryResponse, str]]:
+    ) -> Awaitable[Union[TradingPartnerComponentQueryResponse, str, dict]]:
         return to_async(super().query_trading_partner_component)(request_body)
 
     def query_more_trading_partner_component(
         self, request_body: str
-    ) -> Awaitable[Union[TradingPartnerComponentQueryResponse, str]]:
+    ) -> Awaitable[Union[TradingPartnerComponentQueryResponse, str, dict]]:
         return to_async(super().query_more_trading_partner_component)(request_body)

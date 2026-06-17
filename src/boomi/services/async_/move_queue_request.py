@@ -12,5 +12,5 @@ class MoveQueueRequestServiceAsync(MoveQueueRequestService):
 
     def create_move_queue_request(
         self, request_body: MoveQueueRequest = None
-    ) -> Awaitable[Union[MoveQueueRequest, str]]:
+    ) -> Awaitable[Union[MoveQueueRequest, str, dict]]:
         return to_async(super().create_move_queue_request)(request_body)

@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     PackagedComponent,
     PackagedComponentBulkRequest,
@@ -21,7 +19,7 @@ class PackagedComponentService(BaseService):
     @cast_models
     def create_packaged_component(
         self, request_body: PackagedComponent = None
-    ) -> Union[PackagedComponent, str]:
+    ) -> Union[PackagedComponent, str, dict]:
         """- You can use the CREATE operation to perform two different actions. For example, you can create a new packaged component from a specific component ID, or you can restore a deleted packaged component. Both actions use the same object endpoint. However, the information required in the request body differs.
           -  **To create a new packaged component**, you must include a component ID in the request body. You create a packaged component for the specified componentId. Optionally, you can specify a packageVersion value and notes about the package version.
              >**Note:** You cannot add package versions and notes after creating the packaged component. However, if not specified, automatically assigns a numerical version number to your new packaged component.
@@ -34,7 +32,7 @@ class PackagedComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PackagedComponent, str]
+        :rtype: Union[PackagedComponent, str, dict]
         """
 
         Validator(PackagedComponent).is_optional().validate(request_body)
@@ -50,14 +48,10 @@ class PackagedComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PackagedComponent._unmap(response)
-        if content == "application/xml":
-            return PackagedComponent._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(PackagedComponent, response, status, content)
 
     @cast_models
-    def get_packaged_component(self, id_: str) -> Union[PackagedComponent, str]:
+    def get_packaged_component(self, id_: str) -> Union[PackagedComponent, str, dict]:
         """Retrieves the packaged component with the specified ID.
 
         :param id_: id_
@@ -66,7 +60,7 @@ class PackagedComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PackagedComponent, str]
+        :rtype: Union[PackagedComponent, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -82,11 +76,7 @@ class PackagedComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PackagedComponent._unmap(response)
-        if content == "application/xml":
-            return PackagedComponent._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(PackagedComponent, response, status, content)
 
     @cast_models
     def delete_packaged_component(self, id_: str) -> None:

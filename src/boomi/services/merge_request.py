@@ -3,8 +3,6 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
-from ..net.transport.utils import parse_xml_to_dict
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
@@ -21,7 +19,7 @@ class MergeRequestService(BaseService):
     @cast_models
     def create_merge_request(
         self, request_body: MergeRequest = None
-    ) -> Union[MergeRequest, str]:
+    ) -> Union[MergeRequest, str, dict]:
         """You can use the Merge Request object to merge a development branch into the main branch.
 
          - To create a merge request, you need the branch IDs for the source and destination branches. The source branch is the branch you want to merge into the destination branch.
@@ -34,7 +32,7 @@ class MergeRequestService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[MergeRequest, str]
+        :rtype: Union[MergeRequest, str, dict]
         """
 
         Validator(MergeRequest).is_optional().validate(request_body)
@@ -50,14 +48,10 @@ class MergeRequestService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return MergeRequest._unmap(response)
-        if content == "application/xml":
-            return MergeRequest._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(MergeRequest, response, status, content)
 
     @cast_models
-    def get_merge_request(self, id_: str) -> Union[MergeRequest, str]:
+    def get_merge_request(self, id_: str) -> Union[MergeRequest, str, dict]:
         """Retrieve more information about the recently performed merge.
 
          - The `resolution` parameter is generated from the original merge request and specifies either the source branch for the final content for the merge or the destination. It can have the following values:
@@ -83,7 +77,7 @@ class MergeRequestService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[MergeRequest, str]
+        :rtype: Union[MergeRequest, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -99,16 +93,12 @@ class MergeRequestService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return MergeRequest._unmap(response)
-        if content == "application/xml":
-            return MergeRequest._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(MergeRequest, response, status, content)
 
     @cast_models
     def update_merge_request(
         self, id_: str, request_body: MergeRequest = None
-    ) -> Union[MergeRequest, str]:
+    ) -> Union[MergeRequest, str, dict]:
         """update_merge_request
 
         :param request_body: The request body., defaults to None
@@ -119,7 +109,7 @@ class MergeRequestService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[MergeRequest, str]
+        :rtype: Union[MergeRequest, str, dict]
         """
 
         Validator(MergeRequest).is_optional().validate(request_body)
@@ -137,11 +127,7 @@ class MergeRequestService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return MergeRequest._unmap(response)
-        if content == "application/xml":
-            return MergeRequest._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(MergeRequest, response, status, content)
 
     @cast_models
     def delete_merge_request(self, id_: str) -> None:
@@ -214,7 +200,7 @@ class MergeRequestService(BaseService):
     @cast_models
     def execute_merge_request(
         self, id_: str, request_body: MergeRequest = None
-    ) -> Union[MergeRequest, str]:
+    ) -> Union[MergeRequest, str, dict]:
         """- These are the actions you can choose from when executing a merge request:
           -  MERGE: Use to start or restart a merge request; the stage must be REVIEWING or FAILED_TO_MERGE
           -  REVERT: Use to revert a merge request; the stage must be MERGED or DELETED and previousStage is MERGED
@@ -235,7 +221,7 @@ class MergeRequestService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[MergeRequest, str]
+        :rtype: Union[MergeRequest, str, dict]
         """
 
         Validator(MergeRequest).is_optional().validate(request_body)
@@ -253,11 +239,7 @@ class MergeRequestService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return MergeRequest._unmap(response)
-        if content == "application/xml":
-            return MergeRequest._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(MergeRequest, response, status, content)
 
     @cast_models
     def query_merge_request(

@@ -18,15 +18,15 @@ class RuntimeCloudServiceAsync(RuntimeCloudService):
 
     def create_runtime_cloud(
         self, request_body: RuntimeCloud = None
-    ) -> Awaitable[Union[RuntimeCloud, str]]:
+    ) -> Awaitable[Union[RuntimeCloud, str, dict]]:
         return to_async(super().create_runtime_cloud)(request_body)
 
-    def get_runtime_cloud(self, id_: str) -> Awaitable[Union[RuntimeCloud, str]]:
+    def get_runtime_cloud(self, id_: str) -> Awaitable[Union[RuntimeCloud, str, dict]]:
         return to_async(super().get_runtime_cloud)(id_)
 
     def update_runtime_cloud(
         self, id_: str, request_body: RuntimeCloud = None
-    ) -> Awaitable[Union[RuntimeCloud, str]]:
+    ) -> Awaitable[Union[RuntimeCloud, str, dict]]:
         return to_async(super().update_runtime_cloud)(id_, request_body)
 
     def delete_runtime_cloud(self, id_: str) -> Awaitable[None]:

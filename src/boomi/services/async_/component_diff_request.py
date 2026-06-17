@@ -17,15 +17,15 @@ class ComponentDiffRequestServiceAsync(ComponentDiffRequestService):
 
     def create_component_diff_request(
         self, request_body: ComponentDiffRequest = None
-    ) -> Awaitable[Union[ComponentDiffResponseCreate, str]]:
+    ) -> Awaitable[Union[ComponentDiffResponseCreate, str, dict]]:
         return to_async(super().create_component_diff_request)(request_body)
 
     def get_component_diff_request(
         self, component_id: str
-    ) -> Awaitable[Union[ComponentDiffResponseCreate, str]]:
+    ) -> Awaitable[Union[ComponentDiffResponseCreate, str, dict]]:
         return to_async(super().get_component_diff_request)(component_id)
 
     def bulk_component_diff_request(
         self, request_body: ComponentDiffRequestBulkRequest = None
-    ) -> Awaitable[Union[ComponentDiffRequestBulkResponse, str]]:
+    ) -> Awaitable[Union[ComponentDiffRequestBulkResponse, str, dict]]:
         return to_async(super().bulk_component_diff_request)(request_body)

@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     ComponentReference,
     ComponentReferenceBulkRequest,
@@ -21,7 +19,7 @@ class ComponentReferenceService(BaseService):
     @cast_models
     def get_component_reference(
         self, component_id: str
-    ) -> Union[ComponentReference, str]:
+    ) -> Union[ComponentReference, str, dict]:
         """Retrieves the component reference for a component ID.
 
          Send an HTTP GET to `https://api.boomi.com/api/rest/v1/{accountId}/ComponentReference/{componentId}`
@@ -38,7 +36,7 @@ class ComponentReferenceService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ComponentReference, str]
+        :rtype: Union[ComponentReference, str, dict]
         """
 
         Validator(str).validate(component_id)
@@ -54,16 +52,12 @@ class ComponentReferenceService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ComponentReference._unmap(response)
-        if content == "application/xml":
-            return ComponentReference._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ComponentReference, response, status, content)
 
     @cast_models
     def bulk_component_reference(
         self, request_body: ComponentReferenceBulkRequest = None
-    ) -> Union[ComponentReferenceBulkResponse, str]:
+    ) -> Union[ComponentReferenceBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -72,7 +66,7 @@ class ComponentReferenceService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ComponentReferenceBulkResponse, str]
+        :rtype: Union[ComponentReferenceBulkResponse, str, dict]
         """
 
         Validator(ComponentReferenceBulkRequest).is_optional().validate(request_body)
@@ -88,16 +82,12 @@ class ComponentReferenceService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ComponentReferenceBulkResponse._unmap(response)
-        if content == "application/xml":
-            return ComponentReferenceBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ComponentReferenceBulkResponse, response, status, content)
 
     @cast_models
     def query_component_reference(
         self, request_body: ComponentReferenceQueryConfig = None
-    ) -> Union[ComponentReferenceQueryResponse, str]:
+    ) -> Union[ComponentReferenceQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         - You can use the QUERY operation to return the latest version(s) of a primary component(s) that references a given secondary component ID, or all the secondary components that the given primary component ID references.
@@ -126,7 +116,7 @@ class ComponentReferenceService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ComponentReferenceQueryResponse, str]
+        :rtype: Union[ComponentReferenceQueryResponse, str, dict]
         """
 
         Validator(ComponentReferenceQueryConfig).is_optional().validate(request_body)
@@ -142,16 +132,12 @@ class ComponentReferenceService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ComponentReferenceQueryResponse._unmap(response)
-        if content == "application/xml":
-            return ComponentReferenceQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ComponentReferenceQueryResponse, response, status, content)
 
     @cast_models
     def query_more_component_reference(
         self, request_body: str
-    ) -> Union[ComponentReferenceQueryResponse, str]:
+    ) -> Union[ComponentReferenceQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -160,7 +146,7 @@ class ComponentReferenceService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ComponentReferenceQueryResponse, str]
+        :rtype: Union[ComponentReferenceQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -176,8 +162,4 @@ class ComponentReferenceService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ComponentReferenceQueryResponse._unmap(response)
-        if content == "application/xml":
-            return ComponentReferenceQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ComponentReferenceQueryResponse, response, status, content)

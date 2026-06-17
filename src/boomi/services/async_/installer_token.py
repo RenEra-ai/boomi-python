@@ -12,5 +12,5 @@ class InstallerTokenServiceAsync(InstallerTokenService):
 
     def create_installer_token(
         self, request_body: InstallerToken = None
-    ) -> Awaitable[Union[InstallerToken, str]]:
+    ) -> Awaitable[Union[InstallerToken, str, dict]]:
         return to_async(super().create_installer_token)(request_body)

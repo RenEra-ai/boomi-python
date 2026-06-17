@@ -12,10 +12,10 @@ class ExecutionConnectorServiceAsync(ExecutionConnectorService):
 
     def query_execution_connector(
         self, request_body: ExecutionConnectorQueryConfig = None
-    ) -> Awaitable[Union[ExecutionConnectorQueryResponse, str]]:
+    ) -> Awaitable[Union[ExecutionConnectorQueryResponse, str, dict]]:
         return to_async(super().query_execution_connector)(request_body)
 
     def query_more_execution_connector(
         self, request_body: str
-    ) -> Awaitable[Union[ExecutionConnectorQueryResponse, str]]:
+    ) -> Awaitable[Union[ExecutionConnectorQueryResponse, str, dict]]:
         return to_async(super().query_more_execution_connector)(request_body)

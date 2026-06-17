@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import ExecutionRequest
 
 
@@ -15,7 +13,7 @@ class ExecutionRequestService(BaseService):
     @cast_models
     def create_execution_request(
         self, request_body: ExecutionRequest = None
-    ) -> Union[ExecutionRequest, str]:
+    ) -> Union[ExecutionRequest, str, dict]:
         """Submits the process to run and returns results immediately. The operation does not wait for the run to complete.
 
          - The Execution Request response returns a requestID, which you use to make a subsequent call to the [Execution Record object](/api/platformapi#tag/ExecutionRecord) to retrieve detailed information about the process run.
@@ -33,7 +31,7 @@ class ExecutionRequestService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ExecutionRequest, str]
+        :rtype: Union[ExecutionRequest, str, dict]
         """
 
         Validator(ExecutionRequest).is_optional().validate(request_body)
@@ -49,8 +47,4 @@ class ExecutionRequestService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ExecutionRequest._unmap(response)
-        if content == "application/xml":
-            return ExecutionRequest._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ExecutionRequest, response, status, content)

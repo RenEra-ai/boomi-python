@@ -12,10 +12,10 @@ class ReleaseIntegrationPackServiceAsync(ReleaseIntegrationPackService):
 
     def create_release_integration_pack(
         self, request_body: ReleaseIntegrationPack = None
-    ) -> Awaitable[Union[ReleaseIntegrationPack, str]]:
+    ) -> Awaitable[Union[ReleaseIntegrationPack, str, dict]]:
         return to_async(super().create_release_integration_pack)(request_body)
 
     def update_release_integration_pack(
         self, id_: str, request_body: ReleaseIntegrationPack = None
-    ) -> Awaitable[Union[ReleaseIntegrationPack, str]]:
+    ) -> Awaitable[Union[ReleaseIntegrationPack, str, dict]]:
         return to_async(super().update_release_integration_pack)(id_, request_body)

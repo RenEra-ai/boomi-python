@@ -20,21 +20,21 @@ class IntegrationPackEnvironmentAttachmentServiceAsync(
 
     def create_integration_pack_environment_attachment(
         self, request_body: IntegrationPackEnvironmentAttachment = None
-    ) -> Awaitable[Union[IntegrationPackEnvironmentAttachment, str]]:
+    ) -> Awaitable[Union[IntegrationPackEnvironmentAttachment, str, dict]]:
         return to_async(super().create_integration_pack_environment_attachment)(
             request_body
         )
 
     def query_integration_pack_environment_attachment(
         self, request_body: IntegrationPackEnvironmentAttachmentQueryConfig = None
-    ) -> Awaitable[Union[IntegrationPackEnvironmentAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[IntegrationPackEnvironmentAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_integration_pack_environment_attachment)(
             request_body
         )
 
     def query_more_integration_pack_environment_attachment(
         self, request_body: str
-    ) -> Awaitable[Union[IntegrationPackEnvironmentAttachmentQueryResponse, str]]:
+    ) -> Awaitable[Union[IntegrationPackEnvironmentAttachmentQueryResponse, str, dict]]:
         return to_async(super().query_more_integration_pack_environment_attachment)(
             request_body
         )

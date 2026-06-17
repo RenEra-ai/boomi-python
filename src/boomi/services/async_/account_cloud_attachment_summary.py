@@ -23,20 +23,20 @@ class AccountCloudAttachmentSummaryServiceAsync(AccountCloudAttachmentSummarySer
 
     def get_account_cloud_attachment_summary(
         self, id_: str
-    ) -> Awaitable[Union[AccountCloudAttachmentSummary, str]]:
+    ) -> Awaitable[Union[AccountCloudAttachmentSummary, str, dict]]:
         return to_async(super().get_account_cloud_attachment_summary)(id_)
 
     def bulk_account_cloud_attachment_summary(
         self, request_body: AccountCloudAttachmentSummaryBulkRequest = None
-    ) -> Awaitable[Union[AccountCloudAttachmentSummaryBulkResponse, str]]:
+    ) -> Awaitable[Union[AccountCloudAttachmentSummaryBulkResponse, str, dict]]:
         return to_async(super().bulk_account_cloud_attachment_summary)(request_body)
 
     def query_account_cloud_attachment_summary(
         self, request_body: AccountCloudAttachmentSummaryQueryConfig = None
-    ) -> Awaitable[Union[AccountCloudAttachmentSummaryQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountCloudAttachmentSummaryQueryResponse, str, dict]]:
         return to_async(super().query_account_cloud_attachment_summary)(request_body)
 
     def query_more_account_cloud_attachment_summary(
         self, request_body: str
-    ) -> Awaitable[Union[AccountCloudAttachmentSummaryQueryResponse, str]]:
+    ) -> Awaitable[Union[AccountCloudAttachmentSummaryQueryResponse, str, dict]]:
         return to_async(super().query_more_account_cloud_attachment_summary)(request_body)

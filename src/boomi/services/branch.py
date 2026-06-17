@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     Branch,
     BranchBulkRequest,
@@ -19,7 +17,7 @@ from ..models import (
 class BranchService(BaseService):
 
     @cast_models
-    def create_branch(self, request_body: Branch = None) -> Union[Branch, str]:
+    def create_branch(self, request_body: Branch = None) -> Union[Branch, str, dict]:
         """- To create a branch, you need the branch ID for the branch from which you want to create a new branch. New branches return ready as false until the creating stage has cleared.
          - You can also create a branch from a packaged component. To do so, use the ID of the packaged component as the packageId.
          - To create a branch from a deployment, use the ID of the deployment for the packageId.
@@ -30,7 +28,7 @@ class BranchService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Branch, str]
+        :rtype: Union[Branch, str, dict]
         """
 
         Validator(Branch).is_optional().validate(request_body)
@@ -46,14 +44,10 @@ class BranchService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Branch._unmap(response)
-        if content == "application/xml":
-            return Branch._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Branch, response, status, content)
 
     @cast_models
-    def get_branch(self, id_: str) -> Union[Branch, str]:
+    def get_branch(self, id_: str) -> Union[Branch, str, dict]:
         """When you have the branch ID, you can query for additional information about the branch. Send an HTTP GET where {accountId} is the ID of the authenticating account and {branchId} is the ID of the branch you want to query.
 
         :param id_: The ID of the branch.
@@ -62,7 +56,7 @@ class BranchService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Branch, str]
+        :rtype: Union[Branch, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -78,16 +72,12 @@ class BranchService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Branch._unmap(response)
-        if content == "application/xml":
-            return Branch._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Branch, response, status, content)
 
     @cast_models
     def update_branch(
         self, id_: str, request_body: Branch = None
-    ) -> Union[Branch, str]:
+    ) -> Union[Branch, str, dict]:
         """To update a branch, you need the branch ID. Currently, you can only update the name of the branch.
 
         :param request_body: The request body., defaults to None
@@ -98,7 +88,7 @@ class BranchService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Branch, str]
+        :rtype: Union[Branch, str, dict]
         """
 
         Validator(Branch).is_optional().validate(request_body)
@@ -116,11 +106,7 @@ class BranchService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Branch._unmap(response)
-        if content == "application/xml":
-            return Branch._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Branch, response, status, content)
 
     @cast_models
     def delete_branch(self, id_: str) -> None:
@@ -150,7 +136,7 @@ class BranchService(BaseService):
     @cast_models
     def bulk_branch(
         self, request_body: BranchBulkRequest = None
-    ) -> Union[BranchBulkResponse, str]:
+    ) -> Union[BranchBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -159,7 +145,7 @@ class BranchService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[BranchBulkResponse, str]
+        :rtype: Union[BranchBulkResponse, str, dict]
         """
 
         Validator(BranchBulkRequest).is_optional().validate(request_body)
@@ -175,16 +161,12 @@ class BranchService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return BranchBulkResponse._unmap(response)
-        if content == "application/xml":
-            return BranchBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(BranchBulkResponse, response, status, content)
 
     @cast_models
     def query_branch(
         self, request_body: BranchQueryConfig = None
-    ) -> Union[BranchQueryResponse, str]:
+    ) -> Union[BranchQueryResponse, str, dict]:
         """You must first retrieve the ID of your main branch, using the name of your current branch. If you haven't created any branches, your current branch will be `main`.
 
          When you query a branch, it might be in one of the following states:
@@ -200,7 +182,7 @@ class BranchService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[BranchQueryResponse, str]
+        :rtype: Union[BranchQueryResponse, str, dict]
         """
 
         Validator(BranchQueryConfig).is_optional().validate(request_body)
@@ -216,14 +198,10 @@ class BranchService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return BranchQueryResponse._unmap(response)
-        if content == "application/xml":
-            return BranchQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(BranchQueryResponse, response, status, content)
 
     @cast_models
-    def query_more_branch(self, request_body: str) -> Union[BranchQueryResponse, str]:
+    def query_more_branch(self, request_body: str) -> Union[BranchQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -232,7 +210,7 @@ class BranchService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[BranchQueryResponse, str]
+        :rtype: Union[BranchQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -248,8 +226,4 @@ class BranchService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return BranchQueryResponse._unmap(response)
-        if content == "application/xml":
-            return BranchQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(BranchQueryResponse, response, status, content)

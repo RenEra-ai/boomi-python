@@ -18,10 +18,10 @@ class DeployedPackageServiceAsync(DeployedPackageService):
 
     def create_deployed_package(
         self, request_body: DeployedPackage = None
-    ) -> Awaitable[Union[DeployedPackage, str]]:
+    ) -> Awaitable[Union[DeployedPackage, str, dict]]:
         return to_async(super().create_deployed_package)(request_body)
 
-    def get_deployed_package(self, id_: str) -> Awaitable[Union[DeployedPackage, str]]:
+    def get_deployed_package(self, id_: str) -> Awaitable[Union[DeployedPackage, str, dict]]:
         return to_async(super().get_deployed_package)(id_)
 
     def delete_deployed_package(self, id_: str) -> Awaitable[None]:
@@ -29,15 +29,15 @@ class DeployedPackageServiceAsync(DeployedPackageService):
 
     def bulk_deployed_package(
         self, request_body: DeployedPackageBulkRequest = None
-    ) -> Awaitable[Union[DeployedPackageBulkResponse, str]]:
+    ) -> Awaitable[Union[DeployedPackageBulkResponse, str, dict]]:
         return to_async(super().bulk_deployed_package)(request_body)
 
     def query_deployed_package(
         self, request_body: DeployedPackageQueryConfig = None
-    ) -> Awaitable[Union[DeployedPackageQueryResponse, str]]:
+    ) -> Awaitable[Union[DeployedPackageQueryResponse, str, dict]]:
         return to_async(super().query_deployed_package)(request_body)
 
     def query_more_deployed_package(
         self, request_body: str
-    ) -> Awaitable[Union[DeployedPackageQueryResponse, str]]:
+    ) -> Awaitable[Union[DeployedPackageQueryResponse, str, dict]]:
         return to_async(super().query_more_deployed_package)(request_body)

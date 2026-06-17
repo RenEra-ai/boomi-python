@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     Process,
     ProcessBulkRequest,
@@ -19,7 +17,7 @@ from ..models import (
 class ProcessService(BaseService):
 
     @cast_models
-    def get_process(self, id_: str) -> Union[Process, str]:
+    def get_process(self, id_: str) -> Union[Process, str, dict]:
         """Retrieves the properties of the process having the specified ID.
 
          The ordinary GET operation retrieves the properties of the process having the specified ID. The bulk GET operation retrieves the properties of the processes having the specified IDs, to a maximum of 100.
@@ -30,7 +28,7 @@ class ProcessService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Process, str]
+        :rtype: Union[Process, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -46,16 +44,12 @@ class ProcessService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Process._unmap(response)
-        if content == "application/xml":
-            return Process._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(Process, response, status, content)
 
     @cast_models
     def bulk_process(
         self, request_body: ProcessBulkRequest = None
-    ) -> Union[ProcessBulkResponse, str]:
+    ) -> Union[ProcessBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -64,7 +58,7 @@ class ProcessService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ProcessBulkResponse, str]
+        :rtype: Union[ProcessBulkResponse, str, dict]
         """
 
         Validator(ProcessBulkRequest).is_optional().validate(request_body)
@@ -80,16 +74,12 @@ class ProcessService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ProcessBulkResponse._unmap(response)
-        if content == "application/xml":
-            return ProcessBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ProcessBulkResponse, response, status, content)
 
     @cast_models
     def query_process(
         self, request_body: ProcessQueryConfig = None
-    ) -> Union[ProcessQueryResponse, str]:
+    ) -> Union[ProcessQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -98,7 +88,7 @@ class ProcessService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ProcessQueryResponse, str]
+        :rtype: Union[ProcessQueryResponse, str, dict]
         """
 
         Validator(ProcessQueryConfig).is_optional().validate(request_body)
@@ -114,14 +104,10 @@ class ProcessService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ProcessQueryResponse._unmap(response)
-        if content == "application/xml":
-            return ProcessQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ProcessQueryResponse, response, status, content)
 
     @cast_models
-    def query_more_process(self, request_body: str) -> Union[ProcessQueryResponse, str]:
+    def query_more_process(self, request_body: str) -> Union[ProcessQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -130,7 +116,7 @@ class ProcessService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ProcessQueryResponse, str]
+        :rtype: Union[ProcessQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -146,8 +132,4 @@ class ProcessService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ProcessQueryResponse._unmap(response)
-        if content == "application/xml":
-            return ProcessQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(ProcessQueryResponse, response, status, content)

@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     IntegrationPack,
     IntegrationPackBulkRequest,
@@ -19,7 +17,7 @@ from ..models import (
 class IntegrationPackService(BaseService):
 
     @cast_models
-    def get_integration_pack(self, id_: str) -> Union[IntegrationPack, str]:
+    def get_integration_pack(self, id_: str) -> Union[IntegrationPack, str, dict]:
         """Retrieves the properties of the integration pack with a specified ID. The ordinary GET operation retrieves the properties of the integration pack with a specified ID. The bulk GET operation retrieves the properties of the integration packs having the specified IDs, to a maximum of 100.
 
         :param id_: A unique ID assigned by the system to the integration pack.
@@ -28,7 +26,7 @@ class IntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[IntegrationPack, str]
+        :rtype: Union[IntegrationPack, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -44,11 +42,7 @@ class IntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return IntegrationPack._unmap(response)
-        if content == "application/xml":
-            return IntegrationPack._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(IntegrationPack, response, status, content)
 
     @cast_models
     def bulk_integration_pack(

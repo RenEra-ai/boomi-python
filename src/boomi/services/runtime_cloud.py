@@ -3,10 +3,8 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict
 from ..models import (
     RuntimeCloud,
     RuntimeCloudBulkRequest,
@@ -21,7 +19,7 @@ class RuntimeCloudService(BaseService):
     @cast_models
     def create_runtime_cloud(
         self, request_body: RuntimeCloud = None
-    ) -> Union[RuntimeCloud, str]:
+    ) -> Union[RuntimeCloud, str, dict]:
         """Creates a new RuntimeCloud object.
 
         :param request_body: The request body., defaults to None
@@ -30,7 +28,7 @@ class RuntimeCloudService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeCloud, str]
+        :rtype: Union[RuntimeCloud, str, dict]
         """
 
         Validator(RuntimeCloud).is_optional().validate(request_body)
@@ -46,14 +44,10 @@ class RuntimeCloudService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeCloud._unmap(response)
-        if content == "application/xml":
-            return RuntimeCloud._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RuntimeCloud, response, status, content)
 
     @cast_models
-    def get_runtime_cloud(self, id_: str) -> Union[RuntimeCloud, str]:
+    def get_runtime_cloud(self, id_: str) -> Union[RuntimeCloud, str, dict]:
         """Retrieves the properties of the RuntimeCloud having the specified ID.
 
         :param id_: A unique ID assigned by the system to the RuntimeCloud.
@@ -62,7 +56,7 @@ class RuntimeCloudService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeCloud, str]
+        :rtype: Union[RuntimeCloud, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -78,16 +72,12 @@ class RuntimeCloudService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeCloud._unmap(response)
-        if content == "application/xml":
-            return RuntimeCloud._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RuntimeCloud, response, status, content)
 
     @cast_models
     def update_runtime_cloud(
         self, id_: str, request_body: RuntimeCloud = None
-    ) -> Union[RuntimeCloud, str]:
+    ) -> Union[RuntimeCloud, str, dict]:
         """Updates the RuntimeCloud object having the specified ID.
 
         :param request_body: The request body., defaults to None
@@ -98,7 +88,7 @@ class RuntimeCloudService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeCloud, str]
+        :rtype: Union[RuntimeCloud, str, dict]
         """
 
         Validator(RuntimeCloud).is_optional().validate(request_body)
@@ -116,11 +106,7 @@ class RuntimeCloudService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeCloud._unmap(response)
-        if content == "application/xml":
-            return RuntimeCloud._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(RuntimeCloud, response, status, content)
 
     @cast_models
     def delete_runtime_cloud(self, id_: str) -> None:
