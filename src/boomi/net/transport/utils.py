@@ -353,11 +353,10 @@ def require_raw_xml(body):
         payload = bytes(body)
     else:
         raise UnsafeComponentXmlSerializationError(type(body).__name__)
-    if isinstance(payload, str):
-        if not payload.strip():
-            raise ValueError("request_body must not be empty")
-    elif len(payload) == 0:
-        raise ValueError("request_body must not be empty")
+    # ``str`` and ``bytes`` both support ``.strip()``; reject empty or
+    # whitespace-only payloads symmetrically for either type.
+    if not payload.strip():
+        raise ValueError("request_body must not be empty or whitespace-only")
     return payload
 
 
@@ -386,22 +385,18 @@ def extract_component_xml_metadata(xml) -> dict:
     import xml.parsers.expat as expat
 
     if isinstance(xml, (bytes, bytearray, memoryview)):
-        try:
-            text = bytes(xml).decode("utf-8", errors="replace")
-        except Exception:
-            return {}
+        # Pass raw bytes to expat so it reads the encoding from the XML
+        # declaration instead of forcing a (potentially wrong) UTF-8 decode.
+        payload = bytes(xml)
     elif isinstance(xml, str):
-        text = xml
+        payload = xml
     else:
         return {}
 
-    # Refuse DOCTYPE / custom entity declarations (defense against entity
-    # expansion); external entity resolution is also disabled below.
-    head = text[:4096].lower()
-    if "<!doctype" in head or "<!entity" in head:
-        return {}
-
     class _Stop(Exception):
+        pass
+
+    class _Refuse(Exception):
         pass
 
     found: dict = {}
@@ -415,14 +410,22 @@ def extract_component_xml_metadata(xml) -> dict:
             found[_strip_key_namespace(key)] = value
         raise _Stop()
 
+    def _refuse_doctype(*_args, **_kwargs):
+        # Refuse any DOCTYPE (where entity declarations live) — a precise defense
+        # against XML entity-expansion / XXE, rather than a brittle textual scan
+        # that both false-positives on comments/attributes and can miss a
+        # DOCTYPE pushed past a fixed prescan window.
+        raise _Refuse()
+
     parser = expat.ParserCreate()
     parser.StartElementHandler = _start
+    parser.StartDoctypeDeclHandler = _refuse_doctype
     parser.ExternalEntityRefHandler = lambda *args: False
     try:
-        parser.Parse(text, True)
+        parser.Parse(payload, True)
     except _Stop:
         pass
-    except expat.ExpatError:
+    except (_Refuse, expat.ExpatError):
         return {}
     return found
 

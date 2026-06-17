@@ -4,7 +4,6 @@ from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
-from ..net.transport.request_error import UnsafeComponentXmlSerializationError
 from ..net.transport.utils import extract_component_xml_metadata, require_raw_xml
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
@@ -27,8 +26,11 @@ class ComponentService(BaseService):
 
     Write bodies must be raw ``str`` or ``bytes``; passing a ``Component`` model,
     ``dict``, ``ElementTree`` element, or any other object raises
-    :class:`UnsafeComponentXmlSerializationError`. For read-only access to the
-    root ``<Component>`` attributes use
+    :class:`boomi.net.transport.request_error.UnsafeComponentXmlSerializationError`.
+    A ``bytes`` body is transmitted verbatim (byte-for-byte); a ``str`` body is
+    encoded as UTF-8 by the transport, so pass ``bytes`` when the document's
+    declared encoding is not UTF-8 and exact on-wire bytes matter. For read-only
+    access to the root ``<Component>`` attributes use
     :func:`boomi.net.transport.utils.extract_component_xml_metadata` (re-exported
     here as ``extract_component_xml_metadata``).
     """

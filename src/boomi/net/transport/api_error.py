@@ -57,11 +57,6 @@ class ApiError(BaseModel, Exception):
         if not body.strip().startswith('<?xml') and not body.strip().startswith('<error'):
             return None
 
-        # Defend against XML entity-expansion (billion laughs) / XXE: refuse to
-        # parse documents that declare a DOCTYPE or custom entities.
-        if '<!doctype' in body[:4096].lower() or '<!entity' in body[:4096].lower():
-            return None
-
         try:
             from .utils import parse_xml_to_dict
             parsed = parse_xml_to_dict(body)
