@@ -19,14 +19,14 @@ class AtomConnectionFieldExtensionSummaryServiceAsync(
 
     def query_atom_connection_field_extension_summary(
         self, request_body: AtomConnectionFieldExtensionSummaryQueryConfig = None
-    ) -> Awaitable[Union[AtomConnectionFieldExtensionSummaryQueryResponse, str]]:
+    ) -> Awaitable[Union[AtomConnectionFieldExtensionSummaryQueryResponse, str, dict]]:
         return to_async(super().query_atom_connection_field_extension_summary)(
             request_body
         )
 
     def query_more_atom_connection_field_extension_summary(
         self, request_body: str
-    ) -> Awaitable[Union[AtomConnectionFieldExtensionSummaryQueryResponse, str]]:
+    ) -> Awaitable[Union[AtomConnectionFieldExtensionSummaryQueryResponse, str, dict]]:
         return to_async(super().query_more_atom_connection_field_extension_summary)(
             request_body
         )

@@ -150,7 +150,7 @@ class RuntimeCloudService(BaseService):
     @cast_models
     def bulk_runtime_cloud(
         self, request_body: RuntimeCloudBulkRequest = None
-    ) -> Union[RuntimeCloudBulkResponse, str]:
+    ) -> Union[RuntimeCloudBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -159,7 +159,7 @@ class RuntimeCloudService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeCloudBulkResponse, str]
+        :rtype: Union[RuntimeCloudBulkResponse, str, dict]
         """
 
         Validator(RuntimeCloudBulkRequest).is_optional().validate(request_body)
@@ -175,16 +175,14 @@ class RuntimeCloudService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeCloudBulkResponse._unmap(response)
-        if content == "application/xml":
-            return RuntimeCloudBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            RuntimeCloudBulkResponse, response, status, content
+        )
 
     @cast_models
     def query_runtime_cloud(
         self, request_body: RuntimeCloudQueryConfig = None
-    ) -> Union[RuntimeCloudQueryResponse, str]:
+    ) -> Union[RuntimeCloudQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -193,7 +191,7 @@ class RuntimeCloudService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeCloudQueryResponse, str]
+        :rtype: Union[RuntimeCloudQueryResponse, str, dict]
         """
 
         Validator(RuntimeCloudQueryConfig).is_optional().validate(request_body)
@@ -209,16 +207,14 @@ class RuntimeCloudService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeCloudQueryResponse._unmap(response)
-        if content == "application/xml":
-            return RuntimeCloudQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            RuntimeCloudQueryResponse, response, status, content
+        )
 
     @cast_models
     def query_more_runtime_cloud(
         self, request_body: str
-    ) -> Union[RuntimeCloudQueryResponse, str]:
+    ) -> Union[RuntimeCloudQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -227,7 +223,7 @@ class RuntimeCloudService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeCloudQueryResponse, str]
+        :rtype: Union[RuntimeCloudQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -243,8 +239,6 @@ class RuntimeCloudService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeCloudQueryResponse._unmap(response)
-        if content == "application/xml":
-            return RuntimeCloudQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            RuntimeCloudQueryResponse, response, status, content
+        )

@@ -182,7 +182,7 @@ class MergeRequestService(BaseService):
     @cast_models
     def bulk_merge_request(
         self, request_body: MergeRequestBulkRequest = None
-    ) -> Union[MergeRequestBulkResponse, str]:
+    ) -> Union[MergeRequestBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -191,7 +191,7 @@ class MergeRequestService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[MergeRequestBulkResponse, str]
+        :rtype: Union[MergeRequestBulkResponse, str, dict]
         """
 
         Validator(MergeRequestBulkRequest).is_optional().validate(request_body)
@@ -207,11 +207,9 @@ class MergeRequestService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return MergeRequestBulkResponse._unmap(response)
-        if content == "application/xml":
-            return MergeRequestBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            MergeRequestBulkResponse, response, status, content
+        )
 
     @cast_models
     def execute_merge_request(
@@ -264,7 +262,7 @@ class MergeRequestService(BaseService):
     @cast_models
     def query_merge_request(
         self, request_body: MergeRequestQueryConfig = None
-    ) -> Union[MergeRequestQueryResponse, str]:
+    ) -> Union[MergeRequestQueryResponse, str, dict]:
         """- You can query a branch to retrieve a list of all active merge request IDs.
           - You must include the destination or source branch as a parameter. Only EQUALS is allowed for these parameters.
          - Optional parameters include:
@@ -283,7 +281,7 @@ class MergeRequestService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[MergeRequestQueryResponse, str]
+        :rtype: Union[MergeRequestQueryResponse, str, dict]
         """
 
         Validator(MergeRequestQueryConfig).is_optional().validate(request_body)
@@ -299,16 +297,14 @@ class MergeRequestService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return MergeRequestQueryResponse._unmap(response)
-        if content == "application/xml":
-            return MergeRequestQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            MergeRequestQueryResponse, response, status, content
+        )
 
     @cast_models
     def query_more_merge_request(
         self, request_body: str
-    ) -> Union[MergeRequestQueryResponse, str]:
+    ) -> Union[MergeRequestQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -317,7 +313,7 @@ class MergeRequestService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[MergeRequestQueryResponse, str]
+        :rtype: Union[MergeRequestQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -333,8 +329,6 @@ class MergeRequestService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return MergeRequestQueryResponse._unmap(response)
-        if content == "application/xml":
-            return MergeRequestQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            MergeRequestQueryResponse, response, status, content
+        )

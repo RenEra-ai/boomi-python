@@ -34,15 +34,15 @@ class RuntimeCloudServiceAsync(RuntimeCloudService):
 
     def bulk_runtime_cloud(
         self, request_body: RuntimeCloudBulkRequest = None
-    ) -> Awaitable[Union[RuntimeCloudBulkResponse, str]]:
+    ) -> Awaitable[Union[RuntimeCloudBulkResponse, str, dict]]:
         return to_async(super().bulk_runtime_cloud)(request_body)
 
     def query_runtime_cloud(
         self, request_body: RuntimeCloudQueryConfig = None
-    ) -> Awaitable[Union[RuntimeCloudQueryResponse, str]]:
+    ) -> Awaitable[Union[RuntimeCloudQueryResponse, str, dict]]:
         return to_async(super().query_runtime_cloud)(request_body)
 
     def query_more_runtime_cloud(
         self, request_body: str
-    ) -> Awaitable[Union[RuntimeCloudQueryResponse, str]]:
+    ) -> Awaitable[Union[RuntimeCloudQueryResponse, str, dict]]:
         return to_async(super().query_more_runtime_cloud)(request_body)

@@ -6,7 +6,7 @@ from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
-from ..net.transport.utils import parse_xml_to_dict, require_raw_xml
+from ..net.transport.utils import require_raw_xml
 from ..models import (
     OrganizationComponentBulkRequest,
     OrganizationComponentBulkResponse,
@@ -164,7 +164,7 @@ class OrganizationComponentService(BaseService):
     @cast_models
     def bulk_organization_component(
         self, request_body: OrganizationComponentBulkRequest = None
-    ) -> Union[str, OrganizationComponentBulkResponse]:
+    ) -> Union[str, OrganizationComponentBulkResponse, dict]:
         """The bulk GET operation returns multiple Account objects based on the supplied account IDs, to a maximum of 100. To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -173,7 +173,7 @@ class OrganizationComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[str, OrganizationComponentBulkResponse]
+        :rtype: Union[str, OrganizationComponentBulkResponse, dict]
         """
 
         Validator(OrganizationComponentBulkRequest).is_optional().validate(request_body)
@@ -189,11 +189,9 @@ class OrganizationComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/xml":
-            return OrganizationComponentBulkResponse._unmap(parse_xml_to_dict(response))
-        if content == "application/json":
-            return OrganizationComponentBulkResponse._unmap(response)
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            OrganizationComponentBulkResponse, response, status, content
+        )
 
     @cast_models
     def query_organization_component(

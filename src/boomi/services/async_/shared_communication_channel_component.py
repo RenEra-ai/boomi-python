@@ -45,21 +45,21 @@ class SharedCommunicationChannelComponentServiceAsync(
 
     def bulk_shared_communication_channel_component(
         self, request_body: SharedCommunicationChannelComponentBulkRequest = None
-    ) -> Awaitable[Union[SharedCommunicationChannelComponentBulkResponse, str]]:
+    ) -> Awaitable[Union[SharedCommunicationChannelComponentBulkResponse, str, dict]]:
         return to_async(super().bulk_shared_communication_channel_component)(
             request_body
         )
 
     def query_shared_communication_channel_component(
         self, request_body: SharedCommunicationChannelComponentQueryConfig = None
-    ) -> Awaitable[Union[SharedCommunicationChannelComponentQueryResponse, str]]:
+    ) -> Awaitable[Union[SharedCommunicationChannelComponentQueryResponse, str, dict]]:
         return to_async(super().query_shared_communication_channel_component)(
             request_body
         )
 
     def query_more_shared_communication_channel_component(
         self, request_body: str
-    ) -> Awaitable[Union[SharedCommunicationChannelComponentQueryResponse, str]]:
+    ) -> Awaitable[Union[SharedCommunicationChannelComponentQueryResponse, str, dict]]:
         return to_async(super().query_more_shared_communication_channel_component)(
             request_body
         )

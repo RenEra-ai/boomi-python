@@ -19,14 +19,14 @@ class EnvironmentConnectionFieldExtensionSummaryServiceAsync(
 
     def query_environment_connection_field_extension_summary(
         self, request_body: EnvironmentConnectionFieldExtensionSummaryQueryConfig = None
-    ) -> Awaitable[Union[EnvironmentConnectionFieldExtensionSummaryQueryResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentConnectionFieldExtensionSummaryQueryResponse, str, dict]]:
         return to_async(super().query_environment_connection_field_extension_summary)(
             request_body
         )
 
     def query_more_environment_connection_field_extension_summary(
         self, request_body: str
-    ) -> Awaitable[Union[EnvironmentConnectionFieldExtensionSummaryQueryResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentConnectionFieldExtensionSummaryQueryResponse, str, dict]]:
         return to_async(
             super().query_more_environment_connection_field_extension_summary
         )(request_body)

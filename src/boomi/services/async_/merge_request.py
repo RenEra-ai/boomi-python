@@ -34,7 +34,7 @@ class MergeRequestServiceAsync(MergeRequestService):
 
     def bulk_merge_request(
         self, request_body: MergeRequestBulkRequest = None
-    ) -> Awaitable[Union[MergeRequestBulkResponse, str]]:
+    ) -> Awaitable[Union[MergeRequestBulkResponse, str, dict]]:
         return to_async(super().bulk_merge_request)(request_body)
 
     def execute_merge_request(
@@ -44,10 +44,10 @@ class MergeRequestServiceAsync(MergeRequestService):
 
     def query_merge_request(
         self, request_body: MergeRequestQueryConfig = None
-    ) -> Awaitable[Union[MergeRequestQueryResponse, str]]:
+    ) -> Awaitable[Union[MergeRequestQueryResponse, str, dict]]:
         return to_async(super().query_merge_request)(request_body)
 
     def query_more_merge_request(
         self, request_body: str
-    ) -> Awaitable[Union[MergeRequestQueryResponse, str]]:
+    ) -> Awaitable[Union[MergeRequestQueryResponse, str, dict]]:
         return to_async(super().query_more_merge_request)(request_body)

@@ -31,15 +31,15 @@ class PackagedComponentServiceAsync(PackagedComponentService):
 
     def bulk_packaged_component(
         self, request_body: PackagedComponentBulkRequest = None
-    ) -> Awaitable[Union[PackagedComponentBulkResponse, str]]:
+    ) -> Awaitable[Union[PackagedComponentBulkResponse, str, dict]]:
         return to_async(super().bulk_packaged_component)(request_body)
 
     def query_packaged_component(
         self, request_body: PackagedComponentQueryConfig = None
-    ) -> Awaitable[Union[PackagedComponentQueryResponse, str]]:
+    ) -> Awaitable[Union[PackagedComponentQueryResponse, str, dict]]:
         return to_async(super().query_packaged_component)(request_body)
 
     def query_more_packaged_component(
         self, request_body: str
-    ) -> Awaitable[Union[PackagedComponentQueryResponse, str]]:
+    ) -> Awaitable[Union[PackagedComponentQueryResponse, str, dict]]:
         return to_async(super().query_more_packaged_component)(request_body)

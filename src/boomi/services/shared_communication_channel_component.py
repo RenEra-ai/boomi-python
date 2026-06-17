@@ -4,7 +4,7 @@ from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
 from ..net.transport.api_error import ApiError
-from ..net.transport.utils import parse_xml_to_dict, require_raw_xml
+from ..net.transport.utils import require_raw_xml
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
@@ -162,7 +162,7 @@ class SharedCommunicationChannelComponentService(BaseService):
     @cast_models
     def bulk_shared_communication_channel_component(
         self, request_body: SharedCommunicationChannelComponentBulkRequest = None
-    ) -> Union[SharedCommunicationChannelComponentBulkResponse, str]:
+    ) -> Union[SharedCommunicationChannelComponentBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -171,7 +171,7 @@ class SharedCommunicationChannelComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[SharedCommunicationChannelComponentBulkResponse, str]
+        :rtype: Union[SharedCommunicationChannelComponentBulkResponse, str, dict]
         """
 
         Validator(
@@ -189,16 +189,14 @@ class SharedCommunicationChannelComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return SharedCommunicationChannelComponentBulkResponse._unmap(response)
-        if content == "application/xml":
-            return SharedCommunicationChannelComponentBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            SharedCommunicationChannelComponentBulkResponse, response, status, content
+        )
 
     @cast_models
     def query_shared_communication_channel_component(
         self, request_body: SharedCommunicationChannelComponentQueryConfig = None
-    ) -> Union[SharedCommunicationChannelComponentQueryResponse, str]:
+    ) -> Union[SharedCommunicationChannelComponentQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
          The sample request query returns the Shared Communication Channel components using the AS2 standard for the authenticating account.
@@ -211,7 +209,7 @@ class SharedCommunicationChannelComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[SharedCommunicationChannelComponentQueryResponse, str]
+        :rtype: Union[SharedCommunicationChannelComponentQueryResponse, str, dict]
         """
 
         Validator(
@@ -229,56 +227,14 @@ class SharedCommunicationChannelComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return SharedCommunicationChannelComponentQueryResponse._unmap(response)
-        if content == "application/xml":
-            # For XML responses, parse the XML and convert to dict structure
-            import xml.etree.ElementTree as ET
-            try:
-                root = ET.fromstring(response)
-                # Extract query results from XML
-                result_data = {
-                    'numberOfResults': 0,
-                    'result': []
-                }
-
-                # Get number of results if present
-                num_results = root.get('numberOfResults')
-                if num_results:
-                    result_data['numberOfResults'] = int(num_results)
-
-                # Get query token if present
-                query_token = root.get('queryToken')
-                if query_token:
-                    result_data['queryToken'] = query_token
-
-                # Parse each result element
-                for item in root.findall('.//{http://api.platform.boomi.com/}result'):
-                    channel_data = {}
-                    # Get attributes
-                    for attr, value in item.attrib.items():
-                        channel_data[attr] = value
-                    # Get child elements
-                    for child in item:
-                        tag = child.tag.replace('{http://api.platform.boomi.com/}', '')
-                        channel_data[tag] = child.text
-                    if channel_data:
-                        result_data['result'].append(channel_data)
-
-                result_data['numberOfResults'] = len(result_data['result'])
-                return SharedCommunicationChannelComponentQueryResponse._unmap(result_data)
-            except ET.ParseError:
-                # If XML parsing fails, return empty result
-                return SharedCommunicationChannelComponentQueryResponse._unmap({
-                    'numberOfResults': 0,
-                    'result': []
-                })
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            SharedCommunicationChannelComponentQueryResponse, response, status, content
+        )
 
     @cast_models
     def query_more_shared_communication_channel_component(
         self, request_body: str
-    ) -> Union[SharedCommunicationChannelComponentQueryResponse, str]:
+    ) -> Union[SharedCommunicationChannelComponentQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -287,7 +243,7 @@ class SharedCommunicationChannelComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[SharedCommunicationChannelComponentQueryResponse, str]
+        :rtype: Union[SharedCommunicationChannelComponentQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -303,48 +259,6 @@ class SharedCommunicationChannelComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return SharedCommunicationChannelComponentQueryResponse._unmap(response)
-        if content == "application/xml":
-            # For XML responses, parse the XML and convert to dict structure
-            import xml.etree.ElementTree as ET
-            try:
-                root = ET.fromstring(response)
-                # Extract query results from XML
-                result_data = {
-                    'numberOfResults': 0,
-                    'result': []
-                }
-
-                # Get number of results if present
-                num_results = root.get('numberOfResults')
-                if num_results:
-                    result_data['numberOfResults'] = int(num_results)
-
-                # Get query token if present
-                query_token = root.get('queryToken')
-                if query_token:
-                    result_data['queryToken'] = query_token
-
-                # Parse each result element
-                for item in root.findall('.//{http://api.platform.boomi.com/}result'):
-                    channel_data = {}
-                    # Get attributes
-                    for attr, value in item.attrib.items():
-                        channel_data[attr] = value
-                    # Get child elements
-                    for child in item:
-                        tag = child.tag.replace('{http://api.platform.boomi.com/}', '')
-                        channel_data[tag] = child.text
-                    if channel_data:
-                        result_data['result'].append(channel_data)
-
-                result_data['numberOfResults'] = len(result_data['result'])
-                return SharedCommunicationChannelComponentQueryResponse._unmap(result_data)
-            except ET.ParseError:
-                # If XML parsing fails, return empty result
-                return SharedCommunicationChannelComponentQueryResponse._unmap({
-                    'numberOfResults': 0,
-                    'result': []
-                })
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            SharedCommunicationChannelComponentQueryResponse, response, status, content
+        )

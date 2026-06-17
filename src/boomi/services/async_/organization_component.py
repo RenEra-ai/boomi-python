@@ -33,7 +33,7 @@ class OrganizationComponentServiceAsync(OrganizationComponentService):
 
     def bulk_organization_component(
         self, request_body: OrganizationComponentBulkRequest = None
-    ) -> Awaitable[Union[str, OrganizationComponentBulkResponse]]:
+    ) -> Awaitable[Union[str, OrganizationComponentBulkResponse, dict]]:
         return to_async(super().bulk_organization_component)(request_body)
 
     def query_organization_component(

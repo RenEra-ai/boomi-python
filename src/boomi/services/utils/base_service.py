@@ -168,6 +168,12 @@ class BaseService:
                 return model._unmap(parse_xml_to_dict(response))
         except Exception:
             if 200 <= status < 300:
+                # A 2xx body the transport could not decode (empty body, or a
+                # gateway error page served with a JSON/XML content type) arrives
+                # as bytes; decode it so the raw fallback stays within the
+                # declared str return member instead of leaking a bytes object.
+                if isinstance(response, (bytes, bytearray)):
+                    return bytes(response).decode("utf-8", errors="replace")
                 return response
             raise
         raise ApiError("Error on deserializing the response.", status, response)

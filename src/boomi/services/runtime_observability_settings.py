@@ -20,7 +20,7 @@ class RuntimeObservabilitySettingsService(BaseService):
     @cast_models
     def update_runtime_observability_settings(
         self, id_: str, request_body: RuntimeObservabilitySettingsRequest = None
-    ) -> Union[RuntimeObservabilitySettings, str]:
+    ) -> Union[RuntimeObservabilitySettings, str, dict]:
         """Updates the RuntimeObservabilitySettings object having the specified ID.
 
         :param request_body: The request body., defaults to None
@@ -31,7 +31,7 @@ class RuntimeObservabilitySettingsService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[RuntimeObservabilitySettings, str]
+        :rtype: Union[RuntimeObservabilitySettings, str, dict]
         """
 
         Validator(RuntimeObservabilitySettingsRequest).is_optional().validate(request_body)
@@ -49,11 +49,9 @@ class RuntimeObservabilitySettingsService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return RuntimeObservabilitySettings._unmap(response)
-        if content == "application/xml":
-            return RuntimeObservabilitySettings._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            RuntimeObservabilitySettings, response, status, content
+        )
 
     @cast_models
     def async_get_runtime_observability_settings(

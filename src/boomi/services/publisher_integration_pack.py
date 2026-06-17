@@ -161,7 +161,7 @@ class PublisherIntegrationPackService(BaseService):
     @cast_models
     def bulk_publisher_integration_pack(
         self, request_body: PublisherIntegrationPackBulkRequest = None
-    ) -> Union[PublisherIntegrationPackBulkResponse, str, any]:
+    ) -> Union[PublisherIntegrationPackBulkResponse, str, dict]:
         """The bulk GET operation returns multiple objects based on the supplied account IDs, to a maximum of 100. To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -170,7 +170,7 @@ class PublisherIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PublisherIntegrationPackBulkResponse, str, any]
+        :rtype: Union[PublisherIntegrationPackBulkResponse, str, dict]
         """
 
         Validator(PublisherIntegrationPackBulkRequest).is_optional().validate(
@@ -188,18 +188,16 @@ class PublisherIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PublisherIntegrationPackBulkResponse._unmap(response)
-        if content == "application/xml":
-            return PublisherIntegrationPackBulkResponse._unmap(parse_xml_to_dict(response))
         if content == "example":
             return response
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            PublisherIntegrationPackBulkResponse, response, status, content
+        )
 
     @cast_models
     def query_publisher_integration_pack(
         self, request_body: PublisherIntegrationPackQueryConfig = None
-    ) -> Union[PublisherIntegrationPackQueryResponse, str]:
+    ) -> Union[PublisherIntegrationPackQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -208,7 +206,7 @@ class PublisherIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PublisherIntegrationPackQueryResponse, str]
+        :rtype: Union[PublisherIntegrationPackQueryResponse, str, dict]
         """
 
         Validator(PublisherIntegrationPackQueryConfig).is_optional().validate(
@@ -226,16 +224,14 @@ class PublisherIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PublisherIntegrationPackQueryResponse._unmap(response)
-        if content == "application/xml":
-            return PublisherIntegrationPackQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            PublisherIntegrationPackQueryResponse, response, status, content
+        )
 
     @cast_models
     def query_more_publisher_integration_pack(
         self, request_body: str
-    ) -> Union[PublisherIntegrationPackQueryResponse, str]:
+    ) -> Union[PublisherIntegrationPackQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -244,7 +240,7 @@ class PublisherIntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PublisherIntegrationPackQueryResponse, str]
+        :rtype: Union[PublisherIntegrationPackQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -260,8 +256,6 @@ class PublisherIntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PublisherIntegrationPackQueryResponse._unmap(response)
-        if content == "application/xml":
-            return PublisherIntegrationPackQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            PublisherIntegrationPackQueryResponse, response, status, content
+        )

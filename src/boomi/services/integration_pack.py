@@ -53,7 +53,7 @@ class IntegrationPackService(BaseService):
     @cast_models
     def bulk_integration_pack(
         self, request_body: IntegrationPackBulkRequest = None
-    ) -> Union[IntegrationPackBulkResponse, str]:
+    ) -> Union[IntegrationPackBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -62,7 +62,7 @@ class IntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[IntegrationPackBulkResponse, str]
+        :rtype: Union[IntegrationPackBulkResponse, str, dict]
         """
 
         Validator(IntegrationPackBulkRequest).is_optional().validate(request_body)
@@ -78,16 +78,14 @@ class IntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return IntegrationPackBulkResponse._unmap(response)
-        if content == "application/xml":
-            return IntegrationPackBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            IntegrationPackBulkResponse, response, status, content
+        )
 
     @cast_models
     def query_integration_pack(
         self, request_body: IntegrationPackQueryConfig = None
-    ) -> Union[IntegrationPackQueryResponse, str]:
+    ) -> Union[IntegrationPackQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -96,7 +94,7 @@ class IntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[IntegrationPackQueryResponse, str]
+        :rtype: Union[IntegrationPackQueryResponse, str, dict]
         """
 
         Validator(IntegrationPackQueryConfig).is_optional().validate(request_body)
@@ -112,16 +110,14 @@ class IntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return IntegrationPackQueryResponse._unmap(response)
-        if content == "application/xml":
-            return IntegrationPackQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            IntegrationPackQueryResponse, response, status, content
+        )
 
     @cast_models
     def query_more_integration_pack(
         self, request_body: str
-    ) -> Union[IntegrationPackQueryResponse, str]:
+    ) -> Union[IntegrationPackQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -130,7 +126,7 @@ class IntegrationPackService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[IntegrationPackQueryResponse, str]
+        :rtype: Union[IntegrationPackQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -146,8 +142,6 @@ class IntegrationPackService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return IntegrationPackQueryResponse._unmap(response)
-        if content == "application/xml":
-            return IntegrationPackQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            IntegrationPackQueryResponse, response, status, content
+        )

@@ -36,15 +36,15 @@ class PublisherIntegrationPackServiceAsync(PublisherIntegrationPackService):
 
     def bulk_publisher_integration_pack(
         self, request_body: PublisherIntegrationPackBulkRequest = None
-    ) -> Awaitable[Union[PublisherIntegrationPackBulkResponse, str, any]]:
+    ) -> Awaitable[Union[PublisherIntegrationPackBulkResponse, str, dict]]:
         return to_async(super().bulk_publisher_integration_pack)(request_body)
 
     def query_publisher_integration_pack(
         self, request_body: PublisherIntegrationPackQueryConfig = None
-    ) -> Awaitable[Union[PublisherIntegrationPackQueryResponse, str]]:
+    ) -> Awaitable[Union[PublisherIntegrationPackQueryResponse, str, dict]]:
         return to_async(super().query_publisher_integration_pack)(request_body)
 
     def query_more_publisher_integration_pack(
         self, request_body: str
-    ) -> Awaitable[Union[PublisherIntegrationPackQueryResponse, str]]:
+    ) -> Awaitable[Union[PublisherIntegrationPackQueryResponse, str, dict]]:
         return to_async(super().query_more_publisher_integration_pack)(request_body)

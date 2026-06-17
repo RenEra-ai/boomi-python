@@ -119,7 +119,7 @@ class PackagedComponentService(BaseService):
     @cast_models
     def bulk_packaged_component(
         self, request_body: PackagedComponentBulkRequest = None
-    ) -> Union[PackagedComponentBulkResponse, str]:
+    ) -> Union[PackagedComponentBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -128,7 +128,7 @@ class PackagedComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PackagedComponentBulkResponse, str]
+        :rtype: Union[PackagedComponentBulkResponse, str, dict]
         """
 
         Validator(PackagedComponentBulkRequest).is_optional().validate(request_body)
@@ -144,16 +144,14 @@ class PackagedComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PackagedComponentBulkResponse._unmap(response)
-        if content == "application/xml":
-            return PackagedComponentBulkResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            PackagedComponentBulkResponse, response, status, content
+        )
 
     @cast_models
     def query_packaged_component(
         self, request_body: PackagedComponentQueryConfig = None
-    ) -> Union[PackagedComponentQueryResponse, str]:
+    ) -> Union[PackagedComponentQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -162,7 +160,7 @@ class PackagedComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PackagedComponentQueryResponse, str]
+        :rtype: Union[PackagedComponentQueryResponse, str, dict]
         """
 
         Validator(PackagedComponentQueryConfig).is_optional().validate(request_body)
@@ -178,16 +176,14 @@ class PackagedComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PackagedComponentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return PackagedComponentQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            PackagedComponentQueryResponse, response, status, content
+        )
 
     @cast_models
     def query_more_packaged_component(
         self, request_body: str
-    ) -> Union[PackagedComponentQueryResponse, str]:
+    ) -> Union[PackagedComponentQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -196,7 +192,7 @@ class PackagedComponentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[PackagedComponentQueryResponse, str]
+        :rtype: Union[PackagedComponentQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -212,8 +208,6 @@ class PackagedComponentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return PackagedComponentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return PackagedComponentQueryResponse._unmap(parse_xml_to_dict(response))
-        raise ApiError("Error on deserializing the response.", status, response)
+        return self._deserialize_or_raw(
+            PackagedComponentQueryResponse, response, status, content
+        )

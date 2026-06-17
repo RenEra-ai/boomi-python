@@ -21,15 +21,15 @@ class IntegrationPackServiceAsync(IntegrationPackService):
 
     def bulk_integration_pack(
         self, request_body: IntegrationPackBulkRequest = None
-    ) -> Awaitable[Union[IntegrationPackBulkResponse, str]]:
+    ) -> Awaitable[Union[IntegrationPackBulkResponse, str, dict]]:
         return to_async(super().bulk_integration_pack)(request_body)
 
     def query_integration_pack(
         self, request_body: IntegrationPackQueryConfig = None
-    ) -> Awaitable[Union[IntegrationPackQueryResponse, str]]:
+    ) -> Awaitable[Union[IntegrationPackQueryResponse, str, dict]]:
         return to_async(super().query_integration_pack)(request_body)
 
     def query_more_integration_pack(
         self, request_body: str
-    ) -> Awaitable[Union[IntegrationPackQueryResponse, str]]:
+    ) -> Awaitable[Union[IntegrationPackQueryResponse, str, dict]]:
         return to_async(super().query_more_integration_pack)(request_body)
