@@ -24,7 +24,7 @@ from pathlib import Path
 # Add the src directory to the path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent / "src"))
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
 from boomi.models import (
     SharedWebServer,
     SharedCommunicationChannelComponent,
@@ -208,18 +208,26 @@ class SharedResourceManager:
         """
         try:
             self._log(f"Creating communication channel: {name}")
-            
-            channel = SharedCommunicationChannelComponent(
-                name=name,
-                type=channel_type,
-                **config
+
+            # Component XML is opaque/raw-only: pass raw XML (str/bytes). Export
+            # an existing channel via get_communication_channel(...) for an
+            # accurate template; this minimal skeleton sets the root attributes.
+            from xml.sax.saxutils import quoteattr
+            extra = "".join(
+                f" {k}={quoteattr(str(v))}" for k, v in (config or {}).items()
             )
-            
+            raw_xml = (
+                '<bns:SharedCommunicationChannelComponent '
+                'xmlns:bns="http://api.platform.boomi.com/" '
+                f'componentName={quoteattr(name)} type={quoteattr(channel_type)}{extra}/>'
+            )
+
             created = self.sdk.shared_communication_channel_component.create_shared_communication_channel_component(
-                request_body=channel
+                request_body=raw_xml
             )
-            
-            self._log(f"Successfully created channel: {created.id_}")
+
+            new_id = extract_component_xml_metadata(created).get("componentId", "unknown")
+            self._log(f"Successfully created channel: {new_id}")
             return created
             
         except Exception as e:
@@ -516,7 +524,12 @@ Examples:
             
             channel = manager.get_communication_channel(args.channel_id)
             if channel:
-                manager.display_resources([channel], "channel", "detailed")
+                md = extract_component_xml_metadata(channel)
+                print(f"\n{'='*60}\nCommunication Channel\n{'='*60}")
+                print(f"ID: {md.get('componentId', args.channel_id)}")
+                print(f"Name: {md.get('componentName') or md.get('name', 'N/A')}")
+                print(f"Type: {md.get('type', 'N/A')}")
+                print(f"Raw XML: {len(channel)} bytes")
             else:
                 print(f"Channel not found: {args.channel_id}")
         
@@ -532,8 +545,9 @@ Examples:
             )
             
             if channel:
-                print(f"✅ Created channel: {channel.id_}")
-                manager.display_resources([channel], "channel", "detailed")
+                md = extract_component_xml_metadata(channel)
+                print(f"✅ Created channel: {md.get('componentId', 'unknown')}")
+                print(f"   Name: {md.get('componentName') or md.get('name', args.name)}")
             else:
                 print("❌ Failed to create channel")
         

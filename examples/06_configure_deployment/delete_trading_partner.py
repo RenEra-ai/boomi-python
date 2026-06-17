@@ -40,7 +40,7 @@ import argparse
 from typing import List, Optional
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../src'))
 
-from boomi import Boomi
+from boomi import Boomi, extract_component_xml_metadata
 from boomi.models import (
     TradingPartnerProcessingGroupQueryConfig,
     TradingPartnerProcessingGroupQueryConfigQueryFilter,
@@ -64,13 +64,15 @@ class TradingPartnerDeleter:
                 id_=tp_id
             )
 
+            # tp is opaque raw XML bytes — read root attributes (read-only).
+            md = extract_component_xml_metadata(tp)
             info = {
-                'id': getattr(tp, 'id_', getattr(tp, 'component_id', 'N/A')),
-                'name': getattr(tp, 'component_name', getattr(tp, 'name', 'Unnamed')),
-                'standard': getattr(tp, 'standard', 'N/A'),
-                'classification': getattr(tp, 'classification', 'N/A'),
-                'folder': getattr(tp, 'folder_name', 'N/A'),
-                'deleted': getattr(tp, 'deleted', False)
+                'id': md.get('componentId', tp_id),
+                'name': md.get('componentName') or md.get('name', 'Unnamed'),
+                'standard': md.get('standard', 'N/A'),
+                'classification': md.get('classification', 'N/A'),
+                'folder': md.get('folderName', 'N/A'),
+                'deleted': md.get('deleted', 'false').lower() == 'true',
             }
 
             return info
@@ -285,13 +287,14 @@ class TradingPartnerDeleter:
         print("="*70)
 
         try:
-            # Get the trading partner (even if deleted)
+            # Get the trading partner (even if deleted) as raw XML bytes.
             tp = self.sdk.trading_partner_component.get_trading_partner_component(
                 id_=tp_id
             )
 
-            deleted = getattr(tp, 'deleted', False)
-            name = getattr(tp, 'component_name', getattr(tp, 'name', 'Unnamed'))
+            md = extract_component_xml_metadata(tp)
+            deleted = md.get('deleted', 'false').lower() == 'true'
+            name = md.get('componentName') or md.get('name', 'Unnamed')
 
             print(f"\n📋 Trading Partner: {name}")
             print(f"   Deleted: {deleted}")
@@ -300,7 +303,7 @@ class TradingPartnerDeleter:
                 print("\n⚠️  Trading partner is not deleted - no restore needed")
                 return False
 
-            # Restore by updating (POST to the same ID restores it)
+            # Restore by POSTing the exact raw XML back (raw bytes accepted as-is).
             print("\n🔄 Restoring trading partner...")
             self.sdk.trading_partner_component.update_trading_partner_component(
                 id_=tp_id,

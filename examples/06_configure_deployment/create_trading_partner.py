@@ -155,27 +155,17 @@ def get_trading_partner(sdk, trading_partner_id):
         )
 
         print("✅ Trading partner retrieved successfully!")
-        print(f"   Type: {type(result).__name__}")
+        print(f"   Type: raw XML ({len(result)} bytes)")
 
-        # Display key information
-        if hasattr(result, 'name'):
-            print(f"   Name: {result.name}")
-        if hasattr(result, 'id_'):
-            print(f"   ID: {result.id_}")
-        if hasattr(result, 'standard'):
-            print(f"   Standard: {result.standard}")
-        if hasattr(result, 'classification'):
-            print(f"   Classification: {result.classification}")
-        if hasattr(result, 'folder_name'):
-            print(f"   Folder: {result.folder_name}")
-
-        # Show contact info if available
-        if hasattr(result, 'contact_info') and result.contact_info:
-            contact = result.contact_info
-            if hasattr(contact, 'contact_name'):
-                print(f"   Contact: {contact.contact_name}")
-            if hasattr(contact, 'email'):
-                print(f"   Email: {contact.email}")
+        # Result is opaque raw XML bytes — read root attributes (read-only).
+        md = extract_component_xml_metadata(result)
+        print(f"   Name: {md.get('componentName') or md.get('name', 'N/A')}")
+        print(f"   ID: {md.get('componentId', trading_partner_id)}")
+        print(f"   Standard: {md.get('standard', 'N/A')}")
+        print(f"   Classification: {md.get('classification', 'N/A')}")
+        print(f"   Folder: {md.get('folderName', 'N/A')}")
+        print(f"   Deleted: {md.get('deleted', 'false')}")
+        print("   (full configuration is in the returned raw XML)")
 
         print("\n🎉 GET operation successful!")
 
