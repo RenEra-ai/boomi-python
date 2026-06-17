@@ -5,7 +5,6 @@ from ..shared_communication_channel_component import (
     SharedCommunicationChannelComponentService,
 )
 from ...models import (
-    SharedCommunicationChannelComponentBulkResponse,
     SharedCommunicationChannelComponentBulkRequest,
     SharedCommunicationChannelComponentQueryResponse,
     SharedCommunicationChannelComponentQueryConfig,
@@ -45,7 +44,7 @@ class SharedCommunicationChannelComponentServiceAsync(
 
     def bulk_shared_communication_channel_component(
         self, request_body: SharedCommunicationChannelComponentBulkRequest = None
-    ) -> Awaitable[Union[SharedCommunicationChannelComponentBulkResponse, str, dict]]:
+    ) -> Awaitable[bytes]:
         return to_async(super().bulk_shared_communication_channel_component)(
             request_body
         )

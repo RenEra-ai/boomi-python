@@ -9,7 +9,6 @@ from ..models.utils.cast_models import cast_models
 from ..net.transport.utils import require_raw_xml
 from ..models import (
     TradingPartnerComponentBulkRequest,
-    TradingPartnerComponentBulkResponse,
     TradingPartnerComponentQueryConfig,
     TradingPartnerComponentQueryResponse,
 )
@@ -166,16 +165,19 @@ class TradingPartnerComponentService(BaseService):
     @cast_models
     def bulk_trading_partner_component(
         self, request_body: TradingPartnerComponentBulkRequest = None
-    ) -> Union[TradingPartnerComponentBulkResponse, str, dict]:
+    ) -> bytes:
         """The bulk GET operation returns multiple Trading Partner Component objects based on the supplied IDs, to a maximum of 100.
+
+        Trading Partner Component XML is opaque (it carries open-ended EDI /
+        communication config subtrees), so the bulk response is returned as the
+        whole raw XML envelope, byte-for-byte, with no splitting or per-component
+        re-serialization (which would be lossy and would drop non-200 entries).
 
         :param request_body: The request body., defaults to None
         :type request_body: TradingPartnerComponentBulkRequest, optional
-        ...
-        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
-        ...
-        :return: The parsed response data.
-        :rtype: Union[TradingPartnerComponentBulkResponse, str, dict]
+        :raises ApiError: If the request fails.
+        :return: The raw XML bulk-response envelope exactly as returned by the API.
+        :rtype: bytes
         """
 
         Validator(TradingPartnerComponentBulkRequest).is_optional().validate(
@@ -187,13 +189,20 @@ class TradingPartnerComponentService(BaseService):
                 f"{self.base_url or Environment.DEFAULT.url}/TradingPartnerComponent/bulk",
                 [self.get_access_token(), self.get_basic_auth()],
             )
+            .add_header("Accept", "application/xml")
             .serialize()
             .set_method("POST")
             .set_body(request_body)
         )
 
-        response, status, content = self.send_request(serialized_request)
-        return self._deserialize_or_raw(TradingPartnerComponentBulkResponse, response, status, content)
+        response, status, _ = self.send_request_raw(serialized_request)
+        if 200 <= status < 300:
+            return response
+        raise ApiError(
+            f"Failed to bulk get trading partner components: HTTP {status}",
+            status,
+            response,
+        )
 
     @cast_models
     def query_trading_partner_component(

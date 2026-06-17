@@ -2,7 +2,16 @@
 from __future__ import annotations
 from .utils.json_map import JsonMap
 from .utils.base_model import BaseModel
-from .publisher_integration_pack_expression import PublisherIntegrationPackExpression
+from .publisher_integration_pack_expression import (
+    PublisherIntegrationPackExpression,
+    PublisherIntegrationPackExpressionGuard,
+)
+from .publisher_integration_pack_simple_expression import (
+    PublisherIntegrationPackSimpleExpression,
+)
+from .publisher_integration_pack_grouping_expression import (
+    PublisherIntegrationPackGroupingExpression,
+)
 
 
 @JsonMap({})
@@ -19,8 +28,8 @@ class PublisherIntegrationPackQueryConfigQueryFilter(BaseModel):
         :param expression: expression
         :type expression: PublisherIntegrationPackExpression
         """
-        self.expression = self._define_object(
-            expression, PublisherIntegrationPackExpression
+        self.expression = PublisherIntegrationPackExpressionGuard.return_one_of(
+            expression
         )
         self._kwargs = kwargs
 

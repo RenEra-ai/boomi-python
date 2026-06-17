@@ -73,7 +73,9 @@ class ExecutionRecordService(BaseService):
         return self._deserialize_or_raw(ExecutionRecordQueryResponse, response, status, content)
 
     @cast_models
-    def async_get_execution_record(self, id_: str) -> Union[ExecutionRecord, str, None]:
+    def async_get_execution_record(
+        self, id_: str
+    ) -> Union[ExecutionRecord, str, dict, None]:
         """Retrieves the execution record asynchronously for the specified ID.
 
         Use the requestId returned by ExecutionRequest create to poll this endpoint.
@@ -90,7 +92,7 @@ class ExecutionRecordService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed execution record, or None if still processing (HTTP 202).
-        :rtype: Union[ExecutionRecord, str, None]
+        :rtype: Union[ExecutionRecord, str, dict, None]
         """
 
         Validator(str).validate(id_)
@@ -106,6 +108,13 @@ class ExecutionRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
+
+        # The async endpoint returns a bare HTTP 202 while the execution is still
+        # processing; some responses carry no AsyncOperationResult wrapper to
+        # inspect below, so short-circuit on the transport status to honor the
+        # documented "None while processing" contract.
+        if status == 202:
+            return None
 
         data = response
         if content == "application/xml":
@@ -144,9 +153,23 @@ class ExecutionRecordService(BaseService):
         if data is None:
             return None
 
-        return ExecutionRecord._unmap(data)
+        # Mirror BaseService._deserialize_or_raw: a sparse/partial 2xx body that a
+        # strict ExecutionRecord cannot hydrate must not be lost. Return the raw
+        # unwrapped payload (dict/str) instead of letting _unmap raise, honoring
+        # the declared Union[ExecutionRecord, str, dict, None] return contract.
+        try:
+            return ExecutionRecord._unmap(data)
+        except Exception:
+            # Match BaseService._deserialize_or_raw: decode an undecoded bytes
+            # body so the raw fallback stays within the declared str return
+            # member instead of leaking bytes.
+            if isinstance(data, (bytes, bytearray)):
+                return bytes(data).decode("utf-8", errors="replace")
+            return data
 
-    def get_execution_record(self, id_: str) -> Union[ExecutionRecord, str, None]:
+    def get_execution_record(
+        self, id_: str
+    ) -> Union[ExecutionRecord, str, dict, None]:
         """Retrieves the execution record for the specified ID.
 
         Convenience wrapper for async_get_execution_record(). Note: this calls
@@ -155,19 +178,19 @@ class ExecutionRecordService(BaseService):
         :param id_: The execution record ID.
         :type id_: str
         :return: The parsed response data.
-        :rtype: Union[ExecutionRecord, str, None]
+        :rtype: Union[ExecutionRecord, str, dict, None]
         """
         return self.async_get_execution_record(id_)
 
     def async_get_response_execution_record(
         self, id_: str
-    ) -> Union[ExecutionRecord, str, None]:
+    ) -> Union[ExecutionRecord, str, dict, None]:
         """Alias for :meth:`async_get_execution_record` matching the OpenAPI
         operationId ``AsyncGetResponseExecutionRecord`` (GET /ExecutionRecord/async/{id}).
 
         :param id_: The execution record ID.
         :type id_: str
         :return: The parsed response data.
-        :rtype: Union[ExecutionRecord, str, None]
+        :rtype: Union[ExecutionRecord, str, dict, None]
         """
         return self.async_get_execution_record(id_)

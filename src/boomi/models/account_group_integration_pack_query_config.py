@@ -4,6 +4,13 @@ from .utils.json_map import JsonMap
 from .utils.base_model import BaseModel
 from .account_group_integration_pack_expression import (
     AccountGroupIntegrationPackExpression,
+    AccountGroupIntegrationPackExpressionGuard,
+)
+from .account_group_integration_pack_simple_expression import (
+    AccountGroupIntegrationPackSimpleExpression,
+)
+from .account_group_integration_pack_grouping_expression import (
+    AccountGroupIntegrationPackGroupingExpression,
 )
 
 
@@ -21,8 +28,8 @@ class AccountGroupIntegrationPackQueryConfigQueryFilter(BaseModel):
         :param expression: expression
         :type expression: AccountGroupIntegrationPackExpression
         """
-        self.expression = self._define_object(
-            expression, AccountGroupIntegrationPackExpression
+        self.expression = AccountGroupIntegrationPackExpressionGuard.return_one_of(
+            expression
         )
         self._kwargs = kwargs
 

@@ -3,7 +3,6 @@ from typing import Awaitable, Union
 from .utils.to_async import to_async
 from ..organization_component import OrganizationComponentService
 from ...models import (
-    OrganizationComponentBulkResponse,
     OrganizationComponentBulkRequest,
     OrganizationComponentQueryResponse,
     OrganizationComponentQueryConfig,
@@ -33,7 +32,7 @@ class OrganizationComponentServiceAsync(OrganizationComponentService):
 
     def bulk_organization_component(
         self, request_body: OrganizationComponentBulkRequest = None
-    ) -> Awaitable[Union[str, OrganizationComponentBulkResponse, dict]]:
+    ) -> Awaitable[bytes]:
         return to_async(super().bulk_organization_component)(request_body)
 
     def query_organization_component(

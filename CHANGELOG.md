@@ -1,5 +1,54 @@
 # Changelog
 
+## 4.0.0 — Component-family bulk is opaque; typed integration-pack query filters (breaking)
+
+Completes the v3.0.0 opaque/byte-faithful migration for the component-family
+services and fixes two response-fidelity gaps surfaced by a full SDK↔OpenAPI
+audit.
+
+### Breaking changes
+
+- **`bulk_*` is now opaque/raw for the three sibling component-family services**
+  — `TradingPartnerComponentService.bulk_trading_partner_component`,
+  `OrganizationComponentService.bulk_organization_component`, and
+  `SharedCommunicationChannelComponentService.bulk_shared_communication_channel_component`
+  now return the **whole raw XML bulk-response envelope** (`bytes`), like
+  `ComponentService.bulk_component`, instead of hydrating a typed
+  `*BulkResponse` model. These components carry open-ended config subtrees, so
+  the previous per-component model hydration was the same lossy
+  XML→model round-trip the v3.0.0 contract removed from `create_*`/`get_*`/
+  `update_*`. v3.0.0 left these `bulk_*` methods typed; v4.0.0 makes them raw
+  for consistency. (sync + async; return annotation → `bytes`.)
+- **Removed** the non-spec junk models `AccountGroupIntegrationPackExpressionMetadata`
+  and `PublisherIntegrationPackExpressionMetadata` (and the entity-shaped
+  `*IntegrationPackExpression` models that carried `id`/`name`/`status`),
+  replacing them with the standard query-expression triplet (see Fixed).
+
+### Fixed
+
+- **Typed query filters for `AccountGroupIntegrationPack` and
+  `PublisherIntegrationPack`.** The OpenAPI `*IntegrationPackExpression` schema is
+  `oneOf(SimpleExpression, GroupingExpression)`, but the SDK had generated an
+  entity-shaped placeholder (`id`/`name`/`status`/`metadata`) with no
+  Simple/Grouping classes, so callers could not build a typed query filter for
+  these two `/query` endpoints. Added the standard
+  `*IntegrationPackSimpleExpression` (with `operator`/`property` enums and
+  `argument`), `*IntegrationPackGroupingExpression` (`operator`/`nestedExpression`),
+  and the `*IntegrationPackExpression` `Union` + guard, and rewired the query
+  configs — matching every other queryable entity.
+- **`FieldSummary` no longer drops `CloudManagedSecretConfig`.** The spec defines
+  `FieldSummary = allOf[Field, …]` and `Field` carries `CloudManagedSecretConfig`,
+  but `FieldSummary` omitted it, so cloud-managed secret config returned by the
+  connection-field-extension-summary query endpoints was silently dropped. Added
+  the field (mirroring `Field`).
+- **`ExecutionRecord` async-get honors the raw-fallback contract.**
+  `async_get_execution_record` (behind `get_execution_record` /
+  `async_get_response_execution_record`) hydrated via a bare
+  `ExecutionRecord._unmap(...)`, the only service site outside
+  `BaseService._deserialize_or_raw`; a sparse/partial 2xx body raised
+  `TypeError` and lost the success. It now falls back to the raw payload, and the
+  declared return type is `Union[ExecutionRecord, str, dict, None]` (sync + async).
+
 ## 3.0.0 — Component XML is opaque / byte-faithful (breaking)
 
 Component XML (and the other open-ended component-family endpoints) is now an

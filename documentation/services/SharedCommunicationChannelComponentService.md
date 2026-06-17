@@ -172,7 +172,7 @@ To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction
 
 **Return Type**
 
-`SharedCommunicationChannelComponentBulkResponse`
+`bytes` — the whole raw XML bulk-response envelope, returned byte-for-byte. The SDK does not split it into per-component fragments (which would be lossy and would drop non-200 entries); parse the envelope yourself if you need individual components.
 
 **Example Usage Code Snippet**
 

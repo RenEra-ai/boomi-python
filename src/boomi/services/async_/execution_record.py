@@ -22,12 +22,12 @@ class ExecutionRecordServiceAsync(ExecutionRecordService):
 
     def async_get_execution_record(
         self, id_: str
-    ) -> Awaitable[Union[ExecutionRecord, str, None]]:
+    ) -> Awaitable[Union[ExecutionRecord, str, dict, None]]:
         return to_async(super().async_get_execution_record)(id_)
 
     def get_execution_record(
         self, id_: str
-    ) -> Awaitable[Union[ExecutionRecord, str, None]]:
+    ) -> Awaitable[Union[ExecutionRecord, str, dict, None]]:
         # Wrap the real underlying method directly. Wrapping the sync
         # ``get_execution_record`` convenience forwarder would re-dispatch through
         # ``self.async_get_execution_record`` (the async override) and return an
@@ -36,5 +36,5 @@ class ExecutionRecordServiceAsync(ExecutionRecordService):
 
     def async_get_response_execution_record(
         self, id_: str
-    ) -> Awaitable[Union[ExecutionRecord, str, None]]:
+    ) -> Awaitable[Union[ExecutionRecord, str, dict, None]]:
         return to_async(super().async_get_execution_record)(id_)

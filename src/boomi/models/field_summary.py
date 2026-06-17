@@ -3,6 +3,7 @@ from __future__ import annotations
 from .utils.json_map import JsonMap
 from .utils.base_model import BaseModel
 from .utils.sentinel import SENTINEL
+from .cloud_managed_secret_config import CloudManagedSecretConfig
 from .custom_properties import CustomProperties
 
 
@@ -14,6 +15,7 @@ from .custom_properties import CustomProperties
         "id_": "id",
         "use_default": "useDefault",
         "uses_encryption": "usesEncryption",
+        "cloud_managed_secret_config": "CloudManagedSecretConfig",
         "oauth2_authorization_url": "oauth2AuthorizationUrl",
     }
 )
@@ -34,6 +36,8 @@ class FieldSummary(BaseModel):
     :type uses_encryption: bool, optional
     :param value: value, defaults to None
     :type value: str, optional
+    :param cloud_managed_secret_config: cloud_managed_secret_config, defaults to None
+    :type cloud_managed_secret_config: CloudManagedSecretConfig, optional
     :param oauth2_authorization_url: oauth2_authorization_url, defaults to None
     :type oauth2_authorization_url: str, optional
     """
@@ -47,6 +51,7 @@ class FieldSummary(BaseModel):
         use_default: bool = SENTINEL,
         uses_encryption: bool = SENTINEL,
         value: str = SENTINEL,
+        cloud_managed_secret_config: CloudManagedSecretConfig = SENTINEL,
         oauth2_authorization_url: str = SENTINEL,
         **kwargs,
     ):
@@ -66,6 +71,8 @@ class FieldSummary(BaseModel):
         :type uses_encryption: bool, optional
         :param value: value, defaults to None
         :type value: str, optional
+        :param cloud_managed_secret_config: cloud_managed_secret_config, defaults to None
+        :type cloud_managed_secret_config: CloudManagedSecretConfig, optional
         :param oauth2_authorization_url: oauth2_authorization_url, defaults to None
         :type oauth2_authorization_url: str, optional
         """
@@ -85,6 +92,10 @@ class FieldSummary(BaseModel):
             self.uses_encryption = uses_encryption
         if value is not SENTINEL:
             self.value = value
+        if cloud_managed_secret_config is not SENTINEL:
+            self.cloud_managed_secret_config = self._define_object(
+                cloud_managed_secret_config, CloudManagedSecretConfig
+            )
         if oauth2_authorization_url is not SENTINEL:
             self.oauth2_authorization_url = oauth2_authorization_url
         self._kwargs = kwargs

@@ -3,7 +3,6 @@ from typing import Awaitable, Union
 from .utils.to_async import to_async
 from ..trading_partner_component import TradingPartnerComponentService
 from ...models import (
-    TradingPartnerComponentBulkResponse,
     TradingPartnerComponentBulkRequest,
     TradingPartnerComponentQueryResponse,
     TradingPartnerComponentQueryConfig,
@@ -33,7 +32,7 @@ class TradingPartnerComponentServiceAsync(TradingPartnerComponentService):
 
     def bulk_trading_partner_component(
         self, request_body: TradingPartnerComponentBulkRequest = None
-    ) -> Awaitable[Union[TradingPartnerComponentBulkResponse, str, dict]]:
+    ) -> Awaitable[bytes]:
         return to_async(super().bulk_trading_partner_component)(request_body)
 
     def query_trading_partner_component(

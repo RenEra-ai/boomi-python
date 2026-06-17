@@ -1893,13 +1893,31 @@ from .shared_communication_channel_component_grouping_expression import (
 )
 from .account_group_integration_pack_expression import (
     AccountGroupIntegrationPackExpression,
-    AccountGroupIntegrationPackExpressionMetadata,
+    AccountGroupIntegrationPackExpressionGuard,
+)
+from .account_group_integration_pack_simple_expression import (
+    AccountGroupIntegrationPackSimpleExpression,
+    AccountGroupIntegrationPackSimpleExpressionOperator,
+    AccountGroupIntegrationPackSimpleExpressionProperty,
+)
+from .account_group_integration_pack_grouping_expression import (
+    AccountGroupIntegrationPackGroupingExpression,
+    AccountGroupIntegrationPackGroupingExpressionOperator,
 )
 from .publisher_packaged_components import PublisherPackagedComponents
 from .publisher_packaged_component import PublisherPackagedComponent
 from .publisher_integration_pack_expression import (
     PublisherIntegrationPackExpression,
-    PublisherIntegrationPackExpressionMetadata,
+    PublisherIntegrationPackExpressionGuard,
+)
+from .publisher_integration_pack_simple_expression import (
+    PublisherIntegrationPackSimpleExpression,
+    PublisherIntegrationPackSimpleExpressionOperator,
+    PublisherIntegrationPackSimpleExpressionProperty,
+)
+from .publisher_integration_pack_grouping_expression import (
+    PublisherIntegrationPackGroupingExpression,
+    PublisherIntegrationPackGroupingExpressionOperator,
 )
 from .release_packaged_components import ReleasePackagedComponents
 from .release_packaged_component import ReleasePackagedComponent

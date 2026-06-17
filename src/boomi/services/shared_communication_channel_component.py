@@ -9,7 +9,6 @@ from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
     SharedCommunicationChannelComponentBulkRequest,
-    SharedCommunicationChannelComponentBulkResponse,
     SharedCommunicationChannelComponentQueryConfig,
     SharedCommunicationChannelComponentQueryResponse,
 )
@@ -162,16 +161,20 @@ class SharedCommunicationChannelComponentService(BaseService):
     @cast_models
     def bulk_shared_communication_channel_component(
         self, request_body: SharedCommunicationChannelComponentBulkRequest = None
-    ) -> Union[SharedCommunicationChannelComponentBulkResponse, str, dict]:
+    ) -> bytes:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
+
+        Shared Communication Channel Component XML is opaque (it carries
+        open-ended communication config subtrees), so the bulk response is
+        returned as the whole raw XML envelope, byte-for-byte, with no splitting
+        or per-component re-serialization (which would be lossy and would drop
+        non-200 entries).
 
         :param request_body: The request body., defaults to None
         :type request_body: SharedCommunicationChannelComponentBulkRequest, optional
-        ...
-        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
-        ...
-        :return: The parsed response data.
-        :rtype: Union[SharedCommunicationChannelComponentBulkResponse, str, dict]
+        :raises ApiError: If the request fails.
+        :return: The raw XML bulk-response envelope exactly as returned by the API.
+        :rtype: bytes
         """
 
         Validator(
@@ -183,14 +186,19 @@ class SharedCommunicationChannelComponentService(BaseService):
                 f"{self.base_url or Environment.DEFAULT.url}/SharedCommunicationChannelComponent/bulk",
                 [self.get_access_token(), self.get_basic_auth()],
             )
+            .add_header("Accept", "application/xml")
             .serialize()
             .set_method("POST")
             .set_body(request_body)
         )
 
-        response, status, content = self.send_request(serialized_request)
-        return self._deserialize_or_raw(
-            SharedCommunicationChannelComponentBulkResponse, response, status, content
+        response, status, _ = self.send_request_raw(serialized_request)
+        if 200 <= status < 300:
+            return response
+        raise ApiError(
+            f"Failed to bulk get shared communication channel components: HTTP {status}",
+            status,
+            response,
         )
 
     @cast_models

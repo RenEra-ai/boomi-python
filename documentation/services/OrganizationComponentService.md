@@ -171,7 +171,7 @@ The bulk GET operation returns multiple Account objects based on the supplied ac
 
 **Return Type**
 
-`str`
+`bytes` — the whole raw XML bulk-response envelope, returned byte-for-byte. The SDK does not split it into per-component fragments (which would be lossy and would drop non-200 entries); parse the envelope yourself if you need individual components.
 
 **Example Usage Code Snippet**
 
@@ -195,10 +195,10 @@ request_body = OrganizationComponentBulkRequest(
     type_="GET"
 )
 
-result = sdk.organization_component.bulk_organization_component(request_body=request_body)
+envelope = sdk.organization_component.bulk_organization_component(request_body=request_body)
 
-with open("output-file.ext", "w") as f:
-    f.write(result)
+with open("organization-components.xml", "wb") as f:
+    f.write(envelope)
 ```
 
 ## query_organization_component

@@ -171,7 +171,7 @@ The bulk GET operation returns multiple Trading Partner Component objects based 
 
 **Return Type**
 
-`TradingPartnerComponentBulkResponse`
+`bytes` — the whole raw XML bulk-response envelope, returned byte-for-byte. The SDK does not split it into per-component fragments (which would be lossy and would drop non-200 entries); parse the envelope yourself if you need individual components.
 
 **Example Usage Code Snippet**
 
