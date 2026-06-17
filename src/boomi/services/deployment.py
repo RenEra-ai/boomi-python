@@ -32,7 +32,7 @@ class DeploymentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Deployment, str]
+        :rtype: Union[Deployment, str, dict]
         """
 
         Validator(Deployment).is_optional().validate(request_body)
@@ -60,7 +60,7 @@ class DeploymentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[Deployment, str]
+        :rtype: Union[Deployment, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -90,7 +90,7 @@ class DeploymentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[DeploymentBulkResponse, str]
+        :rtype: Union[DeploymentBulkResponse, str, dict]
         """
 
         Validator(DeploymentBulkRequest).is_optional().validate(request_body)
@@ -120,7 +120,7 @@ class DeploymentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[DeploymentQueryResponse, str]
+        :rtype: Union[DeploymentQueryResponse, str, dict]
         """
 
         Validator(DeploymentQueryConfig).is_optional().validate(request_body)
@@ -150,7 +150,7 @@ class DeploymentService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[DeploymentQueryResponse, str]
+        :rtype: Union[DeploymentQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)

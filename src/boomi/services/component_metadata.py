@@ -3,7 +3,6 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
@@ -29,7 +28,7 @@ class ComponentMetadataService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ComponentMetadata, str]
+        :rtype: Union[ComponentMetadata, str, dict]
         """
 
         Validator(ComponentMetadata).is_optional().validate(request_body)
@@ -57,7 +56,7 @@ class ComponentMetadataService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ComponentMetadata, str]
+        :rtype: Union[ComponentMetadata, str, dict]
         """
 
         Validator(str).validate(id_)
@@ -89,7 +88,7 @@ class ComponentMetadataService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ComponentMetadata, str]
+        :rtype: Union[ComponentMetadata, str, dict]
         """
 
         Validator(ComponentMetadata).is_optional().validate(request_body)
@@ -146,7 +145,7 @@ class ComponentMetadataService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ComponentMetadataBulkResponse, str]
+        :rtype: Union[ComponentMetadataBulkResponse, str, dict]
         """
 
         Validator(ComponentMetadataBulkRequest).is_optional().validate(request_body)
@@ -180,7 +179,7 @@ class ComponentMetadataService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ComponentMetadataQueryResponse, str]
+        :rtype: Union[ComponentMetadataQueryResponse, str, dict]
         """
 
         Validator(ComponentMetadataQueryConfig).is_optional().validate(request_body)
@@ -210,7 +209,7 @@ class ComponentMetadataService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ComponentMetadataQueryResponse, str]
+        :rtype: Union[ComponentMetadataQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)

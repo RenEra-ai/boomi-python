@@ -3,7 +3,6 @@ from typing import Union
 from .utils.validator import Validator
 from .utils.base_service import BaseService
 from ..net.transport.serializer import Serializer
-from ..net.transport.api_error import ApiError
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
@@ -26,7 +25,7 @@ class OdetteConnectorRecordService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[OdetteConnectorRecordQueryResponse, str]
+        :rtype: Union[OdetteConnectorRecordQueryResponse, str, dict]
         """
 
         Validator(OdetteConnectorRecordQueryConfig).is_optional().validate(request_body)
@@ -56,7 +55,7 @@ class OdetteConnectorRecordService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[OdetteConnectorRecordQueryResponse, str]
+        :rtype: Union[OdetteConnectorRecordQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)

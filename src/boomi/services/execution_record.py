@@ -24,7 +24,7 @@ class ExecutionRecordService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ExecutionRecordQueryResponse, str]
+        :rtype: Union[ExecutionRecordQueryResponse, str, dict]
         """
 
         Validator(ExecutionRecordQueryConfig).is_optional().validate(request_body)
@@ -54,7 +54,7 @@ class ExecutionRecordService(BaseService):
         :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
         ...
         :return: The parsed response data.
-        :rtype: Union[ExecutionRecordQueryResponse, str]
+        :rtype: Union[ExecutionRecordQueryResponse, str, dict]
         """
 
         Validator(str).validate(request_body)
@@ -155,7 +155,7 @@ class ExecutionRecordService(BaseService):
         :param id_: The execution record ID.
         :type id_: str
         :return: The parsed response data.
-        :rtype: Union[ExecutionRecord, str]
+        :rtype: Union[ExecutionRecord, str, None]
         """
         return self.async_get_execution_record(id_)
 
@@ -168,6 +168,6 @@ class ExecutionRecordService(BaseService):
         :param id_: The execution record ID.
         :type id_: str
         :return: The parsed response data.
-        :rtype: Union[ExecutionRecord, str]
+        :rtype: Union[ExecutionRecord, str, None]
         """
         return self.async_get_execution_record(id_)
