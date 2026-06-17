@@ -157,13 +157,21 @@ processes = sdk.component_metadata.query_component_metadata(
     )
 )
 
-# Get a specific component
-component = sdk.component.get_component(component_id="component-id")
+# Component XML is opaque: get/create/update send & return RAW bytes,
+# byte-for-byte identical to the Boomi API (the SDK never parses it).
+from boomi import extract_component_xml_metadata
 
-# Update component
+xml = sdk.component.get_component(component_id="component-id")  # -> bytes
+
+# Read the root <Component> attributes without re-parsing the whole document
+meta = extract_component_xml_metadata(xml)
+print(meta["componentId"], meta["name"], meta["type"], meta["version"])
+
+# Update by passing the exact raw XML (str/bytes); a model/dict is rejected
+# with UnsafeComponentXmlSerializationError.
 updated = sdk.component.update_component(
     component_id="component-id",
-    request_body=component_data
+    request_body=xml,
 )
 ```
 
@@ -202,7 +210,7 @@ status = sdk.execution_record.get_execution_record(
 
 ```bash
 # Clone the repository
-git clone https://github.com/Glebuar/boomi-python.git
+git clone https://github.com/RenEra-ai/boomi-python.git
 cd boomi-python
 
 # Install development dependencies
@@ -271,7 +279,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🆘 Support
 
-- **Issues**: [GitHub Issues](https://github.com/Glebuar/boomi-python/issues)
+- **Issues**: [GitHub Issues](https://github.com/RenEra-ai/boomi-python/issues)
 - **Documentation**: [Boomi Help Center](https://help.boomi.com/)
 - **API Reference**: [Platform API Documentation](https://help.boomi.com/docs/Atomsphere/Platform/)
 

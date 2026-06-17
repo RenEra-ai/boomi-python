@@ -31,9 +31,11 @@ client = Boomi(
 environments = client.environment.query_environment()
 print(f"Found {len(environments.result)} environments")
 
-# Get a specific process component
-process = client.component.get_component(component_id="your-process-id")
-print(f"Process: {process.name}")
+# Component XML is opaque: get_component returns RAW bytes (the SDK never parses it)
+from boomi import extract_component_xml_metadata
+
+xml = client.component.get_component(component_id="your-process-id")  # -> bytes
+print(f"Process: {extract_component_xml_metadata(xml)['name']}")
 
 # Execute a process
 from boomi.models import ExecutionRequest
@@ -184,7 +186,7 @@ Each service provides intuitive methods following REST conventions:
 - **[Boomi Platform Documentation](https://help.boomi.com/)**
 - **[API Reference](https://help.boomi.com/docs/atomsphere/api/)**
 - **[OpenAPI Specification](https://api.boomi.com/docs/)**
-- **[SDK Examples](https://github.com/Glebuar/boomi-python/tree/main/examples)**
+- **[SDK Examples](https://github.com/RenEra-ai/boomi-python/tree/main/examples)**
 
 ## 🤝 Contributing
 
