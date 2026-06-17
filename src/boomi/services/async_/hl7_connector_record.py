@@ -12,10 +12,10 @@ class Hl7ConnectorRecordServiceAsync(Hl7ConnectorRecordService):
 
     def query_hl7_connector_record(
         self, request_body: Hl7ConnectorRecordQueryConfig = None
-    ) -> Awaitable[Union[Hl7ConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[Hl7ConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_hl7_connector_record)(request_body)
 
     def query_more_hl7_connector_record(
         self, request_body: str
-    ) -> Awaitable[Union[Hl7ConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[Hl7ConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_more_hl7_connector_record)(request_body)

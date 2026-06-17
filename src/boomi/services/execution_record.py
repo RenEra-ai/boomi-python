@@ -73,7 +73,7 @@ class ExecutionRecordService(BaseService):
         return self._deserialize_or_raw(ExecutionRecordQueryResponse, response, status, content)
 
     @cast_models
-    def async_get_execution_record(self, id_: str) -> Union[ExecutionRecord, str]:
+    def async_get_execution_record(self, id_: str) -> Union[ExecutionRecord, str, None]:
         """Retrieves the execution record asynchronously for the specified ID.
 
         Use the requestId returned by ExecutionRequest create to poll this endpoint.
@@ -146,7 +146,7 @@ class ExecutionRecordService(BaseService):
 
         return ExecutionRecord._unmap(data)
 
-    def get_execution_record(self, id_: str) -> Union[ExecutionRecord, str]:
+    def get_execution_record(self, id_: str) -> Union[ExecutionRecord, str, None]:
         """Retrieves the execution record for the specified ID.
 
         Convenience wrapper for async_get_execution_record(). Note: this calls
@@ -161,7 +161,7 @@ class ExecutionRecordService(BaseService):
 
     def async_get_response_execution_record(
         self, id_: str
-    ) -> Union[ExecutionRecord, str]:
+    ) -> Union[ExecutionRecord, str, None]:
         """Alias for :meth:`async_get_execution_record` matching the OpenAPI
         operationId ``AsyncGetResponseExecutionRecord`` (GET /ExecutionRecord/async/{id}).
 

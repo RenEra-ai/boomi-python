@@ -18,17 +18,17 @@ class ComponentMetadataServiceAsync(ComponentMetadataService):
 
     def create_component_metadata(
         self, request_body: ComponentMetadata = None
-    ) -> Awaitable[Union[ComponentMetadata, str]]:
+    ) -> Awaitable[Union[ComponentMetadata, str, dict]]:
         return to_async(super().create_component_metadata)(request_body)
 
     def get_component_metadata(
         self, id_: str
-    ) -> Awaitable[Union[ComponentMetadata, str]]:
+    ) -> Awaitable[Union[ComponentMetadata, str, dict]]:
         return to_async(super().get_component_metadata)(id_)
 
     def update_component_metadata(
         self, id_: str, request_body: ComponentMetadata = None
-    ) -> Awaitable[Union[ComponentMetadata, str]]:
+    ) -> Awaitable[Union[ComponentMetadata, str, dict]]:
         return to_async(super().update_component_metadata)(id_, request_body)
 
     def delete_component_metadata(self, id_: str) -> Awaitable[None]:
@@ -36,15 +36,15 @@ class ComponentMetadataServiceAsync(ComponentMetadataService):
 
     def bulk_component_metadata(
         self, request_body: ComponentMetadataBulkRequest = None
-    ) -> Awaitable[Union[ComponentMetadataBulkResponse, str]]:
+    ) -> Awaitable[Union[ComponentMetadataBulkResponse, str, dict]]:
         return to_async(super().bulk_component_metadata)(request_body)
 
     def query_component_metadata(
         self, request_body: ComponentMetadataQueryConfig = None
-    ) -> Awaitable[Union[ComponentMetadataQueryResponse, str]]:
+    ) -> Awaitable[Union[ComponentMetadataQueryResponse, str, dict]]:
         return to_async(super().query_component_metadata)(request_body)
 
     def query_more_component_metadata(
         self, request_body: str
-    ) -> Awaitable[Union[ComponentMetadataQueryResponse, str]]:
+    ) -> Awaitable[Union[ComponentMetadataQueryResponse, str, dict]]:
         return to_async(super().query_more_component_metadata)(request_body)

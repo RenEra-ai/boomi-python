@@ -12,10 +12,10 @@ class EventServiceAsync(EventService):
 
     def query_event(
         self, request_body: EventQueryConfig = None
-    ) -> Awaitable[Union[EventQueryResponse, str]]:
+    ) -> Awaitable[Union[EventQueryResponse, str, dict]]:
         return to_async(super().query_event)(request_body)
 
     def query_more_event(
         self, request_body: str
-    ) -> Awaitable[Union[EventQueryResponse, str]]:
+    ) -> Awaitable[Union[EventQueryResponse, str, dict]]:
         return to_async(super().query_more_event)(request_body)

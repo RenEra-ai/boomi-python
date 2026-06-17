@@ -15,10 +15,10 @@ class EdiCustomConnectorRecordServiceAsync(EdiCustomConnectorRecordService):
 
     def query_edi_custom_connector_record(
         self, request_body: EdiCustomConnectorRecordQueryConfig = None
-    ) -> Awaitable[Union[EdiCustomConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[EdiCustomConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_edi_custom_connector_record)(request_body)
 
     def query_more_edi_custom_connector_record(
         self, request_body: str
-    ) -> Awaitable[Union[EdiCustomConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[EdiCustomConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_more_edi_custom_connector_record)(request_body)

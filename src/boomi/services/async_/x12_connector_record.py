@@ -12,10 +12,10 @@ class X12ConnectorRecordServiceAsync(X12ConnectorRecordService):
 
     def query_x12_connector_record(
         self, request_body: X12ConnectorRecordQueryConfig = None
-    ) -> Awaitable[Union[X12ConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[X12ConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_x12_connector_record)(request_body)
 
     def query_more_x12_connector_record(
         self, request_body: str
-    ) -> Awaitable[Union[X12ConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[X12ConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_more_x12_connector_record)(request_body)

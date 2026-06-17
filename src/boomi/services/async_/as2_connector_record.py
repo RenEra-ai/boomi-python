@@ -12,10 +12,10 @@ class As2ConnectorRecordServiceAsync(As2ConnectorRecordService):
 
     def query_as2_connector_record(
         self, request_body: As2ConnectorRecordQueryConfig = None
-    ) -> Awaitable[Union[As2ConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[As2ConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_as2_connector_record)(request_body)
 
     def query_more_as2_connector_record(
         self, request_body: str
-    ) -> Awaitable[Union[As2ConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[As2ConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_more_as2_connector_record)(request_body)

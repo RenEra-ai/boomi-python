@@ -15,10 +15,10 @@ class RosettaNetConnectorRecordServiceAsync(RosettaNetConnectorRecordService):
 
     def query_rosetta_net_connector_record(
         self, request_body: RosettaNetConnectorRecordQueryConfig = None
-    ) -> Awaitable[Union[RosettaNetConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[RosettaNetConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_rosetta_net_connector_record)(request_body)
 
     def query_more_rosetta_net_connector_record(
         self, request_body: str
-    ) -> Awaitable[Union[RosettaNetConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[RosettaNetConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_more_rosetta_net_connector_record)(request_body)

@@ -12,10 +12,10 @@ class Oftp2ConnectorRecordServiceAsync(Oftp2ConnectorRecordService):
 
     def query_oftp2_connector_record(
         self, request_body: Oftp2ConnectorRecordQueryConfig = None
-    ) -> Awaitable[Union[Oftp2ConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[Oftp2ConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_oftp2_connector_record)(request_body)
 
     def query_more_oftp2_connector_record(
         self, request_body: str
-    ) -> Awaitable[Union[Oftp2ConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[Oftp2ConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_more_oftp2_connector_record)(request_body)

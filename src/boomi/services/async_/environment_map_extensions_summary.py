@@ -17,12 +17,12 @@ class EnvironmentMapExtensionsSummaryServiceAsync(
 
     def query_environment_map_extensions_summary(
         self, request_body: EnvironmentMapExtensionsSummaryQueryConfig = None
-    ) -> Awaitable[Union[EnvironmentMapExtensionsSummaryQueryResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentMapExtensionsSummaryQueryResponse, str, dict]]:
         return to_async(super().query_environment_map_extensions_summary)(request_body)
 
     def query_more_environment_map_extensions_summary(
         self, request_body: str
-    ) -> Awaitable[Union[EnvironmentMapExtensionsSummaryQueryResponse, str]]:
+    ) -> Awaitable[Union[EnvironmentMapExtensionsSummaryQueryResponse, str, dict]]:
         return to_async(super().query_more_environment_map_extensions_summary)(
             request_body
         )

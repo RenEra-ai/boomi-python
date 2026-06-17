@@ -15,10 +15,10 @@ class OdetteConnectorRecordServiceAsync(OdetteConnectorRecordService):
 
     def query_odette_connector_record(
         self, request_body: OdetteConnectorRecordQueryConfig = None
-    ) -> Awaitable[Union[OdetteConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[OdetteConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_odette_connector_record)(request_body)
 
     def query_more_odette_connector_record(
         self, request_body: str
-    ) -> Awaitable[Union[OdetteConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[OdetteConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_more_odette_connector_record)(request_body)

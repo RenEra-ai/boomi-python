@@ -20,25 +20,25 @@ class DeploymentServiceAsync(DeploymentService):
 
     def create_deployment(
         self, request_body: Deployment = None
-    ) -> Awaitable[Union[Deployment, str]]:
+    ) -> Awaitable[Union[Deployment, str, dict]]:
         return to_async(super().create_deployment)(request_body)
 
-    def get_deployment(self, id_: str) -> Awaitable[Union[Deployment, str]]:
+    def get_deployment(self, id_: str) -> Awaitable[Union[Deployment, str, dict]]:
         return to_async(super().get_deployment)(id_)
 
     def bulk_deployment(
         self, request_body: DeploymentBulkRequest = None
-    ) -> Awaitable[Union[DeploymentBulkResponse, str]]:
+    ) -> Awaitable[Union[DeploymentBulkResponse, str, dict]]:
         return to_async(super().bulk_deployment)(request_body)
 
     def query_deployment(
         self, request_body: DeploymentQueryConfig = None
-    ) -> Awaitable[Union[DeploymentQueryResponse, str]]:
+    ) -> Awaitable[Union[DeploymentQueryResponse, str, dict]]:
         return to_async(super().query_deployment)(request_body)
 
     def query_more_deployment(
         self, request_body: str
-    ) -> Awaitable[Union[DeploymentQueryResponse, str]]:
+    ) -> Awaitable[Union[DeploymentQueryResponse, str, dict]]:
         return to_async(super().query_more_deployment)(request_body)
 
     def query_process_environment_attachment(

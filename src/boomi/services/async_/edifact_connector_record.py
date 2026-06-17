@@ -15,10 +15,10 @@ class EdifactConnectorRecordServiceAsync(EdifactConnectorRecordService):
 
     def query_edifact_connector_record(
         self, request_body: EdifactConnectorRecordQueryConfig = None
-    ) -> Awaitable[Union[EdifactConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[EdifactConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_edifact_connector_record)(request_body)
 
     def query_more_edifact_connector_record(
         self, request_body: str
-    ) -> Awaitable[Union[EdifactConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[EdifactConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_more_edifact_connector_record)(request_body)

@@ -15,10 +15,10 @@ class TradacomsConnectorRecordServiceAsync(TradacomsConnectorRecordService):
 
     def query_tradacoms_connector_record(
         self, request_body: TradacomsConnectorRecordQueryConfig = None
-    ) -> Awaitable[Union[TradacomsConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[TradacomsConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_tradacoms_connector_record)(request_body)
 
     def query_more_tradacoms_connector_record(
         self, request_body: str
-    ) -> Awaitable[Union[TradacomsConnectorRecordQueryResponse, str]]:
+    ) -> Awaitable[Union[TradacomsConnectorRecordQueryResponse, str, dict]]:
         return to_async(super().query_more_tradacoms_connector_record)(request_body)
