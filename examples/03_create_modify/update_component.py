@@ -60,10 +60,17 @@ def main():
         try:
             root = ET.fromstring(full_xml)
 
-            # Update the description attribute
-            current_desc = root.get('description', '')
+            # Update the <description> child element (Boomi uses a namespaced
+            # child element, not a root attribute).
+            ns = {'ns0': 'http://api.platform.boomi.com/'}
+            desc_elem = root.find('ns0:description', ns)
+            current_desc = desc_elem.text if desc_elem is not None else ''
             new_desc = f"Updated via SDK at {int(time.time())}"
-            root.set('description', new_desc)
+            if desc_elem is None:
+                desc_elem = ET.SubElement(
+                    root, '{http://api.platform.boomi.com/}description'
+                )
+            desc_elem.text = new_desc
 
             # Serialize once back to an XML string for the update body
             modified_xml = ET.tostring(root, encoding='unicode')

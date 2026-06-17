@@ -157,7 +157,12 @@ sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
 
 raw_xml = sdk.component.get_component(component_id="componentId")
 root = ET.fromstring(raw_xml)
-root.set("description", "updated via SDK")
+# Boomi uses a namespaced <description> CHILD element, not a root attribute.
+ns = {"ns0": "http://api.platform.boomi.com/"}
+desc = root.find("ns0:description", ns)
+if desc is None:
+    desc = ET.SubElement(root, "{http://api.platform.boomi.com/}description")
+desc.text = "updated via SDK"
 updated_xml = ET.tostring(root, encoding="unicode")   # serialize once, on your side
 
 result = sdk.component.update_component(

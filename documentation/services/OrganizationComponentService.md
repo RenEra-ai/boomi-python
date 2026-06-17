@@ -25,154 +25,105 @@ A list of all methods in the `OrganizationComponentService` service. Click on th
 
 ## create_organization_component
 
-The CREATE operation creates an Organization Component object with the specified component name. The request body requires the `componentName` field. If you omit the `folderName` field, it requires the `folderId` field — and vice versa. If you omit the `componentID` field, it assigns the value when you create the component. If you omit the `folderID` field, it assigns the value when you create the component.
+Create a Organization Component from raw XML; returns the raw XML response bytes. The component
+XML payload is **opaque / raw-only** — see [ComponentService](./ComponentService.md)
+for the full rationale and helpers.
 
 - HTTP Method: `POST`
 - Endpoint: `/OrganizationComponent`
 
 **Parameters**
 
-| Name         | Type                                                        | Required | Description       |
-| :----------- | :---------------------------------------------------------- | :------- | :---------------- |
-| request_body | [OrganizationComponent](../models/OrganizationComponent.md) | ❌       | The request body. |
+| Name         | Type         | Required | Description                            |
+| :----------- | :----------- | :------- | :------------------------------------- |
+| request_body | str \| bytes | ✅       | Raw component XML, sent byte-for-byte. |
 
 **Return Type**
 
-`Union[OrganizationComponent, str, dict]`
+`bytes` — the raw XML response exactly as returned by the API. Passing a model,
+`dict`, or `ElementTree` raises `UnsafeComponentXmlSerializationError`.
 
 **Example Usage Code Snippet**
 
 ```python
-from boomi import Boomi
-from boomi.models import OrganizationComponent
+from boomi import Boomi, extract_component_xml_metadata
 
 sdk = Boomi(
-    access_token="YOUR_ACCESS_TOKEN",
+    account_id="YOUR_ACCOUNT_ID",
     username="YOUR_USERNAME",
     password="YOUR_PASSWORD",
-    timeout=10000
+    timeout=10000,
 )
 
-request_body = OrganizationComponent(
-    organization_contact_info={
-        "address1": "127 Comstock Ave.",
-        "address2": "address2",
-        "city": "Philadelphia",
-        "contact_name": "Tom Miller",
-        "contact_url": "https://www.bestwholesaling.biz",
-        "country": "country",
-        "email": "tom@bestwholesaling.biz",
-        "fax": "311 555-9753",
-        "phone": "311 555-3579",
-        "postalcode": "19100",
-        "state": "PA"
-    },
-    component_id="89abcdef-0123-4567-89ab-cdef01234567",
-    component_name="Best Wholesaling",
-    deleted=True,
-    description="Shared Organization component for Best Wholesaling",
-    folder_id=11356,
-    folder_name="Commercial"
-)
+with open("component.xml", "rb") as f:
+    request_body = f.read()  # bytes preserve the exact encoding
 
-result = sdk.organization_component.create_organization_component(request_body=request_body)
-
-print(result)
+raw_xml = sdk.organization_component.create_organization_component(request_body=request_body)
+print(extract_component_xml_metadata(raw_xml).get("componentId"))
 ```
 
 ## get_organization_component
 
-The GET operation returns a single Organization Component object based on the supplied ID. A GET operation specifying the ID of a deleted Organization Component retrieves the component. In the component, the deleted field’s value is _true_.
+Get a Organization Component as raw XML response bytes, without parsing.
 
 - HTTP Method: `GET`
 - Endpoint: `/OrganizationComponent/{id}`
 
 **Parameters**
 
-| Name | Type | Required | Description               |
-| :--- | :--- | :------- | :------------------------ |
-| id\_ | str  | ✅       | Organization component ID |
+| Name | Type | Required | Description              |
+| :--- | :--- | :------- | :----------------------- |
+| id_  | str  | ✅       | The ID of the component. |
 
 **Return Type**
 
-`Union[OrganizationComponent, str, dict]`
+`bytes` — the raw XML response exactly as returned by the API.
 
 **Example Usage Code Snippet**
 
 ```python
+import xml.etree.ElementTree as ET
 from boomi import Boomi
 
-sdk = Boomi(
-    access_token="YOUR_ACCESS_TOKEN",
-    username="YOUR_USERNAME",
-    password="YOUR_PASSWORD",
-    timeout=10000
-)
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
 
-result = sdk.organization_component.get_organization_component(id_="id")
-
-print(result)
+raw_xml = sdk.organization_component.get_organization_component(id_="id")
+root = ET.fromstring(raw_xml)            # ET.fromstring accepts bytes
+print(root.get("componentName") or root.get("name"))
 ```
 
 ## update_organization_component
 
-The UPDATE operation overwrites the Organization Component object with the specified component ID. An UPDATE operation specifying the ID of a deleted Organization component restores the component to a non-deleted state, assuming the request is otherwise valid.
+Update a Organization Component with raw XML (full updates only); returns the raw XML response
+bytes. GET the raw XML, edit it yourself, serialize once, and pass it back.
 
 - HTTP Method: `POST`
 - Endpoint: `/OrganizationComponent/{id}`
 
 **Parameters**
 
-| Name         | Type                                                        | Required | Description               |
-| :----------- | :---------------------------------------------------------- | :------- | :------------------------ |
-| request_body | [OrganizationComponent](../models/OrganizationComponent.md) | ❌       | The request body.         |
-| id\_         | str                                                         | ✅       | Organization component ID |
+| Name         | Type         | Required | Description                            |
+| :----------- | :----------- | :------- | :------------------------------------- |
+| id_          | str          | ✅       | The ID of the component.               |
+| request_body | str \| bytes | ✅       | Raw component XML, sent byte-for-byte. |
 
 **Return Type**
 
-`Union[OrganizationComponent, str, dict]`
+`bytes` — the raw XML response exactly as returned by the API. Passing a model,
+`dict`, or `ElementTree` raises `UnsafeComponentXmlSerializationError`.
 
 **Example Usage Code Snippet**
 
 ```python
 from boomi import Boomi
-from boomi.models import OrganizationComponent
 
-sdk = Boomi(
-    access_token="YOUR_ACCESS_TOKEN",
-    username="YOUR_USERNAME",
-    password="YOUR_PASSWORD",
-    timeout=10000
-)
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
 
-request_body = OrganizationComponent(
-    organization_contact_info={
-        "address1": "127 Comstock Ave.",
-        "address2": "address2",
-        "city": "Philadelphia",
-        "contact_name": "Tom Miller",
-        "contact_url": "https://www.bestwholesaling.biz",
-        "country": "country",
-        "email": "tom@bestwholesaling.biz",
-        "fax": "311 555-9753",
-        "phone": "311 555-3579",
-        "postalcode": "19100",
-        "state": "PA"
-    },
-    component_id="89abcdef-0123-4567-89ab-cdef01234567",
-    component_name="Best Wholesaling",
-    deleted=True,
-    description="Shared Organization component for Best Wholesaling",
-    folder_id=11356,
-    folder_name="Commercial"
-)
+with open("component.xml", "rb") as f:
+    body = f.read()
 
-result = sdk.organization_component.update_organization_component(
-    request_body=request_body,
-    id_="id"
-)
-
-print(result)
+raw_xml = sdk.organization_component.update_organization_component(id_="id", request_body=body)
+print(raw_xml[:200])
 ```
 
 ## delete_organization_component

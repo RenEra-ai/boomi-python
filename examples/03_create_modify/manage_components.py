@@ -231,11 +231,13 @@ class ComponentManager:
             if description:
                 # Try to set description if the element exists
                 desc_elem = root.find('.//description') or root.find('.//{*}description')
-                if desc_elem is not None:
-                    desc_elem.text = description
-                else:
-                    # Add description as attribute if no element found
-                    root.set('description', description)
+                if desc_elem is None:
+                    # Boomi uses a namespaced <description> child element, not a
+                    # root attribute — create it if absent.
+                    desc_elem = ET.SubElement(
+                        root, '{http://api.platform.boomi.com/}description'
+                    )
+                desc_elem.text = description
 
             # Remove unique identifiers for creation
             for attr in ['componentId', 'version', 'currentVersion', 'createdDate',
@@ -300,10 +302,13 @@ class ComponentManager:
             if new_description:
                 # Try to set description
                 desc_elem = root.find('.//description') or root.find('.//{*}description')
-                if desc_elem is not None:
-                    desc_elem.text = new_description
-                else:
-                    root.set('description', new_description)
+                if desc_elem is None:
+                    # Boomi uses a namespaced <description> child element, not a
+                    # root attribute — create it if absent.
+                    desc_elem = ET.SubElement(
+                        root, '{http://api.platform.boomi.com/}description'
+                    )
+                desc_elem.text = new_description
                 print(f"   Updated description to: {new_description}")
 
             # Serialize once back to a string for the update body (full update)

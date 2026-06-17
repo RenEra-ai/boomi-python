@@ -47,7 +47,12 @@ import xml.etree.ElementTree as ET
 
 raw = sdk.component.get_component(component_id="abc")
 root = ET.fromstring(raw)
-root.set("description", "new description")
+# Boomi uses a namespaced <description> CHILD element, not a root attribute.
+ns = {"ns0": "http://api.platform.boomi.com/"}
+desc = root.find("ns0:description", ns)
+if desc is None:
+    desc = ET.SubElement(root, "{http://api.platform.boomi.com/}description")
+desc.text = "new description"
 updated_xml = ET.tostring(root, encoding="unicode")   # serialize once
 
 sdk.component.update_component(component_id="abc", request_body=updated_xml)
