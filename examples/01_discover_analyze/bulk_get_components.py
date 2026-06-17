@@ -72,12 +72,21 @@ def format_date(date_str):
 
 
 def extract_component_elements(envelope) -> List[ET.Element]:
-    """Parse the bulk-response envelope (bytes/str) and return each <Component>.
+    """Parse the bulk-response envelope (bytes/str) and return each component element.
 
-    ``bulk_component`` now returns the whole raw XML envelope as bytes. The
-    envelope wraps one ``bns:result`` per request, each containing a
-    ``bns:Component`` element. We parse it once and collect those Component
-    elements (namespace-agnostic to tolerate prefix differences).
+    ``bulk_component`` returns the whole raw XML envelope as bytes, shaped as::
+
+        <bns:BulkResult>
+          <bns:response statusCode="200">
+            <bns:Result xsi:type="bns:Component" componentId="..." name="..." .../>
+          </bns:response>
+          ...
+        </bns:BulkResult>
+
+    Each successful item is the ``bns:Result`` element itself — it carries the
+    component attributes directly (there is no nested ``bns:Component``). We
+    collect the ``Result`` of every 2xx ``response`` (namespace-agnostic to
+    tolerate prefix differences) and skip failed entries.
     """
     components = []
     try:
@@ -86,10 +95,16 @@ def extract_component_elements(envelope) -> List[ET.Element]:
         print(f"❌ Failed to parse bulk-response envelope: {e}")
         return components
 
-    # Find every Component element anywhere in the envelope, regardless of prefix
-    for elem in env_root.iter():
-        if elem.tag.split('}')[-1] == 'Component':
-            components.append(elem)
+    for resp in env_root.iter():
+        if resp.tag.split('}')[-1] != 'response':
+            continue
+        status = resp.get('statusCode', '')
+        if status and not status.startswith('2'):
+            print(f"⚠️  Skipping bulk item with status {status}")
+            continue
+        for child in resp:
+            if child.tag.split('}')[-1] == 'Result':
+                components.append(child)
     return components
 
 

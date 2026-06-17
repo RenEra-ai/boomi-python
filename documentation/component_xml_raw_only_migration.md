@@ -93,10 +93,13 @@ declaration in the XML. For byte-exact round-trips of non-UTF-8 documents, pass
 import xml.etree.ElementTree as ET
 
 envelope = sdk.component.bulk_component(request_body=bulk_request)  # bytes
+# <bns:BulkResult><bns:response statusCode="200">
+#   <bns:Result xsi:type="bns:Component" componentId="..." .../></bns:response>...
+# Each <bns:Result> carries the component attributes directly (no nested <Component>).
 root = ET.fromstring(envelope)
 ns = {"bns": "http://api.platform.boomi.com/"}
 for resp in root.findall("bns:response", ns):
     if resp.get("statusCode") == "200":
-        comp = resp.find("bns:Result/bns:Component", ns)
-        print(comp.get("componentId"))
+        result = resp.find("bns:Result", ns)
+        print(result.get("componentId"))
 ```

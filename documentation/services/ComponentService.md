@@ -203,12 +203,15 @@ request_body = ComponentBulkRequest(
 )
 
 envelope = sdk.component.bulk_component(request_body=request_body)
+# Envelope shape: <bns:BulkResult><bns:response statusCode="200">
+#   <bns:Result xsi:type="bns:Component" componentId="..." name="..." ...>...</bns:Result>
+# Each <bns:Result> IS the component (attributes are on Result itself).
 root = ET.fromstring(envelope)
 ns = {"bns": "http://api.platform.boomi.com/"}
 for resp in root.findall("bns:response", ns):
     if resp.get("statusCode") == "200":
-        component = resp.find("bns:Result/bns:Component", ns)
-        print(component.get("componentId"), component.get("name"))
+        result = resp.find("bns:Result", ns)
+        print(result.get("componentId"), result.get("name"))
 ```
 
 ## create_component_raw
