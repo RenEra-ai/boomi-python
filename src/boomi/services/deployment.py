@@ -23,7 +23,7 @@ class DeploymentService(BaseService):
     @cast_models
     def create_deployment(
         self, request_body: Deployment = None
-    ) -> Union[Deployment, str]:
+    ) -> Union[Deployment, str, dict]:
         """The Deployment object is a deprecated API and should no longer be used. Boomi recommends that you take advantage of the API functionality provided by the [Packaged Component](https://help.boomi.com/docs/Atomsphere/Integration/AtomSphere%20API/r-atm-Packaged_Component_object_66fa92c8-948f-46c6-a521-3927ab431c84) and [Deployed Package objects](https://help.boomi.com/docs/Atomsphere/Integration/AtomSphere%20API/r-atm-Deployed_Package_object_897b5068-6daa-44e4-bf04-7e25385157a8) instead.
 
         :param request_body: The request body., defaults to None
@@ -48,14 +48,22 @@ class DeploymentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Deployment._unmap(response)
-        if content == "application/xml":
-            return Deployment._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return Deployment._unmap(response)
+            if content == "application/xml":
+                return Deployment._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
-    def get_deployment(self, id_: str) -> Union[Deployment, str]:
+    def get_deployment(self, id_: str) -> Union[Deployment, str, dict]:
         """The Deployment object is a deprecated API and should no longer be used. Boomi recommends that you take advantage of the API functionality provided by the [Packaged Component](https://help.boomi.com/docs/Atomsphere/Integration/AtomSphere%20API/r-atm-Packaged_Component_object_66fa92c8-948f-46c6-a521-3927ab431c84) and [Deployed Package objects](https://help.boomi.com/docs/Atomsphere/Integration/AtomSphere%20API/r-atm-Deployed_Package_object_897b5068-6daa-44e4-bf04-7e25385157a8) instead.
 
         :param id_: id_
@@ -80,16 +88,24 @@ class DeploymentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Deployment._unmap(response)
-        if content == "application/xml":
-            return Deployment._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return Deployment._unmap(response)
+            if content == "application/xml":
+                return Deployment._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def bulk_deployment(
         self, request_body: DeploymentBulkRequest = None
-    ) -> Union[DeploymentBulkResponse, str]:
+    ) -> Union[DeploymentBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -114,16 +130,24 @@ class DeploymentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return DeploymentBulkResponse._unmap(response)
-        if content == "application/xml":
-            return DeploymentBulkResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return DeploymentBulkResponse._unmap(response)
+            if content == "application/xml":
+                return DeploymentBulkResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def query_deployment(
         self, request_body: DeploymentQueryConfig = None
-    ) -> Union[DeploymentQueryResponse, str]:
+    ) -> Union[DeploymentQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -148,16 +172,24 @@ class DeploymentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return DeploymentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return DeploymentQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return DeploymentQueryResponse._unmap(response)
+            if content == "application/xml":
+                return DeploymentQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def query_more_deployment(
         self, request_body: str
-    ) -> Union[DeploymentQueryResponse, str]:
+    ) -> Union[DeploymentQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -182,10 +214,18 @@ class DeploymentService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return DeploymentQueryResponse._unmap(response)
-        if content == "application/xml":
-            return DeploymentQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return DeploymentQueryResponse._unmap(response)
+            if content == "application/xml":
+                return DeploymentQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models

@@ -18,7 +18,7 @@ class EdiCustomConnectorRecordService(BaseService):
     @cast_models
     def query_edi_custom_connector_record(
         self, request_body: EdiCustomConnectorRecordQueryConfig = None
-    ) -> Union[EdiCustomConnectorRecordQueryResponse, str]:
+    ) -> Union[EdiCustomConnectorRecordQueryResponse, str, dict]:
         """- To filter by a customField, use the format customFields. Use fieldName as the filter property where fieldName is the element name of the custom field in the EDI Custom Connector Record structure. To get a list of the available custom fields, refer to [Custom Tracked Field object](#tag/CustomTrackedField).
          - The STARTS_WITH operator accepts values that do not include spaces.
          - Sorting of the Query results are by the `dateProcessed` field value, from the oldest to the newest.
@@ -49,16 +49,24 @@ class EdiCustomConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EdiCustomConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return EdiCustomConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return EdiCustomConnectorRecordQueryResponse._unmap(response)
+            if content == "application/xml":
+                return EdiCustomConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def query_more_edi_custom_connector_record(
         self, request_body: str
-    ) -> Union[EdiCustomConnectorRecordQueryResponse, str]:
+    ) -> Union[EdiCustomConnectorRecordQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -83,8 +91,16 @@ class EdiCustomConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return EdiCustomConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return EdiCustomConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return EdiCustomConnectorRecordQueryResponse._unmap(response)
+            if content == "application/xml":
+                return EdiCustomConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)

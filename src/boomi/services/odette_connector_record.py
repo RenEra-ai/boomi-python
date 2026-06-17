@@ -18,7 +18,7 @@ class OdetteConnectorRecordService(BaseService):
     @cast_models
     def query_odette_connector_record(
         self, request_body: OdetteConnectorRecordQueryConfig = None
-    ) -> Union[OdetteConnectorRecordQueryResponse, str]:
+    ) -> Union[OdetteConnectorRecordQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body., defaults to None
@@ -43,16 +43,24 @@ class OdetteConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return OdetteConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return OdetteConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return OdetteConnectorRecordQueryResponse._unmap(response)
+            if content == "application/xml":
+                return OdetteConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def query_more_odette_connector_record(
         self, request_body: str
-    ) -> Union[OdetteConnectorRecordQueryResponse, str]:
+    ) -> Union[OdetteConnectorRecordQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -77,8 +85,16 @@ class OdetteConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return OdetteConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return OdetteConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return OdetteConnectorRecordQueryResponse._unmap(response)
+            if content == "application/xml":
+                return OdetteConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)

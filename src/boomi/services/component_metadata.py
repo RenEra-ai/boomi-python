@@ -21,7 +21,7 @@ class ComponentMetadataService(BaseService):
     @cast_models
     def create_component_metadata(
         self, request_body: ComponentMetadata = None
-    ) -> Union[ComponentMetadata, str]:
+    ) -> Union[ComponentMetadata, str, dict]:
         """The ability to create a new component is not supported at this time. Although, you can create a deleted component, but you cannot create a new component. You will receive an error if you do not specify the deleted component ID in the create request.
 
         :param request_body: The request body., defaults to None
@@ -46,14 +46,23 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ComponentMetadata._unmap(response)
-        if content == "application/xml":
-            return ComponentMetadata._unmap(parse_xml_to_dict(response))
+        # ComponentMetadata.type is a closed enum, but the API documents the
+        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
+        # newer component type) return the raw payload rather than raising
+        # (honors Union[..., dict]) so the response is not lost.
+        try:
+            if content == "application/json":
+                return ComponentMetadata._unmap(response)
+            if content == "application/xml":
+                return ComponentMetadata._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
-    def get_component_metadata(self, id_: str) -> Union[ComponentMetadata, str]:
+    def get_component_metadata(self, id_: str) -> Union[ComponentMetadata, str, dict]:
         """Returns the latest component revision if you do not provide the version. Providing the version in the format of `<componentId>` ~ `<version>`, returns the specific version of the component.
 
         :param id_: Required. Read only. The ID of the component. The component ID is available on the Revision History dialog, which you can access from the Build page in the service.
@@ -78,16 +87,25 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ComponentMetadata._unmap(response)
-        if content == "application/xml":
-            return ComponentMetadata._unmap(parse_xml_to_dict(response))
+        # ComponentMetadata.type is a closed enum, but the API documents the
+        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
+        # newer component type) return the raw payload rather than raising
+        # (honors Union[..., dict]) so the response is not lost.
+        try:
+            if content == "application/json":
+                return ComponentMetadata._unmap(response)
+            if content == "application/xml":
+                return ComponentMetadata._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def update_component_metadata(
         self, id_: str, request_body: ComponentMetadata = None
-    ) -> Union[ComponentMetadata, str]:
+    ) -> Union[ComponentMetadata, str, dict]:
         """Only `name` and `folderId` may be updated. They are optional and will only be modified if included in the UPDATE request. `folderId` must be a valid, non-deleted folder. If `folderId` is included in the request but with a blank value, it defaults to the root folder.
 
         :param request_body: The request body., defaults to None
@@ -116,10 +134,19 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ComponentMetadata._unmap(response)
-        if content == "application/xml":
-            return ComponentMetadata._unmap(parse_xml_to_dict(response))
+        # ComponentMetadata.type is a closed enum, but the API documents the
+        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
+        # newer component type) return the raw payload rather than raising
+        # (honors Union[..., dict]) so the response is not lost.
+        try:
+            if content == "application/json":
+                return ComponentMetadata._unmap(response)
+            if content == "application/xml":
+                return ComponentMetadata._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
@@ -150,7 +177,7 @@ class ComponentMetadataService(BaseService):
     @cast_models
     def bulk_component_metadata(
         self, request_body: ComponentMetadataBulkRequest = None
-    ) -> Union[ComponentMetadataBulkResponse, str]:
+    ) -> Union[ComponentMetadataBulkResponse, str, dict]:
         """To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).
 
         :param request_body: The request body., defaults to None
@@ -175,16 +202,25 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ComponentMetadataBulkResponse._unmap(response)
-        if content == "application/xml":
-            return ComponentMetadataBulkResponse._unmap(parse_xml_to_dict(response))
+        # ComponentMetadata.type is a closed enum, but the API documents the
+        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
+        # newer component type) return the raw payload rather than raising
+        # (honors Union[..., dict]) so the response is not lost.
+        try:
+            if content == "application/json":
+                return ComponentMetadataBulkResponse._unmap(response)
+            if content == "application/xml":
+                return ComponentMetadataBulkResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def query_component_metadata(
         self, request_body: ComponentMetadataQueryConfig = None
-    ) -> Union[ComponentMetadataQueryResponse, str]:
+    ) -> Union[ComponentMetadataQueryResponse, str, dict]:
         """- By default, QUERY results include previous revisions including deleted versions. Use query filters to exclude previous and deleted versions if desired. For more examples of querying components, see Component Metadata API example requests mentioned above in the API description.
          - The `version` field must be accompanied by the `componentId` field. You can query all other fields.
          - The `copiedFromComponentId` field must accompany the `copiedFromComponentVersion` field.
@@ -213,16 +249,25 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ComponentMetadataQueryResponse._unmap(response)
-        if content == "application/xml":
-            return ComponentMetadataQueryResponse._unmap(parse_xml_to_dict(response))
+        # ComponentMetadata.type is a closed enum, but the API documents the
+        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
+        # newer component type) return the raw payload rather than raising
+        # (honors Union[..., dict]) so the response is not lost.
+        try:
+            if content == "application/json":
+                return ComponentMetadataQueryResponse._unmap(response)
+            if content == "application/xml":
+                return ComponentMetadataQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def query_more_component_metadata(
         self, request_body: str
-    ) -> Union[ComponentMetadataQueryResponse, str]:
+    ) -> Union[ComponentMetadataQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -247,8 +292,17 @@ class ComponentMetadataService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return ComponentMetadataQueryResponse._unmap(response)
-        if content == "application/xml":
-            return ComponentMetadataQueryResponse._unmap(parse_xml_to_dict(response))
+        # ComponentMetadata.type is a closed enum, but the API documents the
+        # component-type list as non-exhaustive; on a 2xx hydration miss (e.g. a
+        # newer component type) return the raw payload rather than raising
+        # (honors Union[..., dict]) so the response is not lost.
+        try:
+            if content == "application/json":
+                return ComponentMetadataQueryResponse._unmap(response)
+            if content == "application/xml":
+                return ComponentMetadataQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)

@@ -15,7 +15,7 @@ class Hl7ConnectorRecordService(BaseService):
     @cast_models
     def query_hl7_connector_record(
         self, request_body: Hl7ConnectorRecordQueryConfig = None
-    ) -> Union[Hl7ConnectorRecordQueryResponse, str]:
+    ) -> Union[Hl7ConnectorRecordQueryResponse, str, dict]:
         """To filter by a customField, use the format `customFields.fieldName` as the filter property where `fieldName` is the element name of the custom field in the HL7 Connector Record structure. To get a list of the available custom fields, refer to [CustomTrackedField object](#tag/CustomTrackedField).
 
          The STARTS_WITH operator accepts values that do not include spaces.
@@ -44,16 +44,24 @@ class Hl7ConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Hl7ConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return Hl7ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return Hl7ConnectorRecordQueryResponse._unmap(response)
+            if content == "application/xml":
+                return Hl7ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def query_more_hl7_connector_record(
         self, request_body: str
-    ) -> Union[Hl7ConnectorRecordQueryResponse, str]:
+    ) -> Union[Hl7ConnectorRecordQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -78,8 +86,16 @@ class Hl7ConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Hl7ConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return Hl7ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return Hl7ConnectorRecordQueryResponse._unmap(response)
+            if content == "application/xml":
+                return Hl7ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)

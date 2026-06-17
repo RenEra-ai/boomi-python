@@ -18,7 +18,7 @@ class TradacomsConnectorRecordService(BaseService):
     @cast_models
     def query_tradacoms_connector_record(
         self, request_body: TradacomsConnectorRecordQueryConfig = None
-    ) -> Union[TradacomsConnectorRecordQueryResponse, str]:
+    ) -> Union[TradacomsConnectorRecordQueryResponse, str, dict]:
         """- To filter by a custom field, use the format `customFields`. Use the `fieldName` as the filter property where `fieldName` is the element name of the custom field in the record structure. To get a list of the available custom fields see the [Custom Tracked Field](#tag/CustomTrackedField) object.
 
          - The STARTS_WITH operator only accepts values that do not include spaces.
@@ -49,16 +49,24 @@ class TradacomsConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return TradacomsConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return TradacomsConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return TradacomsConnectorRecordQueryResponse._unmap(response)
+            if content == "application/xml":
+                return TradacomsConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def query_more_tradacoms_connector_record(
         self, request_body: str
-    ) -> Union[TradacomsConnectorRecordQueryResponse, str]:
+    ) -> Union[TradacomsConnectorRecordQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -83,8 +91,16 @@ class TradacomsConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return TradacomsConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return TradacomsConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return TradacomsConnectorRecordQueryResponse._unmap(response)
+            if content == "application/xml":
+                return TradacomsConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)

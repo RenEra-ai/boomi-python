@@ -28,7 +28,11 @@ class ExecutionRecordServiceAsync(ExecutionRecordService):
     def get_execution_record(
         self, id_: str
     ) -> Awaitable[Union[ExecutionRecord, str]]:
-        return to_async(super().get_execution_record)(id_)
+        # Wrap the real underlying method directly. Wrapping the sync
+        # ``get_execution_record`` convenience forwarder would re-dispatch through
+        # ``self.async_get_execution_record`` (the async override) and return an
+        # un-awaited coroutine. Mirror ``async_get_response_execution_record`` below.
+        return to_async(super().async_get_execution_record)(id_)
 
     def async_get_response_execution_record(
         self, id_: str

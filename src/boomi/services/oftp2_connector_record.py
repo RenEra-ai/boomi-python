@@ -15,7 +15,7 @@ class Oftp2ConnectorRecordService(BaseService):
     @cast_models
     def query_oftp2_connector_record(
         self, request_body: Oftp2ConnectorRecordQueryConfig = None
-    ) -> Union[Oftp2ConnectorRecordQueryResponse, str]:
+    ) -> Union[Oftp2ConnectorRecordQueryResponse, str, dict]:
         """For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging).
 
         To filter by a custom field, use the format `customFields/fieldName` as the filter property, where `fieldName` is the element name of the custom field in the OFTP2 Connector Record structure. To get a list of the available custom fields, see [Custom Tracked Field](/api/platformapi#tag/CustomTrackedField) object.
@@ -48,16 +48,24 @@ class Oftp2ConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Oftp2ConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return Oftp2ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return Oftp2ConnectorRecordQueryResponse._unmap(response)
+            if content == "application/xml":
+                return Oftp2ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
 
     @cast_models
     def query_more_oftp2_connector_record(
         self, request_body: str
-    ) -> Union[Oftp2ConnectorRecordQueryResponse, str]:
+    ) -> Union[Oftp2ConnectorRecordQueryResponse, str, dict]:
         """To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).
 
         :param request_body: The request body.
@@ -82,8 +90,16 @@ class Oftp2ConnectorRecordService(BaseService):
         )
 
         response, status, content = self.send_request(serialized_request)
-        if content == "application/json":
-            return Oftp2ConnectorRecordQueryResponse._unmap(response)
-        if content == "application/xml":
-            return Oftp2ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        # Sparse query rows can omit fields the strict model requires; return
+        # the raw payload on a 2xx hydration miss rather than raising (honors
+        # Union[..., dict]) so callers are not forced back to raw transport.
+        try:
+            if content == "application/json":
+                return Oftp2ConnectorRecordQueryResponse._unmap(response)
+            if content == "application/xml":
+                return Oftp2ConnectorRecordQueryResponse._unmap(parse_xml_to_dict(response))
+        except Exception:
+            if 200 <= status < 300:
+                return response
+            raise
         raise ApiError("Error on deserializing the response.", status, response)
