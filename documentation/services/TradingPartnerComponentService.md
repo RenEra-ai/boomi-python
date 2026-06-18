@@ -22,6 +22,9 @@ A list of all methods in the `TradingPartnerComponentService` service. Click on 
 | [bulk_trading_partner_component](#bulk_trading_partner_component)             | The bulk GET operation returns multiple Trading Partner Component objects based on the supplied IDs, to a maximum of 100.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
 | [query_trading_partner_component](#query_trading_partner_component)           | The QUERY operation returns each Trading Partner component that meets the specified filtering criteria. - The name field in a QUERY filter represents the object’s componentName field. - Only the LIKE operator is allowed with a name filter. Likewise, you can only use the EQUALS operator with a classification, standard, identifier filter, or a communication method filter (as2, disk, ftp, http, mllp, sftp). Filtering on a communication method field requests Trading Partner components by defining the communication method. - If the QUERY request includes multiple filters, you can connect the filters with a logical AND operator. The QUERY request does not support the logical OR operator. - The QUERY results omit the folderName field. For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging). |
 | [query_more_trading_partner_component](#query_more_trading_partner_component) | To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| [create_trading_partner_component_json](#create_trading_partner_component_json) | JSON create (additive, v3.0.1). Accepts a typed `TradingPartnerComponent` or a plain `dict` (sent as-is for a lossless JSON write); returns `Union[TradingPartnerComponent, str, dict]`. |
+| [get_trading_partner_component_json](#get_trading_partner_component_json) | JSON get (additive, v3.0.1). Returns `Union[TradingPartnerComponent, str, dict]`; a sparse 2xx body falls back to the raw `dict`. |
+| [update_trading_partner_component_json](#update_trading_partner_component_json) | JSON update (additive, v3.0.1). Accepts a typed `TradingPartnerComponent` or a plain `dict`; returns `Union[TradingPartnerComponent, str, dict]`. |
 
 ## create_trading_partner_component
 
@@ -283,3 +286,96 @@ result = sdk.trading_partner_component.query_more_trading_partner_component(requ
 print(result)
 ```
 
+
+## create_trading_partner_component_json
+
+Create a Trading Partner Component from JSON (additive, v3.0.1). JSON counterpart of `create_trading_partner_component` (raw
+XML), for callers who prefer JSON over hand-authoring component XML. The endpoint
+also accepts/returns JSON in the Boomi Platform API.
+
+- HTTP Method: `POST`
+- Endpoint: `/TradingPartnerComponent`
+
+**Parameters**
+
+| Name         | Type                 | Required | Description                                                               |
+| :----------- | :------------------- | :------- | :------------------------------------------------------------------------ |
+| request_body | TradingPartnerComponent \| dict | ❌       | Typed model (serialized via `_map()`) or a plain `dict` (sent as-is, lossless). |
+
+**Return Type**
+
+`Union[TradingPartnerComponent, str, dict]` — the typed model when the response maps onto it, otherwise
+the raw response content (`dict`) on a sparse 2xx body. A `dict` request body is sent
+byte-faithfully; a typed model body is model-lossless only for fields the generated
+model knows.
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
+
+result = sdk.trading_partner_component.create_trading_partner_component_json(request_body={"componentName": "Example"})
+print(result)
+```
+
+## get_trading_partner_component_json
+
+Get a Trading Partner Component as JSON (additive, v3.0.1). JSON counterpart of `get_trading_partner_component` (raw XML).
+
+- HTTP Method: `GET`
+- Endpoint: `/TradingPartnerComponent/{id}`
+
+**Parameters**
+
+| Name | Type | Required | Description              |
+| :--- | :--- | :------- | :----------------------- |
+| id_  | str  | ✅       | The ID of the component. |
+
+**Return Type**
+
+`Union[TradingPartnerComponent, str, dict]` — the typed model when the response maps onto it; a sparse
+2xx body (the model requires `partner_communication` to hydrate) is returned as the raw `dict` rather than raising.
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
+
+result = sdk.trading_partner_component.get_trading_partner_component_json(id_="id")
+print(result)
+```
+
+## update_trading_partner_component_json
+
+Update a Trading Partner Component with JSON (additive, v3.0.1; full updates only). JSON counterpart of
+`update_trading_partner_component` (raw XML).
+
+- HTTP Method: `POST`
+- Endpoint: `/TradingPartnerComponent/{id}`
+
+**Parameters**
+
+| Name         | Type                 | Required | Description                                                               |
+| :----------- | :------------------- | :------- | :------------------------------------------------------------------------ |
+| id_          | str                  | ✅       | The ID of the component.                                                  |
+| request_body | TradingPartnerComponent \| dict | ❌       | Typed model (serialized via `_map()`) or a plain `dict` (sent as-is, lossless). |
+
+**Return Type**
+
+`Union[TradingPartnerComponent, str, dict]` — see `create_trading_partner_component_json`.
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
+
+current = sdk.trading_partner_component.get_trading_partner_component_json(id_="id")
+result = sdk.trading_partner_component.update_trading_partner_component_json(id_="id", request_body=current)
+print(result)
+```

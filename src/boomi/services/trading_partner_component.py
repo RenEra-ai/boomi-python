@@ -8,6 +8,7 @@ from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..net.transport.utils import require_raw_xml
 from ..models import (
+    TradingPartnerComponent,
     TradingPartnerComponentBulkRequest,
     TradingPartnerComponentQueryConfig,
     TradingPartnerComponentQueryResponse,
@@ -135,6 +136,111 @@ class TradingPartnerComponentService(BaseService):
             status,
             response,
         )
+
+    def create_trading_partner_component_json(
+        self, request_body: Union[TradingPartnerComponent, dict] = None
+    ) -> Union[TradingPartnerComponent, str, dict]:
+        """Create a Trading Partner Component from JSON; return the typed model (or raw payload).
+
+        JSON counterpart of ``create_trading_partner_component`` (raw XML). The body
+        may be a typed ``TradingPartnerComponent`` (serialized via ``_map()``) or a
+        plain ``dict``, which is sent **as-is** for a lossless JSON write. The
+        response hydrates to ``TradingPartnerComponent`` when possible, otherwise the
+        raw ``dict``/``str`` payload is returned on a 2xx (see ``_deserialize_or_raw``).
+
+        :param request_body: The Trading Partner Component as a typed model or dict., defaults to None
+        :type request_body: Union[TradingPartnerComponent, dict], optional
+        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
+        :return: The parsed response data.
+        :rtype: Union[TradingPartnerComponent, str, dict]
+        """
+
+        Validator(Union[TradingPartnerComponent, dict]).is_optional().validate(request_body)
+        self._require_model_or_dict(request_body, TradingPartnerComponent)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/TradingPartnerComponent",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            .add_header("Accept", "application/json")
+            .serialize()
+            .set_method("POST")
+            .set_body(request_body)
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        return self._deserialize_or_raw(TradingPartnerComponent, response, status, content)
+
+    def get_trading_partner_component_json(
+        self, id_: str
+    ) -> Union[TradingPartnerComponent, str, dict]:
+        """Get a Trading Partner Component as JSON; return the typed model (or raw payload).
+
+        JSON counterpart of ``get_trading_partner_component`` (raw XML). Sets
+        ``Accept: application/json`` and hydrates to ``TradingPartnerComponent`` when
+        possible; a sparse 2xx body falls back to the raw ``dict`` rather than raising.
+
+        :param id_: Trading partner component ID
+        :type id_: str
+        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
+        :return: The parsed response data.
+        :rtype: Union[TradingPartnerComponent, str, dict]
+        """
+
+        Validator(str).validate(id_)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/TradingPartnerComponent/{{id}}",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            .add_path("id", id_)
+            .add_header("Accept", "application/json")
+            .serialize()
+            .set_method("GET")
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        return self._deserialize_or_raw(TradingPartnerComponent, response, status, content)
+
+    def update_trading_partner_component_json(
+        self, id_: str, request_body: Union[TradingPartnerComponent, dict] = None
+    ) -> Union[TradingPartnerComponent, str, dict]:
+        """Update a Trading Partner Component with JSON; return the typed model (or raw payload).
+
+        JSON counterpart of ``update_trading_partner_component`` (raw XML). Full
+        updates only: supply the complete component. The body may be a typed
+        ``TradingPartnerComponent`` or a plain ``dict`` (sent as-is for a lossless
+        JSON write).
+
+        :param id_: Trading partner component ID
+        :type id_: str
+        :param request_body: The Trading Partner Component as a typed model or dict., defaults to None
+        :type request_body: Union[TradingPartnerComponent, dict], optional
+        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
+        :return: The parsed response data.
+        :rtype: Union[TradingPartnerComponent, str, dict]
+        """
+
+        Validator(str).validate(id_)
+        Validator(Union[TradingPartnerComponent, dict]).is_optional().validate(request_body)
+        self._require_model_or_dict(request_body, TradingPartnerComponent)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/TradingPartnerComponent/{{id}}",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            .add_path("id", id_)
+            .add_header("Accept", "application/json")
+            .serialize()
+            .set_method("POST")
+            .set_body(request_body)
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        return self._deserialize_or_raw(TradingPartnerComponent, response, status, content)
 
     @cast_models
     def delete_trading_partner_component(self, id_: str) -> None:

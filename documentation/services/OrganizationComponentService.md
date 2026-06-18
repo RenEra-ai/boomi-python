@@ -22,6 +22,9 @@ A list of all methods in the `OrganizationComponentService` service. Click on th
 | [bulk_organization_component](#bulk_organization_component)             | The bulk GET operation returns multiple Account objects based on the supplied account IDs, to a maximum of 100. To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).                                                                                                                                                                                                                                                                                                                                                                                              |
 | [query_organization_component](#query_organization_component)           | - Only the LIKE operator is allowed with a name filter. Likewise, only the EQUALS operator is permitted with a contactName, email, or phone filter. - If the QUERY request includes multiple filters, you can connect the filters with a logical AND operator — the query does not support the logical OR operator . - The QUERY results omit the folderName field. For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging). |
 | [query_more_organization_component](#query_more_organization_component) | To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| [create_organization_component_json](#create_organization_component_json) | JSON create (additive, v3.0.1). Accepts a typed `OrganizationComponent` or a plain `dict` (sent as-is for a lossless JSON write); returns `Union[OrganizationComponent, str, dict]`. |
+| [get_organization_component_json](#get_organization_component_json) | JSON get (additive, v3.0.1). Returns `Union[OrganizationComponent, str, dict]`; a sparse 2xx body falls back to the raw `dict`. |
+| [update_organization_component_json](#update_organization_component_json) | JSON update (additive, v3.0.1). Accepts a typed `OrganizationComponent` or a plain `dict`; returns `Union[OrganizationComponent, str, dict]`. |
 
 ## create_organization_component
 
@@ -289,6 +292,105 @@ request_body = "eu cillum e"
 
 result = sdk.organization_component.query_more_organization_component(request_body=request_body)
 
+print(result)
+```
+
+## create_organization_component_json
+
+Create an Organization Component from JSON (additive, v3.0.1). JSON counterpart of
+`create_organization_component` (raw XML), for callers who prefer JSON over
+hand-authoring component XML. The endpoint also accepts/returns JSON in the Boomi
+Platform API.
+
+- HTTP Method: `POST`
+- Endpoint: `/OrganizationComponent`
+
+**Parameters**
+
+| Name         | Type                                | Required | Description                                                               |
+| :----------- | :---------------------------------- | :------- | :------------------------------------------------------------------------ |
+| request_body | OrganizationComponent \| dict       | ❌       | Typed model (serialized via `_map()`) or a plain `dict` (sent as-is, lossless). |
+
+**Return Type**
+
+`Union[OrganizationComponent, str, dict]` — the typed model when the response maps
+onto it, otherwise the raw response content (`dict`) on a sparse 2xx body. A `dict`
+request body is sent byte-faithfully; a typed model body is model-lossless only for
+fields the generated model knows.
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
+
+result = sdk.organization_component.create_organization_component_json(
+    request_body={"componentName": "Acme Org", "folderId": 12345}
+)
+print(result)
+```
+
+## get_organization_component_json
+
+Get an Organization Component as JSON (additive, v3.0.1). JSON counterpart of
+`get_organization_component` (raw XML).
+
+- HTTP Method: `GET`
+- Endpoint: `/OrganizationComponent/{id}`
+
+**Parameters**
+
+| Name | Type | Required | Description              |
+| :--- | :--- | :------- | :----------------------- |
+| id_  | str  | ✅       | The ID of the component. |
+
+**Return Type**
+
+`Union[OrganizationComponent, str, dict]` — the typed model when the response maps
+onto it; a sparse 2xx body (e.g. partial `OrganizationContactInfo`) is returned as
+the raw `dict` rather than raising.
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
+
+result = sdk.organization_component.get_organization_component_json(id_="id")
+print(result)
+```
+
+## update_organization_component_json
+
+Update an Organization Component with JSON (additive, v3.0.1; full updates only).
+JSON counterpart of `update_organization_component` (raw XML).
+
+- HTTP Method: `POST`
+- Endpoint: `/OrganizationComponent/{id}`
+
+**Parameters**
+
+| Name         | Type                                | Required | Description                                                               |
+| :----------- | :---------------------------------- | :------- | :------------------------------------------------------------------------ |
+| id_          | str                                 | ✅       | The ID of the component.                                                  |
+| request_body | OrganizationComponent \| dict       | ❌       | Typed model (serialized via `_map()`) or a plain `dict` (sent as-is, lossless). |
+
+**Return Type**
+
+`Union[OrganizationComponent, str, dict]` — see `create_organization_component_json`.
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
+
+current = sdk.organization_component.get_organization_component_json(id_="id")
+# current is a dict for a sparse body; mutate and post the whole document back
+result = sdk.organization_component.update_organization_component_json(id_="id", request_body=current)
 print(result)
 ```
 

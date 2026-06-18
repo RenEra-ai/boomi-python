@@ -8,6 +8,7 @@ from ..net.transport.utils import require_raw_xml
 from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..models import (
+    SharedCommunicationChannelComponent,
     SharedCommunicationChannelComponentBulkRequest,
     SharedCommunicationChannelComponentQueryConfig,
     SharedCommunicationChannelComponentQueryResponse,
@@ -131,6 +132,124 @@ class SharedCommunicationChannelComponentService(BaseService):
             f"Failed to update shared communication channel component: HTTP {status}",
             status,
             response,
+        )
+
+    def create_shared_communication_channel_component_json(
+        self, request_body: Union[SharedCommunicationChannelComponent, dict] = None
+    ) -> Union[SharedCommunicationChannelComponent, str, dict]:
+        """Create a Shared Communication Channel Component from JSON; return the typed model (or raw payload).
+
+        JSON counterpart of ``create_shared_communication_channel_component`` (raw
+        XML). The body may be a typed ``SharedCommunicationChannelComponent``
+        (serialized via ``_map()``) or a plain ``dict``, which is sent **as-is** for
+        a lossless JSON write. The response hydrates to the typed model when
+        possible, otherwise the raw ``dict``/``str`` payload is returned on a 2xx
+        (see ``_deserialize_or_raw``).
+
+        :param request_body: The Shared Communication Channel Component as a typed model or dict., defaults to None
+        :type request_body: Union[SharedCommunicationChannelComponent, dict], optional
+        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
+        :return: The parsed response data.
+        :rtype: Union[SharedCommunicationChannelComponent, str, dict]
+        """
+
+        Validator(Union[SharedCommunicationChannelComponent, dict]).is_optional().validate(
+            request_body
+        )
+        self._require_model_or_dict(request_body, SharedCommunicationChannelComponent)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/SharedCommunicationChannelComponent",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            .add_header("Accept", "application/json")
+            .serialize()
+            .set_method("POST")
+            .set_body(request_body)
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        return self._deserialize_or_raw(
+            SharedCommunicationChannelComponent, response, status, content
+        )
+
+    def get_shared_communication_channel_component_json(
+        self, id_: str
+    ) -> Union[SharedCommunicationChannelComponent, str, dict]:
+        """Get a Shared Communication Channel Component as JSON; return the typed model (or raw payload).
+
+        JSON counterpart of ``get_shared_communication_channel_component`` (raw XML).
+        Sets ``Accept: application/json`` and hydrates to the typed model when
+        possible; a sparse 2xx body (the model requires ``partner_communication`` +
+        ``partner_archiving`` to hydrate) falls back to the raw ``dict`` rather than
+        raising.
+
+        :param id_: Shared communication channel component ID
+        :type id_: str
+        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
+        :return: The parsed response data.
+        :rtype: Union[SharedCommunicationChannelComponent, str, dict]
+        """
+
+        Validator(str).validate(id_)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/SharedCommunicationChannelComponent/{{id}}",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            .add_path("id", id_)
+            .add_header("Accept", "application/json")
+            .serialize()
+            .set_method("GET")
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        return self._deserialize_or_raw(
+            SharedCommunicationChannelComponent, response, status, content
+        )
+
+    def update_shared_communication_channel_component_json(
+        self, id_: str, request_body: Union[SharedCommunicationChannelComponent, dict] = None
+    ) -> Union[SharedCommunicationChannelComponent, str, dict]:
+        """Update a Shared Communication Channel Component with JSON; return the typed model (or raw payload).
+
+        JSON counterpart of ``update_shared_communication_channel_component`` (raw
+        XML). Full updates only: supply the complete component. The body may be a
+        typed ``SharedCommunicationChannelComponent`` or a plain ``dict`` (sent
+        as-is for a lossless JSON write).
+
+        :param id_: Shared communication channel component ID
+        :type id_: str
+        :param request_body: The Shared Communication Channel Component as a typed model or dict., defaults to None
+        :type request_body: Union[SharedCommunicationChannelComponent, dict], optional
+        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
+        :return: The parsed response data.
+        :rtype: Union[SharedCommunicationChannelComponent, str, dict]
+        """
+
+        Validator(str).validate(id_)
+        Validator(Union[SharedCommunicationChannelComponent, dict]).is_optional().validate(
+            request_body
+        )
+        self._require_model_or_dict(request_body, SharedCommunicationChannelComponent)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/SharedCommunicationChannelComponent/{{id}}",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            .add_path("id", id_)
+            .add_header("Accept", "application/json")
+            .serialize()
+            .set_method("POST")
+            .set_body(request_body)
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        return self._deserialize_or_raw(
+            SharedCommunicationChannelComponent, response, status, content
         )
 
     @cast_models

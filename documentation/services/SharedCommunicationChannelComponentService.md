@@ -23,6 +23,9 @@ A list of all methods in the `SharedCommunicationChannelComponentService` servic
 | [bulk_shared_communication_channel_component](#bulk_shared_communication_channel_component)             | To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).                                                                                                                                                                                                                                                                                                                                                                          |
 | [query_shared_communication_channel_component](#query_shared_communication_channel_component)           | For general information about the structure of QUERY filters, their sample payloads, and how to handle the paged results, refer to [Query filters](#section/Introduction/Query-filters) and [Query paging](#section/Introduction/Query-paging). The sample request query returns the Shared Communication Channel components using the AS2 standard for the authenticating account. \>**Note:** The name field in a QUERY filter represents the object's `componentName` field. |
 | [query_more_shared_communication_channel_component](#query_more_shared_communication_channel_component) | To learn about using `queryMore`, refer to [Query paging](#section/Introduction/Query-paging).                                                                                                                                                                                                                                                                                                                                                                                  |
+| [create_shared_communication_channel_component_json](#create_shared_communication_channel_component_json) | JSON create (additive, v3.0.1). Accepts a typed `SharedCommunicationChannelComponent` or a plain `dict` (sent as-is for a lossless JSON write); returns `Union[SharedCommunicationChannelComponent, str, dict]`. |
+| [get_shared_communication_channel_component_json](#get_shared_communication_channel_component_json) | JSON get (additive, v3.0.1). Returns `Union[SharedCommunicationChannelComponent, str, dict]`; a sparse 2xx body falls back to the raw `dict`. |
+| [update_shared_communication_channel_component_json](#update_shared_communication_channel_component_json) | JSON update (additive, v3.0.1). Accepts a typed `SharedCommunicationChannelComponent` or a plain `dict`; returns `Union[SharedCommunicationChannelComponent, str, dict]`. |
 
 ## create_shared_communication_channel_component
 
@@ -284,3 +287,96 @@ result = sdk.shared_communication_channel_component.query_more_shared_communicat
 print(result)
 ```
 
+
+## create_shared_communication_channel_component_json
+
+Create a Shared Communication Channel Component from JSON (additive, v3.0.1). JSON counterpart of `create_shared_communication_channel_component` (raw
+XML), for callers who prefer JSON over hand-authoring component XML. The endpoint
+also accepts/returns JSON in the Boomi Platform API.
+
+- HTTP Method: `POST`
+- Endpoint: `/SharedCommunicationChannelComponent`
+
+**Parameters**
+
+| Name         | Type                 | Required | Description                                                               |
+| :----------- | :------------------- | :------- | :------------------------------------------------------------------------ |
+| request_body | SharedCommunicationChannelComponent \| dict | ❌       | Typed model (serialized via `_map()`) or a plain `dict` (sent as-is, lossless). |
+
+**Return Type**
+
+`Union[SharedCommunicationChannelComponent, str, dict]` — the typed model when the response maps onto it, otherwise
+the raw response content (`dict`) on a sparse 2xx body. A `dict` request body is sent
+byte-faithfully; a typed model body is model-lossless only for fields the generated
+model knows.
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
+
+result = sdk.shared_communication_channel_component.create_shared_communication_channel_component_json(request_body={"componentName": "Example"})
+print(result)
+```
+
+## get_shared_communication_channel_component_json
+
+Get a Shared Communication Channel Component as JSON (additive, v3.0.1). JSON counterpart of `get_shared_communication_channel_component` (raw XML).
+
+- HTTP Method: `GET`
+- Endpoint: `/SharedCommunicationChannelComponent/{id}`
+
+**Parameters**
+
+| Name | Type | Required | Description              |
+| :--- | :--- | :------- | :----------------------- |
+| id_  | str  | ✅       | The ID of the component. |
+
+**Return Type**
+
+`Union[SharedCommunicationChannelComponent, str, dict]` — the typed model when the response maps onto it; a sparse
+2xx body (the model requires `partner_communication` + `partner_archiving` to hydrate) is returned as the raw `dict` rather than raising.
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
+
+result = sdk.shared_communication_channel_component.get_shared_communication_channel_component_json(id_="id")
+print(result)
+```
+
+## update_shared_communication_channel_component_json
+
+Update a Shared Communication Channel Component with JSON (additive, v3.0.1; full updates only). JSON counterpart of
+`update_shared_communication_channel_component` (raw XML).
+
+- HTTP Method: `POST`
+- Endpoint: `/SharedCommunicationChannelComponent/{id}`
+
+**Parameters**
+
+| Name         | Type                 | Required | Description                                                               |
+| :----------- | :------------------- | :------- | :------------------------------------------------------------------------ |
+| id_          | str                  | ✅       | The ID of the component.                                                  |
+| request_body | SharedCommunicationChannelComponent \| dict | ❌       | Typed model (serialized via `_map()`) or a plain `dict` (sent as-is, lossless). |
+
+**Return Type**
+
+`Union[SharedCommunicationChannelComponent, str, dict]` — see `create_shared_communication_channel_component_json`.
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
+
+current = sdk.shared_communication_channel_component.get_shared_communication_channel_component_json(id_="id")
+result = sdk.shared_communication_channel_component.update_shared_communication_channel_component_json(id_="id", request_body=current)
+print(result)
+```

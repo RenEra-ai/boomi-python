@@ -8,6 +8,7 @@ from ..net.environment.environment import Environment
 from ..models.utils.cast_models import cast_models
 from ..net.transport.utils import require_raw_xml
 from ..models import (
+    OrganizationComponent,
     OrganizationComponentBulkRequest,
     OrganizationComponentQueryConfig,
     OrganizationComponentQueryResponse,
@@ -134,6 +135,112 @@ class OrganizationComponentService(BaseService):
             status,
             response,
         )
+
+    def create_organization_component_json(
+        self, request_body: Union[OrganizationComponent, dict] = None
+    ) -> Union[OrganizationComponent, str, dict]:
+        """Create an Organization Component from JSON; return the typed model (or raw payload).
+
+        JSON counterpart of ``create_organization_component`` (raw XML). The body
+        may be a typed ``OrganizationComponent`` (serialized via ``_map()``) or a
+        plain ``dict``, which is sent **as-is** for a lossless JSON write. The
+        response hydrates to ``OrganizationComponent`` when possible, otherwise the
+        raw ``dict``/``str`` payload is returned on a 2xx (see ``_deserialize_or_raw``).
+
+        :param request_body: The Organization Component as a typed model or dict., defaults to None
+        :type request_body: Union[OrganizationComponent, dict], optional
+        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
+        :return: The parsed response data.
+        :rtype: Union[OrganizationComponent, str, dict]
+        """
+
+        Validator(Union[OrganizationComponent, dict]).is_optional().validate(request_body)
+        self._require_model_or_dict(request_body, OrganizationComponent)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/OrganizationComponent",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            .add_header("Accept", "application/json")
+            .serialize()
+            .set_method("POST")
+            .set_body(request_body)
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        return self._deserialize_or_raw(OrganizationComponent, response, status, content)
+
+    def get_organization_component_json(
+        self, id_: str
+    ) -> Union[OrganizationComponent, str, dict]:
+        """Get an Organization Component as JSON; return the typed model (or raw payload).
+
+        JSON counterpart of ``get_organization_component`` (raw XML). Sets
+        ``Accept: application/json`` and hydrates to ``OrganizationComponent`` when
+        possible; a sparse 2xx body (e.g. partial ``OrganizationContactInfo``)
+        falls back to the raw ``dict`` rather than raising.
+
+        :param id_: Organization component ID
+        :type id_: str
+        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
+        :return: The parsed response data.
+        :rtype: Union[OrganizationComponent, str, dict]
+        """
+
+        Validator(str).validate(id_)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/OrganizationComponent/{{id}}",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            .add_path("id", id_)
+            .add_header("Accept", "application/json")
+            .serialize()
+            .set_method("GET")
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        return self._deserialize_or_raw(OrganizationComponent, response, status, content)
+
+    def update_organization_component_json(
+        self, id_: str, request_body: Union[OrganizationComponent, dict] = None
+    ) -> Union[OrganizationComponent, str, dict]:
+        """Update an Organization Component with JSON; return the typed model (or raw payload).
+
+        JSON counterpart of ``update_organization_component`` (raw XML). Full
+        updates only: supply the complete component. The body may be a typed
+        ``OrganizationComponent`` or a plain ``dict`` (sent as-is for a lossless
+        JSON write).
+
+        :param id_: Organization component ID
+        :type id_: str
+        :param request_body: The Organization Component as a typed model or dict., defaults to None
+        :type request_body: Union[OrganizationComponent, dict], optional
+        :raises RequestError: Raised when a request fails, with optional HTTP status code and details.
+        :return: The parsed response data.
+        :rtype: Union[OrganizationComponent, str, dict]
+        """
+
+        Validator(str).validate(id_)
+        Validator(Union[OrganizationComponent, dict]).is_optional().validate(request_body)
+        self._require_model_or_dict(request_body, OrganizationComponent)
+
+        serialized_request = (
+            Serializer(
+                f"{self.base_url or Environment.DEFAULT.url}/OrganizationComponent/{{id}}",
+                [self.get_access_token(), self.get_basic_auth()],
+            )
+            .add_path("id", id_)
+            .add_header("Accept", "application/json")
+            .serialize()
+            .set_method("POST")
+            .set_body(request_body)
+        )
+
+        response, status, content = self.send_request(serialized_request)
+        return self._deserialize_or_raw(OrganizationComponent, response, status, content)
 
     @cast_models
     def delete_organization_component(self, id_: str) -> None:

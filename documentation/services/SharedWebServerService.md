@@ -7,6 +7,8 @@ A list of all methods in the `SharedWebServerService` service. Click on the meth
 | [get_shared_web_server](#get_shared_web_server)       | Retrieves the details of a Shared Web Server configuration for this atom/cloud ID by its unique ID. The response can be in either XML or JSON format based on your request. |
 | [update_shared_web_server](#update_shared_web_server) | Updates a Shared Web Server object based on the supplied Runtime ID.                                                                                                        |
 | [bulk_shared_web_server](#bulk_shared_web_server)     | To learn more about `bulk`, refer to [Bulk GET operations](#section/Introduction/Bulk-GET-operations).                                                                      |
+| [get_shared_web_server_json](#get_shared_web_server_json) | Lossless JSON `dict` get (additive, v3.0.1). Returns the decoded JSON `dict` without hydrating `SharedWebServer`, so cloud fields the typed model drops survive.        |
+| [update_shared_web_server_json](#update_shared_web_server_json) | Lossless JSON `dict` update (additive, v3.0.1). Sends the `dict` document as-is for a field-faithful full-document update.                                          |
 
 ## get_shared_web_server
 
@@ -241,5 +243,79 @@ request_body = SharedWebServerBulkRequest(
 
 result = sdk.shared_web_server.bulk_shared_web_server(request_body=request_body)
 
+print(result)
+```
+
+## get_shared_web_server_json
+
+Get a Shared Web Server configuration as a **lossless JSON `dict`** (additive,
+v3.0.1). Unlike `get_shared_web_server`, this returns the decoded JSON body as-is
+without hydrating the `SharedWebServer` model. The typed model does not map every
+cloud-runtime field (`externalHost`, `internalHost`, `sslCertificate`,
+`maxNumberOfThreads`); those land in `_kwargs` and are dropped by `_map()`, so a
+GET → mutate → typed-UPDATE roundtrip would silently strip them. Pair this with
+`update_shared_web_server_json` for a field-faithful full-document update.
+
+- HTTP Method: `GET`
+- Endpoint: `/SharedWebServer/{id}`
+
+**Parameters**
+
+| Name | Type | Required | Description |
+| :--- | :--- | :------- | :---------- |
+| id\_ | str  | ✅       |             |
+
+**Return Type**
+
+`Union[dict, str]` — the decoded JSON body (`dict`), or `str` for an empty/undecodable
+2xx body.
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
+
+doc = sdk.shared_web_server.get_shared_web_server_json(id_="atomId")
+print(doc["cloudTennantGeneral"]["externalHost"])  # preserved field
+```
+
+## update_shared_web_server_json
+
+Update a Shared Web Server configuration from a **lossless JSON `dict`** (additive,
+v3.0.1). The `dict` body is sent as-is (no typed-model roundtrip, so no field loss)
+and the response is returned decoded without hydration. Intended for the
+GET → mutate → update flow: fetch with `get_shared_web_server_json`, change the
+fields you need, and POST the whole document back. A dict-shaped degenerate-body
+guard mirrors the typed update's check — a full-document update must include
+`atomId` plus a settings section (`cloudTennantGeneral` or `generalSettings`) — but
+the model-attribute guard is not applied (it cannot inspect a plain `dict`).
+
+- HTTP Method: `POST`
+- Endpoint: `/SharedWebServer/{id}`
+
+**Parameters**
+
+| Name         | Type | Required | Description                                       |
+| :----------- | :--- | :------- | :------------------------------------------------ |
+| id\_         | str  | ✅       |                                                   |
+| request_body | dict | ✅       | The full Shared Web Server document as a JSON `dict`. |
+
+**Return Type**
+
+`Union[dict, str]` — the decoded JSON body (`dict`), or `str` for an empty/undecodable
+2xx body.
+
+**Example Usage Code Snippet**
+
+```python
+from boomi import Boomi
+
+sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
+
+doc = sdk.shared_web_server.get_shared_web_server_json(id_="atomId")
+doc["cloudTennantGeneral"]["maxNumberOfThreads"] = 20  # untouched fields survive
+result = sdk.shared_web_server.update_shared_web_server_json(id_="atomId", request_body=doc)
 print(result)
 ```

@@ -178,6 +178,40 @@ class BaseService:
             raise
         raise ApiError("Error on deserializing the response.", status, response)
 
+    def _raw_json_or_error(self, response, status):
+        """Return a successful 2xx body as-is, without hydrating a typed model.
+
+        Used by lossless-JSON endpoints (e.g. ``SharedWebServer``) where a typed
+        model roundtrip would silently drop unknown/unmapped fields (they land in
+        ``_kwargs`` and ``JsonMap._map()`` skips private attributes). Returning the
+        decoded payload (``dict``/``list``/``str``) lets a GET -> mutate -> update
+        roundtrip preserve every field. Mirrors :meth:`_deserialize_or_raw`'s
+        ``200 <= status < 300`` boundary and bytes->str fallback (an empty/
+        undecodable 2xx JSON body arrives as bytes); a non-2xx propagates.
+        """
+        if 200 <= status < 300:
+            if isinstance(response, (bytes, bytearray)):
+                return bytes(response).decode("utf-8", errors="replace")
+            return response
+        raise ApiError("Error on the response.", status, response)
+
+    @staticmethod
+    def _require_model_or_dict(request_body, model):
+        """Reject a JSON request body that is neither ``None``, a typed ``model``,
+        nor a ``dict``.
+
+        ``Validator(Union[model, dict])`` cannot enforce this on its own: its
+        oneOf path early-returns primitives (``str``/``int``/``float``/``bool``)
+        without raising (see ``one_of_base_model.py``), so a stray primitive would
+        otherwise be serialized as the JSON body instead of failing fast. ``None``
+        is allowed (the body is optional).
+        """
+        if request_body is not None and not isinstance(request_body, (model, dict)):
+            raise TypeError(
+                f"request_body must be {model.__name__} or dict, "
+                f"not {type(request_body).__name__}"
+            )
+
     def stream_request(self, request: Request) -> Generator[Dict, None, None]:
         """
         Streams the given request.

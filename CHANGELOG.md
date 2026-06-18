@@ -1,5 +1,38 @@
 # Changelog
 
+## 3.0.1 — JSON surfaces for JSON-capable component-family + SharedWebServer endpoints
+
+Additive, non-breaking. Fills a 3.0.0 gap: three structured B2B endpoints and
+`SharedWebServer` support JSON in the Boomi Platform API, but 3.0.0 exposed only
+raw-XML (component-family) or lossy typed-JSON (SharedWebServer) surfaces for
+their create/get/update operations. Downstream callers had to hand-roll the HTTP
+transport. These methods move that transport back into the SDK.
+
+The 3.0.0 opaque raw-XML contract is untouched: the raw-XML `create_*`/`get_*`/
+`update_*`, `bulk_*`, `query_*`, and `delete_*` methods, and the generic
+`ComponentService`, are unchanged.
+
+### Added
+
+- **Component-family JSON methods** (`*_json` create/get/update, sync + async) on
+  `OrganizationComponentService`, `TradingPartnerComponentService`, and
+  `SharedCommunicationChannelComponentService`. Each accepts a typed model **or**
+  a plain `dict` (a `dict` body is sent as-is for a lossless JSON write; a typed
+  model serializes via `_map()`), sets `Accept: application/json`, and returns
+  `Union[Model, str, dict]` via `_deserialize_or_raw` (a sparse 2xx body falls
+  back to the raw payload instead of raising). These methods are intentionally
+  **not** `@cast_models`-decorated, so a `dict` body is never coerced into a model
+  (which would drop unknown fields).
+- **`SharedWebServerService.get_shared_web_server_json(id_)` and
+  `update_shared_web_server_json(id_, request_body)`** (sync + async) return/accept
+  the decoded JSON `dict` directly, without hydrating `SharedWebServer`. This is
+  lossless for cloud-runtime fields the typed model does not map (`externalHost`,
+  `internalHost`, `sslCertificate`, `maxNumberOfThreads`), which a
+  GET → mutate → typed-UPDATE roundtrip would otherwise silently strip.
+- `BaseService._raw_json_or_error(...)` — returns a 2xx body as-is (no model
+  hydration) for the lossless-JSON methods; mirrors `_deserialize_or_raw`'s 2xx
+  boundary and bytes→str fallback.
+
 ## 3.0.0 — Component XML is opaque / byte-faithful (breaking)
 
 Component XML (and the other open-ended component-family endpoints) is now an

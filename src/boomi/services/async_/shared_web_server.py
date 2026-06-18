@@ -22,6 +22,14 @@ class SharedWebServerServiceAsync(SharedWebServerService):
     ) -> Awaitable[Union[SharedWebServer, str, dict]]:
         return to_async(super().update_shared_web_server)(id_, request_body)
 
+    def get_shared_web_server_json(self, id_: str) -> Awaitable[Union[dict, str]]:
+        return to_async(super().get_shared_web_server_json)(id_)
+
+    def update_shared_web_server_json(
+        self, id_: str, request_body: dict
+    ) -> Awaitable[Union[dict, str]]:
+        return to_async(super().update_shared_web_server_json)(id_, request_body)
+
     def bulk_shared_web_server(
         self, request_body: SharedWebServerBulkRequest = None
     ) -> Awaitable[Union[SharedWebServerBulkResponse, str, dict]]:
