@@ -144,12 +144,13 @@ class SharedWebServerService(BaseService):
 
         Unlike :meth:`get_shared_web_server`, this returns the decoded JSON body
         **as-is** without hydrating the ``SharedWebServer`` model. The typed model
-        does not map every cloud-runtime field (e.g. ``externalHost``,
-        ``internalHost``, ``sslCertificate``, ``maxNumberOfThreads``); unmapped
-        fields land in ``_kwargs`` and ``JsonMap._map()`` drops them, so a
-        GET -> mutate -> typed-UPDATE roundtrip would silently strip them. Use this
+        only maps the fields defined in the OpenAPI spec at this SDK version; any
+        field the API returns that the generated models do not map (e.g. a field
+        the platform adds after this SDK release) lands in ``_kwargs``, and
+        ``JsonMap._map()`` skips private attributes — so a
+        GET -> mutate -> typed-UPDATE roundtrip would silently strip it. Use this
         method (paired with :meth:`update_shared_web_server_json`) when you need a
-        field-faithful full-document update.
+        field-faithful full-document update that survives model/spec version skew.
 
         :param id_: id_
         :type id_: str

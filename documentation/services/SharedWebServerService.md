@@ -250,11 +250,12 @@ print(result)
 
 Get a Shared Web Server configuration as a **lossless JSON `dict`** (additive,
 v3.0.1). Unlike `get_shared_web_server`, this returns the decoded JSON body as-is
-without hydrating the `SharedWebServer` model. The typed model does not map every
-cloud-runtime field (`externalHost`, `internalHost`, `sslCertificate`,
-`maxNumberOfThreads`); those land in `_kwargs` and are dropped by `_map()`, so a
-GET → mutate → typed-UPDATE roundtrip would silently strip them. Pair this with
-`update_shared_web_server_json` for a field-faithful full-document update.
+without hydrating the `SharedWebServer` model. The typed model maps only the fields
+defined in the OpenAPI spec at this SDK version; any field the API returns that the
+generated models do not map (e.g. a field the platform adds after this SDK release)
+lands in `_kwargs` and is dropped by `_map()`, so a GET → mutate → typed-UPDATE
+roundtrip would silently strip it. Pair this with `update_shared_web_server_json`
+for a field-faithful full-document update that survives model/spec version skew.
 
 - HTTP Method: `GET`
 - Endpoint: `/SharedWebServer/{id}`
@@ -278,7 +279,8 @@ from boomi import Boomi
 sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
 
 doc = sdk.shared_web_server.get_shared_web_server_json(id_="atomId")
-print(doc["cloudTennantGeneral"]["externalHost"])  # preserved field
+# Whole document preserved verbatim, including any field the typed model omits.
+print(doc["atomId"], sorted(doc))
 ```
 
 ## update_shared_web_server_json
@@ -315,7 +317,7 @@ from boomi import Boomi
 sdk = Boomi(account_id="...", username="...", password="...", timeout=10000)
 
 doc = sdk.shared_web_server.get_shared_web_server_json(id_="atomId")
-doc["cloudTennantGeneral"]["maxNumberOfThreads"] = 20  # untouched fields survive
+doc["shouldRestartPlugin"] = True  # mutate one field; all others survive verbatim
 result = sdk.shared_web_server.update_shared_web_server_json(id_="atomId", request_body=doc)
 print(result)
 ```

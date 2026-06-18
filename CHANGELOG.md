@@ -26,9 +26,10 @@ The 3.0.0 opaque raw-XML contract is untouched: the raw-XML `create_*`/`get_*`/
 - **`SharedWebServerService.get_shared_web_server_json(id_)` and
   `update_shared_web_server_json(id_, request_body)`** (sync + async) return/accept
   the decoded JSON `dict` directly, without hydrating `SharedWebServer`. This is
-  lossless for cloud-runtime fields the typed model does not map (`externalHost`,
-  `internalHost`, `sslCertificate`, `maxNumberOfThreads`), which a
-  GET → mutate → typed-UPDATE roundtrip would otherwise silently strip.
+  lossless for any field the generated models do not map (e.g. a field the platform
+  adds after this SDK release): such fields land in `_kwargs` and `JsonMap._map()`
+  skips them, so a GET → mutate → typed-UPDATE roundtrip would otherwise silently
+  strip them.
 - `BaseService._raw_json_or_error(...)` — returns a 2xx body as-is (no model
   hydration) for the lossless-JSON methods; mirrors `_deserialize_or_raw`'s 2xx
   boundary and bytes→str fallback.
